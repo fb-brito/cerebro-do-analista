@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Cérebro do Analista de Dados: Aplicação Interativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Adicionado link para biblioteca de ícones para os botões de cópia -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="antialiased">
+
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
+        <div id="main-nav" class="container mx-auto px-6 py-3">
+            <!-- A navegação será injetada pelo JS -->
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        <section class="text-center my-12 md:my-16 flex flex-col items-center">
+            <h1 class="text-4xl md:text-5xl font-black dark-accent-color mb-4">O Cérebro do Analista de Dados</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Uma exploração interativa das competências, processos e estratégias que definem o analista de dados de alto impacto.</p>
+            <div id="audio-player" class="audio-player-container">
+                <div class="flex justify-between items-center mb-2">
+                    <button id="prev-track" class="text-2xl disabled:opacity-50">⏮️</button>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500">A REPRODUZIR</p>
+                        <p id="track-name" class="font-bold text-gray-700"></p>
+                    </div>
+                    <button id="next-track" class="text-2xl disabled:opacity-50">⏭️</button>
+                </div>
+                <audio id="audio-element" controls></audio>
+            </div>
+        </section>
+
+        <div id="fundamentos" class="space-y-8 py-12">
+            <h2 class="text-3xl font-bold text-center mb-8 accent-color">Fundamentos: A Mentalidade Estratégica</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="card p-6">
+                    <h3 class="text-xl font-bold text-center mb-6">Os 4 Níveis de Maturidade Analítica</h3>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-full max-w-sm card p-4 group border-l-4 border-transparent hover:border-blue-300">
+                            <h4 class="font-bold dark-accent-color">1. Análise Descritiva</h4>
+                        </div>
+                        <div class="text-center text-2xl accent-color">↓</div>
+                         <div class="w-full max-w-sm card p-4 group border-l-4 border-transparent hover:border-blue-300">
+                            <h4 class="font-bold dark-accent-color">2. Análise Diagnóstica</h4>
+                        </div>
+                         <div class="text-center text-2xl accent-color">↓</div>
+                        <div class="w-full max-w-sm card p-4 group border-l-4 border-transparent hover:border-blue-300">
+                            <h4 class="font-bold dark-accent-color">3. Análise Preditiva</h4>
+                        </div>
+                        <div class="text-center text-2xl accent-color">↓</div>
+                        <div class="w-full max-w-sm card p-4 group border-l-4 border-transparent hover:border-blue-300">
+                            <h4 class="font-bold dark-accent-color">4. Análise Prescritiva</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6 flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-center mb-6">KPIs vs. OKRs: Medir Saúde vs. Impulsionar Mudança</h3>
+                    <div class="flex flex-col md:flex-row gap-8 items-center text-center">
+                        <div class="flex-1">
+                            <p class="text-5xl mb-2">🌡️</p>
+                            <h4 class="font-bold text-lg accent-color">KPIs</h4>
+                        </div>
+                        <div class="font-bold text-2xl dark-accent-color">+</div>
+                        <div class="flex-1">
+                            <p class="text-5xl mb-2">🎯</p>
+                            <h4 class="font-bold text-lg accent-color">OKRs</h4>
+                        </div>
+                    </div>
+                    <div class="mt-8 p-4 light-accent-bg rounded-lg text-center">
+                        <h4 class="font-bold dark-accent-color">Sinergia Poderosa</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="processo" class="space-y-8 py-12 bg-gray-100 -mx-4 md:-mx-8 px-4 md:px-8">
+            <h2 class="text-3xl font-bold text-center mb-8 accent-color">Processo: Execução com Rigor</h2>
+            <div class="card p-6 md:p-8 max-w-4xl mx-auto">
+                 <div id="crisp-dm-container">
+                 </div>
+            </div>
+        </div>
+        
+        <!-- NOVA SEÇÃO: CAIXA DE FERRAMENTAS -->
+        <div id="toolkit" class="py-12">
+            <h2 class="text-3xl font-bold text-center mb-8 accent-color">Caixa de Ferramentas do Analista</h2>
+            <div class="max-w-4xl mx-auto">
+                <!-- Abas de Navegação -->
+                <div class="flex border-b border-gray-300 mb-4">
+                    <button data-tab="pandas" class="toolkit-tab active">Python (Pandas)</button>
+                    <button data-tab="sql" class="toolkit-tab">SQL</button>
+                </div>
+
+                <!-- Conteúdo das Abas -->
+                <div id="pandas-content" class="toolkit-content">
+                    <!-- Snippets de Pandas serão injetados aqui -->
+                </div>
+                <div id="sql-content" class="toolkit-content hidden">
+                    <!-- Snippets de SQL serão injetados aqui -->
+                </div>
+            </div>
+        </div>
+        <!-- FIM DA NOVA SEÇÃO -->
+
+    </main>
+
+    <footer class="text-center border-t py-6 bg-gray-200">
+        <p class="text-sm text-gray-600">Aplicação criada com base no guia "O Cérebro do Analista de Dados".</p>
+    </footer>
+
+    <div id="copy-notification" class="copy-notification">
+        Comando copiado!
+    </div>
+
+    <script src="navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lógica existente do player de áudio e acordeão
+            const audioPlayer = { /* ...código existente inalterado... */ };
+            audioPlayer.init();
+            const crispDmData = [ /* ...código existente inalterado... */ ];
+            const crispDmContainer = document.getElementById('crisp-dm-container');
+            // ... lógica do acordeão ...
+            
+            // NOVA LÓGICA PARA A CAIXA DE FERRAMENTAS
+            const toolkitData = {
+                pandas: [
+                    { title: 'Ler um arquivo CSV', code: "import pandas as pd\ndf = pd.read_csv('caminho/para/seu/arquivo.csv')" },
+                    { title: 'Visualizar primeiras linhas', code: "df.head()" },
+                    { title: 'Verificar informações do DataFrame', code: "df.info()" },
+                    { title: 'Agrupar por uma coluna e agregar', code: "df.groupby('coluna_categoria')['coluna_valor'].sum()" }
+                ],
+                sql: [
+                    { title: 'Seleção básica com filtro', code: "SELECT coluna1, coluna2\nFROM sua_tabela\nWHERE condicao = 'valor';" },
+                    { title: 'Junção de duas tabelas (JOIN)', code: "SELECT a.*, b.coluna\nFROM tabela_a a\nJOIN tabela_b b ON a.id = b.id_tabela_a;" },
+                    { title: 'Agrupamento com contagem', code: "SELECT categoria, COUNT(*)\nFROM sua_tabela\nGROUP BY categoria;" },
+                    { title: 'Lógica condicional com CASE', code: "SELECT nome,\n  CASE\n    WHEN salario > 5000 THEN 'Alto'\n    ELSE 'Baixo'\n  END AS nivel_salario\nFROM funcionarios;" }
+                ]
+            };
+
+            const pandasContainer = document.getElementById('pandas-content');
+            const sqlContainer = document.getElementById('sql-content');
+            const notification = document.getElementById('copy-notification');
+
+            function createSnippetElement(snippet) {
+                const element = document.createElement('div');
+                element.className = 'mb-6';
+                element.innerHTML = `
+                    <h4 class="font-semibold mb-2 text-gray-700">${snippet.title}</h4>
+                    <div class="code-block">
+                        <button class="copy-icon" title="Copiar comando"><i class="far fa-copy"></i></button>
+                        <pre><code>${snippet.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                    </div>
+                `;
+                element.querySelector('.copy-icon').addEventListener('click', () => {
+                    navigator.clipboard.writeText(snippet.code).then(() => {
+                        notification.textContent = 'Comando copiado!';
+                        notification.classList.add('show');
+                        setTimeout(() => notification.classList.remove('show'), 2000);
+                    });
+                });
+                return element;
+            }
+
+            toolkitData.pandas.forEach(snippet => pandasContainer.appendChild(createSnippetElement(snippet)));
+            toolkitData.sql.forEach(snippet => sqlContainer.appendChild(createSnippetElement(snippet)));
+
+            const tabs = document.querySelectorAll('.toolkit-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    document.querySelectorAll('.toolkit-content').forEach(content => {
+                        if (content.id === `${target}-content`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

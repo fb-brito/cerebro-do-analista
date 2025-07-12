@@ -1,0 +1,154 @@
+/* ==========================================================================
+   Base Styles & Fonts
+   ========================================================================== */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #F8F9FA;
+    color: #343A40;
+}
+
+/* ==========================================================================
+   Color & Theme Variables
+   ========================================================================== */
+:root {
+    --primary-color: #0079C2;
+    --dark-primary-color: #004AAD;
+    --light-accent-color: #CAF0F8;
+}
+
+.accent-color { color: var(--primary-color); }
+.dark-accent-color { color: var(--dark-primary-color); }
+.accent-bg { background-color: var(--primary-color); }
+.dark-accent-bg { background-color: var(--dark-primary-color); }
+.light-accent-bg { background-color: var(--light-accent-color); }
+
+/* ==========================================================================
+   Reusable Components & Cards
+   ========================================================================== */
+.card {
+    background-color: #FFFFFF;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    transform: translateY(-4px);
+}
+
+/* ==========================================================================
+   Navigation Styles
+   ========================================================================== */
+header nav a {
+    transition: color 0.2s, background-color 0.2s;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+}
+
+header nav a:hover {
+    color: var(--primary-color);
+    background-color: #e9ecef;
+} 
+
+header nav a.active {
+    color: var(--dark-primary-color);
+    font-weight: 700;
+    background-color: #dee2e6;
+}
+
+/* ==========================================================================
+   Git Guide - Flipping Card Styles (ARQUITETURA FINAL)
+   ========================================================================== */
+.step-card-container {
+    perspective: 1000px;
+    display: flex; /* Permite que o filho direto ocupe 100% da altura da célula da grade */
+}
+
+.step-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+}
+
+.step-card.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    
+    /* LÓGICA CORRETA: Usando Flexbox para distribuir o espaço vertical interno */
+    display: flex;
+    flex-direction: column;
+    
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    text-align: left;
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+}
+
+.card-face-back {
+    transform: rotateY(180deg);
+    background-color: #f3f4f6;
+    justify-content: center;
+    align-items: center;
+}
+
+/* O título ocupa seu espaço natural */
+.card-face > h3 {
+    flex-shrink: 0; /* Impede que o título encolha */
+}
+
+/* O bloco de código cresce para preencher todo o espaço vertical restante */
+.card-face .code-block {
+    flex-grow: 1;
+    margin-top: 1rem; /* Adiciona um espaço entre o título e o bloco de código */
+    display: flex; /* Para centralizar o conteúdo do code-block se necessário */
+    align-items: center;
+}
+
+
+/* ==========================================================================
+   Code Block & Copy Icon Styles
+   ========================================================================== */
+.code-block {
+    position: relative;
+    background-color: #282c34;
+    color: #abb2bf;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-align: left;
+    width: 100%;
+}
+
+.copy-icon {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: #4b5563;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    cursor: pointer;
+    opacity: 0.2;
+    transition: opacity 0.2s;
+}
+
+.code-block:hover .copy-icon {
+    opacity: 1;
+}
+
+/* ... demais estilos ... */
