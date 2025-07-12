@@ -11,8 +11,7 @@
 <body class="antialiased">
     <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
         <div id="main-nav" class="container mx-auto px-6 py-3">
-             <!-- A navegação será injetada pelo JS -->
-        </div>
+             </div>
     </header>
 
     <main class="container mx-auto p-4 md:p-8">
@@ -21,10 +20,8 @@
             <p class="text-lg text-gray-600 max-w-3xl mx-auto">Um fluxo de trabalho essencial para gerir o seu código. Clique num cartão para ver a explicação.</p>
         </section>
 
-        <!-- A grade agora funcionará corretamente com o novo CSS -->
-        <div id="git-guide-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Os cartões de comando Git serão gerados pelo JS -->
-        </div>
+        <div id="git-guide-container">
+            </div>
         
         <div id="copy-notification" class="copy-notification">
             Comando copiado!
@@ -35,68 +32,113 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const gitCommands = [
-                { title: '1. Criar Nova Branch', command: 'git branch feature/nome-da-feature', explanation: 'Cria um novo ramo de desenvolvimento isolado para que você possa trabalhar em uma nova funcionalidade sem afetar a linha principal de código (main).', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '2. Mudar para a Branch', command: 'git checkout feature/nome-da-feature', explanation: 'Muda o seu "ponteiro" (HEAD) para a nova branch, tornando-a o seu ambiente de trabalho ativo. Todas as alterações a partir de agora serão feitas nesta branch.', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '3. Adicionar Alterações', command: 'git add .', explanation: 'O ponto (.) adiciona todos os ficheiros modificados e novos à "Staging Area". Esta é uma área intermediária onde você prepara o "pacote" de alterações que farão parte do próximo commit.', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '4. Fazer o Commit', command: 'git commit -m "Feat: Descrição da alteração"', explanation: 'Grava permanentemente as alterações que estão na Staging Area no histórico da sua branch. A mensagem (flag -m) é crucial para documentar o que foi feito.', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '5. Enviar para o GitHub', command: 'git push --set-upstream origin feature/nome-da-feature', explanation: 'Envia a sua branch e os seus commits para o repositório remoto (GitHub). O --set-upstream é usado na primeira vez para criar um link entre a sua branch local e a remota.', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '6. Voltar para a Main', command: 'git checkout main', explanation: 'Retorna para a branch principal, preparando o terreno para integrar a sua nova funcionalidade que já foi enviada e revista.', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '7. Juntar as Alterações (Merge)', command: 'git merge feature/nome-da-feature', explanation: 'Pega todo o histórico de commits da sua feature branch e o aplica sobre a branch main, unificando o código.', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '8. Atualizar a Main Remota', command: 'git push origin main', explanation: 'Após o merge local, este comando atualiza a branch main no GitHub com a nova funcionalidade integrada.', section: 'Fluxo de Trabalho: Feature Branch' },
-                { title: '9. Apagar Branch Local', command: 'git branch -d feature/nome-da-feature', explanation: 'Uma vez que a funcionalidade foi integrada, a branch já não é necessária localmente. Este comando a apaga para manter o seu ambiente limpo.', section: 'Limpeza do Ambiente' },
-                { title: '10. Apagar Branch Remota', command: 'git push origin --delete feature/nome-da-feature', explanation: 'Também remove a branch do GitHub, finalizando o ciclo de vida da feature e mantendo o repositório remoto organizado.', section: 'Limpeza do Ambiente' }
+                { title: '1. Criar Nova Branch', command: 'git branch feature/nome-da-feature', explanation: 'Cria um novo ramo...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '2. Mudar para a Branch', command: 'git checkout feature/nome-da-feature', explanation: 'Muda o seu "ponteiro"...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '3. Adicionar Alterações', command: 'git add .', explanation: 'O ponto (.) adiciona todos os ficheiros...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '4. Fazer o Commit', command: 'git commit -m "Feat: Descrição da alteração"', explanation: 'Grava permanentemente as alterações...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '5. Enviar para o GitHub', command: 'git push --set-upstream origin feature/nome-da-feature', explanation: 'Envia a sua branch e os seus commits...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '6. Voltar para a Main', command: 'git checkout main', explanation: 'Retorna para a branch principal...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '7. Juntar as Alterações (Merge)', command: 'git merge feature/nome-da-feature', explanation: 'Pega todo o histórico de commits...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '8. Atualizar a Main Remota', command: 'git push origin main', explanation: 'Após o merge local, este comando atualiza...', section: 'Fluxo de Trabalho: Feature Branch' },
+                { title: '9. Apagar Branch Local', command: 'git branch -d feature/nome-da-feature', explanation: 'Uma vez que a funcionalidade foi integrada...', section: 'Limpeza do Ambiente' },
+                { title: '10. Apagar Branch Remota', command: 'git push origin --delete feature/nome-da-feature', explanation: 'Também remove a branch do GitHub...', section: 'Limpeza do Ambiente' }
             ];
 
-            const container = document.getElementById('git-guide-container');
-            const notification = document.getElementById('copy-notification');
-            let currentSection = '';
+            const sectionDescriptions = {
+                'Fluxo de Trabalho: Feature Branch': 'Este é o ciclo completo para desenvolver uma nova funcionalidade de forma segura e organizada, desde a criação até a integração.',
+                'Limpeza do Ambiente': 'Após a integração, é uma boa prática remover as branches que não são mais necessárias para manter o repositório limpo.'
+            };
 
-            gitCommands.forEach(item => {
-                if (item.section !== currentSection) {
-                    currentSection = item.section;
-                    const sectionTitle = document.createElement('div');
-                    sectionTitle.className = 'md:col-span-2 text-center mt-8 first:mt-0';
-                    sectionTitle.innerHTML = `<h2 class="text-2xl font-bold accent-color mb-4">${currentSection}</h2>`;
-                    container.appendChild(sectionTitle);
-                }
+            const mainContainer = document.getElementById('git-guide-container');
+            
+            const groupedCommands = gitCommands.reduce((acc, command) => {
+                const section = command.section;
+                if (!acc[section]) { acc[section] = []; }
+                acc[section].push(command);
+                return acc;
+            }, {});
 
-                const cardContainer = document.createElement('div');
-                cardContainer.className = 'step-card-container'; 
+            mainContainer.innerHTML = '';
 
-                const card = document.createElement('div');
-                card.className = 'step-card';
+            for (const sectionName in groupedCommands) {
+                const sectionBlock = document.createElement('div');
+                sectionBlock.className = 'section-block';
 
-                card.innerHTML = `
-                    <div class="card-face">
-                        <h3 class="font-bold text-lg mb-2">${item.title}</h3>
-                        <div class="code-block">
-                            ${item.command}
-                            <button class="copy-icon" title="Copiar comando">📋</button>
-                        </div>
-                    </div>
-                    <div class="card-face card-face-back">
-                        <h3 class="font-bold text-lg mb-4">${item.title}</h3>
-                        <p class="text-sm text-gray-700 flex-grow">${item.explanation}</p>
-                    </div>
-                `;
+                // --- NOVA LÓGICA DE MONTAGEM ---
+                const sectionTitle = document.createElement('h2');
+                sectionTitle.className = 'section-title';
+                sectionTitle.textContent = sectionName;
                 
-                cardContainer.appendChild(card);
-                container.appendChild(cardContainer);
+                const sectionParagraph = document.createElement('p');
+                sectionParagraph.className = 'section-description';
+                sectionParagraph.textContent = sectionDescriptions[sectionName] || '';
+                
+                const sectionGrid = document.createElement('div');
+                sectionGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
 
-                card.addEventListener('click', (e) => {
-                    if (e.target.tagName !== 'BUTTON') {
-                       card.classList.toggle('is-flipped');
+                // Adiciona o título primeiro, para ele ficar por cima
+                sectionBlock.appendChild(sectionTitle);
+                // Depois a descrição e a grade
+                sectionBlock.appendChild(sectionParagraph);
+                sectionBlock.appendChild(sectionGrid);
+
+                groupedCommands[sectionName].forEach(item => {
+                    const cardContainer = document.createElement('div');
+                    cardContainer.className = 'step-card-container';
+                    cardContainer.innerHTML = `
+                        <div class="step-card">
+                            <div class="card-face">
+                                <h3 class="font-bold text-lg mb-2">${item.title}</h3>
+                                <div class="code-block">${item.command}<button class="copy-icon" title="Copiar comando">📋</button></div>
+                            </div>
+                            <div class="card-face card-face-back">
+                                <h3 class="font-bold text-lg mb-4">${item.title}</h3>
+                                <p class="text-sm text-gray-700 flex-grow">${item.explanation}</p>
+                            </div>
+                        </div>
+                    `;
+                    sectionGrid.appendChild(cardContainer);
+                });
+                
+                mainContainer.appendChild(sectionBlock); 
+            }
+
+            // A função de ajuste de altura e os eventos continuam como antes
+            function adjustCardHeights() {
+                const cards = document.querySelectorAll('.step-card-container');
+                cards.forEach(card => {
+                    card.style.height = 'auto';
+                    const frontFace = card.querySelector('.card-face');
+                    const backFace = card.querySelector('.card-face-back');
+                    if (frontFace && backFace) {
+                        const frontHeight = frontFace.scrollHeight;
+                        const backHeight = backFace.scrollHeight;
+                        const maxHeight = Math.max(frontHeight, backHeight);
+                        card.style.height = `${maxHeight}px`;
                     }
                 });
+            }
 
-                card.querySelector('.copy-icon').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    navigator.clipboard.writeText(item.command).then(() => {
+            mainContainer.addEventListener('click', function(e) {
+                const copyButton = e.target.closest('.copy-icon');
+                if (copyButton) {
+                    const commandText = copyButton.parentElement.innerText.replace('📋','').trim();
+                    navigator.clipboard.writeText(commandText).then(() => {
+                        const notification = document.getElementById('copy-notification');
                         notification.classList.add('show');
                         setTimeout(() => notification.classList.remove('show'), 2000);
                     });
-                });
+                    return; 
+                }
+
+                const cardContainer = e.target.closest('.step-card-container');
+                if (cardContainer) {
+                    cardContainer.querySelector('.step-card').classList.toggle('is-flipped');
+                }
             });
+
+            adjustCardHeights();
+            window.addEventListener('resize', adjustCardHeights);
         });
     </script>
 </body>
