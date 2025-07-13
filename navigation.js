@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         { href: './paleta-cores.html', text: 'Paletas de Cores' },
-        { href: '#', text: 'Quiz Gamificado', isHighlight: true } // O quiz ainda não tem página própria
+        { href: './quiz.html', text: 'Quiz Gamificado', isHighlight: true } // LINK ATUALIZADO
     ];
 
     const currentPage = window.location.pathname.split('/').pop();
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const li = document.createElement('li');
 
         if (link.isDropdown) {
-            li.className = 'relative'; // Remove a classe 'group'
+            li.className = 'relative';
             li.innerHTML = `
                 <button class="dropdown-toggle flex items-center">
                     ${link.text}
@@ -66,15 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (toggle && menu) {
             dropdown.addEventListener('mouseenter', () => {
-                clearTimeout(leaveTimer); // Cancela o timer de fechar, se houver
+                clearTimeout(leaveTimer);
                 menu.classList.add('is-visible');
             });
 
             dropdown.addEventListener('mouseleave', () => {
-                // Define um timer para fechar o menu após um pequeno atraso
                 leaveTimer = setTimeout(() => {
                     menu.classList.remove('is-visible');
-                }, 200); // 200ms de atraso
+                }, 200);
             });
         }
     });
