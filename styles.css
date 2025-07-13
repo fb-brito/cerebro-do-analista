@@ -165,3 +165,35 @@ header nav a.active {
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   border: 1px solid #e5e7eb;
 }
+
+/* ==========================================================================
+   Dropdown Menu Styles (v3 - JS Controlled)
+   ========================================================================== */
+.dropdown-toggle {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.relative:hover .dropdown-toggle {
+    color: var(--primary-color);
+    background-color: #e9ecef;
+}
+
+.dropdown-menu {
+    min-width: 160px;
+    z-index: 100;
+    
+    /* Estado inicial: escondido */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+/* Estado visível: ativado via JS com a classe .is-visible */
+.dropdown-menu.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
