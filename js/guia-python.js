@@ -1,64 +1,70 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const toolkitData = {
-        pandas: [
-            { title: 'Ler um arquivo CSV', code: "import pandas as pd\ndf = pd.read_csv('caminho/para/seu/arquivo.csv')" },
-            { title: 'Visualizar primeiras linhas', code: "df.head()" },
-            { title: 'Verificar informações do DataFrame', code: "df.info()" },
-            { title: 'Agrupar por uma coluna e agregar', code: "df.groupby('coluna_categoria')['coluna_valor'].sum()" }
-        ],
-        sql: [
-            { title: 'Seleção básica com filtro', code: "SELECT coluna1, coluna2\nFROM sua_tabela\nWHERE condicao = 'valor';" },
-            { title: 'Junção de duas tabelas (JOIN)', code: "SELECT a.*, b.coluna\nFROM tabela_a a\nJOIN tabela_b b ON a.id = b.id_tabela_a;" },
-            { title: 'Agrupamento com contagem', code: "SELECT categoria, COUNT(*)\nFROM sua_tabela\nGROUP BY categoria;" },
-            { title: 'Lógica condicional com CASE', code: "SELECT nome,\n  CASE\n    WHEN salario > 5000 THEN 'Alto'\n    ELSE 'Baixo'\n  END AS nivel_salario\nFROM funcionarios;" }
+    // Os dados agora contêm apenas informações de Python e estão estruturados em seções
+    const pythonGuideData = {
+        sectionTitle: 'Snippets Essenciais com Pandas',
+        sectionDescription: 'Comandos fundamentais para iniciar a manipulação e exploração de dados com a biblioteca Pandas.',
+        commands: [
+            { title: 'Ler um arquivo CSV', command: "import pandas as pd\ndf = pd.read_csv('caminho/para/seu/arquivo.csv')", explanation: 'Usa a biblioteca Pandas para carregar dados de um arquivo CSV em um DataFrame, a estrutura de dados principal para análise.' },
+            { title: 'Visualizar Primeiras Linhas', command: "df.head()", explanation: 'Mostra as primeiras 5 linhas do DataFrame. É o primeiro passo para ter uma visão rápida da estrutura e dos tipos de dados.' },
+            { title: 'Verificar Informações Gerais', command: "df.info()", explanation: 'Fornece um resumo conciso do DataFrame, incluindo o tipo de cada coluna, valores não nulos e uso de memória.' },
+            { title: 'Agrupar e Agregar', command: "df.groupby('categoria')['valor'].sum()", explanation: 'Agrupa o DataFrame por uma coluna categórica e calcula uma agregação (neste caso, a soma) para uma coluna numérica.' },
+            { title: 'Filtrar Linhas por Condição', command: "df[df['idade'] > 30]", explanation: 'Seleciona e retorna um novo DataFrame contendo apenas as linhas onde a condição especificada (idade maior que 30) é verdadeira.' }
         ]
     };
 
-    const pandasContainer = document.getElementById('pandas-content');
-    const sqlContainer = document.getElementById('sql-content');
-    const notification = document.getElementById('copy-notification');
+    const mainContainer = document.getElementById('python-guide-container');
+    if (!mainContainer) return;
 
-    function createSnippetElement(snippet) {
-        const element = document.createElement('div');
-        element.className = 'mb-6';
-        element.innerHTML = `
-            <h4 class="font-semibold mb-2 text-gray-700">${snippet.title}</h4>
-            <div class="code-block">
-                <button class="copy-icon" title="Copiar comando"><i class="far fa-copy"></i></button>
-                <pre><code>${snippet.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+    mainContainer.innerHTML = ''; // Limpa o container
+
+    // Cria o bloco da seção, assim como no Guia Git
+    const sectionBlock = document.createElement('div');
+    sectionBlock.className = 'mb-12';
+
+    const sectionTitleEl = document.createElement('h3');
+    sectionTitleEl.className = 'section-title';
+    sectionTitleEl.textContent = pythonGuideData.sectionTitle;
+
+    const sectionParagraphEl = document.createElement('p');
+    sectionParagraphEl.className = 'text-gray-600 mb-6';
+    sectionParagraphEl.textContent = pythonGuideData.sectionDescription;
+
+    sectionBlock.appendChild(sectionTitleEl);
+    sectionBlock.appendChild(sectionParagraphEl);
+
+    // Cria o card que conterá os acordeões
+    const accordionContainer = document.createElement('div');
+    accordionContainer.className = 'card p-6 md:p-8';
+
+    pythonGuideData.commands.forEach(item => {
+        const accordionItem = document.createElement('div');
+        accordionItem.className = 'accordion-item border-b border-gray-200 last:border-b-0';
+        accordionItem.innerHTML = `
+            <button class="accordion-button w-full text-left p-4 font-semibold dark-accent-color focus:outline-none flex justify-between items-center">
+                <span>${item.title}</span>
+                <span class="accordion-icon transform transition-transform duration-300 text-2xl font-light">+</span>
+            </button>
+            <div class="accordion-content px-4 text-gray-700" style="max-height: 0px; overflow: hidden;">
+                <p class="py-4">${item.explanation}</p>
+                <div class="code-block mb-4">
+                    <button class="copy-icon" title="Copiar comando"><i class="far fa-copy"></i></button>
+                    <pre><code>${item.command}</code></pre>
+                </div>
             </div>
         `;
-        element.querySelector('.copy-icon').addEventListener('click', () => {
-            navigator.clipboard.writeText(snippet.code).then(() => {
-                if (notification) {
-                    notification.textContent = 'Comando copiado!';
-                    notification.classList.add('show');
-                    setTimeout(() => notification.classList.remove('show'), 2000);
-                }
+        accordionContainer.appendChild(accordionItem);
+
+        accordionItem.querySelector('.copy-icon').addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(item.command).then(() => {
+                showCopyNotification('Comando copiado!');
             });
         });
-        return element;
-    }
+    });
 
-    if (pandasContainer && sqlContainer) {
-        toolkitData.pandas.forEach(snippet => pandasContainer.appendChild(createSnippetElement(snippet)));
-        toolkitData.sql.forEach(snippet => sqlContainer.appendChild(createSnippetElement(snippet)));
+    sectionBlock.appendChild(accordionContainer);
+    mainContainer.appendChild(sectionBlock);
 
-        const tabs = document.querySelectorAll('.toolkit-tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.dataset.tab;
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-
-                document.querySelectorAll('.toolkit-content').forEach(content => {
-                    if (content.id === `${target}-content`) {
-                        content.classList.remove('hidden');
-                    } else {
-                        content.classList.add('hidden');
-                    }
-                });
-            });
-        });
-    }
+    // Inicializa todos os acordeões dentro do container principal
+    initializeAccordions('#python-guide-container');
 });

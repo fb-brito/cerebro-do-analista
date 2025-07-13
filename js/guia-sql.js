@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Objeto com as descrições adicionado para padronização
+    const sectionDescriptions = {
+        'Seleção e Filtragem': 'Comandos para escolher, filtrar e ordenar os dados que você deseja ver.',
+        'Agregação e Agrupamento': 'Funções para resumir dados e realizar cálculos em grupos de linhas.',
+        'Junção de Tabelas (JOINs)': 'Técnicas para combinar linhas de duas ou mais tabelas com base em uma coluna relacionada.',
+        'Funções Avançadas e Condicionais': 'Operadores e funções para manipulações complexas e lógicas condicionais dentro das suas consultas.'
+    };
+
     const sqlGuideData = [
         {
             category: 'Seleção e Filtragem',
@@ -33,55 +41,56 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const container = document.getElementById('sql-guide-container');
-    const notification = document.getElementById('copy-notification');
+    if (!container) return;
+
+    container.innerHTML = '';
 
     sqlGuideData.forEach(section => {
-        const sectionTitle = document.createElement('h3');
-        sectionTitle.className = 'text-2xl font-bold accent-color mb-6 mt-8 first:mt-0';
-        sectionTitle.textContent = section.category;
-        container.appendChild(sectionTitle);
+        const sectionBlock = document.createElement('div');
+        sectionBlock.className = 'mb-12';
 
+        const sectionTitle = document.createElement('h3');
+        sectionTitle.className = 'section-title';
+        sectionTitle.textContent = section.category;
+
+        const sectionParagraph = document.createElement('p');
+        sectionParagraph.className = 'text-gray-600 mb-6';
+        sectionParagraph.textContent = sectionDescriptions[section.category] || '';
+        
+        sectionBlock.appendChild(sectionTitle);
+        sectionBlock.appendChild(sectionParagraph);
+        
+        const accordionContainer = document.createElement('div');
+        accordionContainer.className = 'card p-6 md:p-8';
+        
         section.commands.forEach(item => {
             const accordionItem = document.createElement('div');
-            accordionItem.className = 'border-b border-gray-200';
+            accordionItem.className = 'accordion-item border-b border-gray-200 last:border-b-0';
             accordionItem.innerHTML = `
-                        <button class="w-full text-left p-4 font-semibold dark-accent-color focus:outline-none flex justify-between items-center">
-                            <span>${item.title}</span>
-                            <span class="accordion-icon transform transition-transform duration-300 text-2xl font-light">+</span>
-                        </button>
-                        <div class="accordion-content px-4 text-gray-700">
-                            <p class="py-4">${item.explanation}</p>
-                            <div class="code-block mb-4">
-                                <button class="copy-icon" title="Copiar comando"><i class="far fa-copy"></i></button>
-                                <pre><code>${item.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
-                            </div>
-                        </div>
-                    `;
-            container.appendChild(accordionItem);
-
-            const button = accordionItem.querySelector('button');
-            const content = accordionItem.querySelector('.accordion-content');
-            const icon = button.querySelector('.accordion-icon');
-
-            button.addEventListener('click', () => {
-                const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
-
-                if (!isOpen) {
-                    content.style.maxHeight = content.scrollHeight + "px";
-                    icon.textContent = '−';
-                } else {
-                    content.style.maxHeight = '0px';
-                    icon.textContent = '+';
-                }
-            });
+                <button class="accordion-button w-full text-left py-4 font-semibold dark-accent-color focus:outline-none flex justify-between items-center">
+                    <span>${item.title}</span>
+                    <span class="accordion-icon transform transition-transform duration-300 text-2xl font-light">+</span>
+                </button>
+                <div class="accordion-content px-4 text-gray-700" style="max-height: 0px; overflow: hidden;">
+                    <p class="py-4">${item.explanation}</p>
+                    <div class="code-block mb-4">
+                        <button class="copy-icon" title="Copiar comando"><i class="far fa-copy"></i></button>
+                        <pre><code>${item.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                    </div>
+                </div>
+            `;
+            accordionContainer.appendChild(accordionItem);
 
             accordionItem.querySelector('.copy-icon').addEventListener('click', (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(item.code).then(() => {
-                    // Nova chamada à função centralizada
                     showCopyNotification('Comando copiado!');
                 });
             });
         });
+        sectionBlock.appendChild(accordionContainer);
+        container.appendChild(sectionBlock);
     });
+
+    initializeAccordions('#sql-guide-container');
 });
