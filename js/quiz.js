@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // =========================================================================
-    // 1. ESTRUTURA DE DADOS (JÁ DEFINIDA NO PASSO ANTERIOR)
-    // =========================================================================
+    // 1. ESTRUTURA DE DADOS (Inalterada)
     const gameData = {
         "sql": {
             phaseName: "Fase SQL: O Mestre das Queries",
@@ -32,41 +30,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // =========================================================================
     // 2. ELEMENTOS DA INTERFACE (DOM)
-    // =========================================================================
+    const phaseCompleteTitle = document.getElementById('phase-complete-title');
     const gameScreen = document.getElementById('game-screen');
     const levelCompleteScreen = document.getElementById('level-complete-screen');
     const phaseCompleteScreen = document.getElementById('phase-complete-screen');
-
     const levelTitle = document.getElementById('level-title');
     const progressText = document.getElementById('progress-text');
-    const livesText = document.getElementById('lives-text');
+    const livesContainer = document.getElementById('lives-container');
+    const xpText = document.getElementById('xp-text');
     const questionText = document.getElementById('question-text');
     const optionsContainer = document.getElementById('options-container');
     const feedbackArea = document.getElementById('feedback-area');
     const nextBtn = document.getElementById('next-btn');
-
     const levelScoreText = document.getElementById('level-score-text');
     const nextLevelBtn = document.getElementById('next-level-btn');
-
     const phaseScoreText = document.getElementById('phase-score-text');
     const phaseStatusText = document.getElementById('phase-status-text');
     const restartPhaseBtn = document.getElementById('restart-phase-btn');
 
-    // =========================================================================
     // 3. VARIÁVEIS DE ESTADO DO JOGO
-    // =========================================================================
     let currentPhaseId = "sql";
     let currentLevelIndex = 0;
     let currentQuestionIndexInLevel = 0;
     let score = 0;
     let lives = 5;
     let answered = false;
+    let currentCorrectIndex; // Armazena o índice correto após o embaralhamento
 
     // =========================================================================
-    // 4. FUNÇÕES PRINCIPAIS DO JOGO
+    // 4. FUNÇÕES DO JOGO (LÓGICA ATUALIZADA)
     // =========================================================================
+
+    // NOVA FUNÇÃO para embaralhar as respostas
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // Troca os elementos
+        }
+        return array;
+    }
+
+    function updateXpDisplay() { xpText.textContent = `XP: ${score}`; }
+
+    function updateLivesDisplay(animateIndex = -1) {
+        livesContainer.innerHTML = '';
+        for (let i = 0; i < 5; i++) {
+            const heartIcon = document.createElement('i');
+            heartIcon.className = i < lives ? 'fas fa-heart heart-icon' : 'fas fa-heart-broken heart-icon heart-broken';
+            if (i === animateIndex) {
+                heartIcon.classList.add('animate-heart-break');
+                setTimeout(() => heartIcon.classList.remove('animate-heart-break'), 500);
+            }
+            livesContainer.appendChild(heartIcon);
+        }
+    }
 
     function startPhase() {
         currentLevelIndex = 0;
@@ -83,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadQuestion();
     }
 
+    // ATUALIZADA: Agora com a lógica para embaralhar as respostas
     function loadQuestion() {
         answered = false;
         feedbackArea.classList.add('hidden');
@@ -91,96 +110,107 @@ document.addEventListener('DOMContentLoaded', () => {
         const levelData = gameData[currentPhaseId].levels[currentLevelIndex];
         const questionData = levelData.questions[currentQuestionIndexInLevel];
 
-        // Atualiza a UI
+        // Guarda o texto da resposta correta ANTES de embaralhar
+        const correctAnswerText = questionData.options[questionData.correctAnswer];
+
+        // Cria uma cópia e embaralha as opções
+        const shuffledOptions = shuffleArray([...questionData.options]);
+
+        // Encontra o NOVO índice da resposta correta no array embaralhado
+        currentCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+
+        updateLivesDisplay();
+        updateXpDisplay();
+
         levelTitle.textContent = `${gameData[currentPhaseId].phaseName} - ${levelData.levelName}`;
-        livesText.textContent = `Vidas: ${lives}`;
         progressText.textContent = `Questão ${currentQuestionIndexInLevel + 1} / ${levelData.questions.length}`;
         questionText.textContent = questionData.question;
 
-        // Renderiza as opções
         optionsContainer.innerHTML = '';
-        questionData.options.forEach((option, index) => {
+        shuffledOptions.forEach((option, index) => {
             const button = document.createElement('button');
             button.className = 'w-full text-left p-4 border rounded-lg hover:bg-gray-100 transition-colors quiz-option';
             button.textContent = option;
-            button.dataset.index = index;
+            button.dataset.index = index; // O índice agora é da posição embaralhada
             button.addEventListener('click', selectAnswer);
             optionsContainer.appendChild(button);
         });
     }
 
+    // ATUALIZADA: Agora compara com o índice correto da pergunta embaralhada
     function selectAnswer(e) {
-        if (answered) return; // Impede múltiplos cliques
+        if (answered) return;
         answered = true;
 
         const selectedButton = e.target;
         const selectedAnswerIndex = parseInt(selectedButton.dataset.index);
         const questionData = gameData[currentPhaseId].levels[currentLevelIndex].questions[currentQuestionIndexInLevel];
-        const correctAnswerIndex = questionData.correctAnswer;
 
         document.querySelectorAll('.quiz-option').forEach(btn => btn.disabled = true);
 
-        if (selectedAnswerIndex === correctAnswerIndex) {
-            handleCorrectAnswer(selectedButton, questionData);
+        // Compara com o índice correto que guardamos após o embaralhamento
+        if (selectedAnswerIndex === currentCorrectIndex) {
+            score++;
+            updateXpDisplay();
+            selectedButton.classList.add('bg-green-200', 'border-green-500');
+            feedbackArea.innerHTML = `<p class="font-bold text-green-700">Correto!</p><p class="text-sm mt-1">${questionData.explanation}</p>`;
+            feedbackArea.classList.remove('hidden');
+            nextBtn.textContent = "Próxima Pergunta";
+            nextBtn.classList.remove('hidden');
         } else {
             handleIncorrectAnswer(selectedButton, questionData);
         }
     }
 
-    function handleCorrectAnswer(selectedButton, questionData) {
-        score++;
-        selectedButton.classList.add('bg-green-200', 'border-green-500');
-        feedbackArea.innerHTML = `<p class="font-bold text-green-700">Correto!</p><p class="text-sm mt-1">${questionData.explanation}</p>`;
-        feedbackArea.classList.remove('hidden');
-        nextBtn.textContent = "Próxima Pergunta";
-        nextBtn.classList.remove('hidden');
-    }
-
     function handleIncorrectAnswer(selectedButton, questionData) {
         selectedButton.classList.add('bg-red-200', 'border-red-500');
+        const lifeIndexToAnimate = lives > 0 ? lives - 1 : -1;
+        lives = Math.max(0, lives - 1);
+        updateLivesDisplay(lifeIndexToAnimate);
 
         if (lives > 0) {
-            // Oferece a opção de tentar novamente
-            feedbackArea.innerHTML = `
-                <p class="font-bold text-red-700">Incorreto.</p>
-                <p class="text-sm mt-2">Você tem ${lives} vidas restantes. Deseja usar uma para tentar de novo?</p>
-                <div class="flex justify-center gap-4 mt-4">
-                    <button id="retry-yes-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">Sim, usar 1 vida</button>
-                    <button id="retry-no-btn" class="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">Não, pular</button>
-                </div>
-            `;
+            feedbackArea.innerHTML = `<p class="font-bold text-red-700">Incorreto.</p><p class="text-sm mt-2">Você tem ${lives} vidas restantes. Deseja usar uma para tentar de novo?</p><div class="flex justify-center gap-4 mt-4"><button id="retry-yes-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">Sim, tentar de novo</button><button id="retry-no-btn" class="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">Não, pular</button></div>`;
             document.getElementById('retry-yes-btn').addEventListener('click', useLifeAndRetry);
             document.getElementById('retry-no-btn').addEventListener('click', () => showExplanationAndContinue(questionData));
         } else {
-            // Sem vidas, apenas mostra a explicação e continua
-            showExplanationAndContinue(questionData);
+            showGameOver();
         }
         feedbackArea.classList.remove('hidden');
     }
 
     function useLifeAndRetry() {
-        lives--;
         answered = false;
         feedbackArea.classList.add('hidden');
         document.querySelectorAll('.quiz-option').forEach(btn => {
             btn.disabled = false;
             btn.classList.remove('bg-red-200', 'border-red-500');
         });
-        livesText.textContent = `Vidas: ${lives}`;
     }
 
+    // ATUALIZADA: Agora destaca a resposta correta na sua nova posição embaralhada
     function showExplanationAndContinue(questionData) {
-        const correctAnswerIndex = questionData.correctAnswer;
         feedbackArea.innerHTML = `<p class="font-bold text-red-700">Incorreto.</p><p class="text-sm mt-1">${questionData.explanation}</p>`;
-        document.querySelector(`.quiz-option[data-index='${correctAnswerIndex}']`).classList.add('bg-green-200', 'border-green-500');
+        // Usa o currentCorrectIndex para destacar a resposta certa
+        document.querySelector(`.quiz-option[data-index='${currentCorrectIndex}']`).classList.add('bg-green-200', 'border-green-500');
         nextBtn.textContent = "Próxima Pergunta";
         nextBtn.classList.remove('hidden');
     }
 
+    // ATUALIZADA: Agora define o título como "Fase SQL - Game Over"
+    function showGameOver() {
+        gameScreen.classList.add('hidden');
+        phaseCompleteScreen.classList.remove('hidden');
+        const phaseData = gameData[currentPhaseId];
+        phaseCompleteTitle.textContent = `${phaseData.phaseName} - Game Over`; // Define o título correto
+        phaseScoreText.textContent = `Seu XP final foi: ${score}`;
+        phaseStatusText.textContent = "Você perdeu todas as suas vidas. Tente novamente para se tornar um mestre!";
+        phaseStatusText.className = "font-bold text-red-600";
+    }
+
+    // Funções de final de nível e fase (sem alterações lógicas, apenas o título da fase foi ajustado)
     function handleNext() {
         currentQuestionIndexInLevel++;
         const levelData = gameData[currentPhaseId].levels[currentLevelIndex];
-
         if (currentQuestionIndexInLevel < levelData.questions.length) {
             loadQuestion();
         } else {
@@ -191,13 +221,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function showLevelComplete() {
         gameScreen.classList.add('hidden');
         levelCompleteScreen.classList.remove('hidden');
-
-        const levelData = gameData[currentPhaseId].levels[currentLevelIndex];
-        const questionsInLevel = levelData.questions.length;
-        const scoreInThisLevel = score - (gameData[currentPhaseId].levels.slice(0, currentLevelIndex).reduce((acc, level) => acc + level.questions.length, 0));
-
+        const allPreviousQuestions = gameData[currentPhaseId].levels.slice(0, currentLevelIndex).reduce((acc, level) => acc + level.questions.length, 0);
+        const scoreInThisLevel = score - allPreviousQuestions;
+        const questionsInLevel = gameData[currentPhaseId].levels[currentLevelIndex].questions.length;
         levelScoreText.textContent = `Sua pontuação neste nível foi: ${scoreInThisLevel} de ${questionsInLevel}`;
-
         if (currentLevelIndex + 1 < gameData[currentPhaseId].levels.length) {
             nextLevelBtn.textContent = "Ir para o Próximo Nível";
         } else {
@@ -217,13 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function showPhaseComplete() {
         levelCompleteScreen.classList.add('hidden');
         phaseCompleteScreen.classList.remove('hidden');
-
         const phaseData = gameData[currentPhaseId];
+        phaseCompleteTitle.textContent = `${phaseData.phaseName} Concluída!`;
         const totalQuestions = phaseData.levels.reduce((acc, level) => acc + level.questions.length, 0);
-        const userPercentage = (score / totalQuestions) * 100;
-
-        phaseScoreText.textContent = `Sua pontuação final na Fase SQL foi: ${score} de ${totalQuestions} (${userPercentage.toFixed(0)}%)`;
-
+        const userPercentage = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+        phaseScoreText.textContent = `Sua pontuação final foi: ${score} de ${totalQuestions} (${userPercentage.toFixed(0)}%)`;
         if (userPercentage >= phaseData.passingScorePercentage) {
             phaseStatusText.textContent = "Parabéns, você foi aprovado e desbloqueou a próxima fase!";
             phaseStatusText.className = "font-bold text-green-600";
@@ -233,15 +258,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // =========================================================================
-    // 5. EVENT LISTENERS GERAIS
-    // =========================================================================
+    // EVENT LISTENERS GERAIS
     nextBtn.addEventListener('click', handleNext);
     nextLevelBtn.addEventListener('click', handleNextLevel);
     restartPhaseBtn.addEventListener('click', startPhase);
 
-    // =========================================================================
-    // 6. INICIALIZAÇÃO
-    // =========================================================================
+    // INICIALIZAÇÃO
     startPhase();
 });
