@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Objeto com as descrições adicionado para padronização
     const sectionDescriptions = {
         'Seleção e Filtragem': 'Comandos para escolher, filtrar e ordenar os dados que você deseja ver.',
         'Agregação e Agrupamento': 'Funções para resumir dados e realizar cálculos em grupos de linhas.',
@@ -56,13 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const sectionParagraph = document.createElement('p');
         sectionParagraph.className = 'text-gray-600 mb-6';
         sectionParagraph.textContent = sectionDescriptions[section.category] || '';
-        
+
         sectionBlock.appendChild(sectionTitle);
         sectionBlock.appendChild(sectionParagraph);
-        
+
         const accordionContainer = document.createElement('div');
         accordionContainer.className = 'card p-6 md:p-8';
-        
+
         section.commands.forEach(item => {
             const accordionItem = document.createElement('div');
             accordionItem.className = 'accordion-item border-b border-gray-200 last:border-b-0';
@@ -75,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="py-4">${item.explanation}</p>
                     <div class="code-block mb-4">
                         <button class="copy-icon" title="Copiar comando"><i class="far fa-copy"></i></button>
-                        <pre><code>${item.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                        <pre><code class="language-sql">${item.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
                     </div>
                 </div>
             `;

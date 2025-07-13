@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Os dados agora contêm apenas informações de Python e estão estruturados em seções
+    // A estrutura de dados foi simplificada para refletir o layout padrão
     const pythonGuideData = {
         sectionTitle: 'Snippets Essenciais com Pandas',
         sectionDescription: 'Comandos fundamentais para iniciar a manipulação e exploração de dados com a biblioteca Pandas.',
@@ -12,12 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
+    // Agora procuramos pelo contêiner correto, que existe no HTML
     const mainContainer = document.getElementById('python-guide-container');
     if (!mainContainer) return;
 
     mainContainer.innerHTML = ''; // Limpa o container
 
-    // Cria o bloco da seção, assim como no Guia Git
+    // Cria o bloco da seção, título e parágrafo, seguindo o padrão das outras páginas
     const sectionBlock = document.createElement('div');
     sectionBlock.className = 'mb-12';
 
@@ -48,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="py-4">${item.explanation}</p>
                 <div class="code-block mb-4">
                     <button class="copy-icon" title="Copiar comando"><i class="far fa-copy"></i></button>
-                    <pre><code>${item.command}</code></pre>
+                    <pre><code class="language-python">${item.command}</code></pre>
                 </div>
             </div>
         `;

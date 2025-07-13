@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Dados reestruturados para o novo padrão de seção
     const markdownGuideData = {
         sectionTitle: 'Sintaxe Essencial do Markdown',
         sectionDescription: 'Estes são os elementos de formatação mais comuns para criar documentos bem estruturados em Markdown.',
@@ -16,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const mainContainer = document.getElementById('markdown-guide');
-    if(!mainContainer) return;
-    
+    if (!mainContainer) return;
+
     mainContainer.innerHTML = '';
 
     const sectionBlock = document.createElement('div');
@@ -33,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sectionBlock.appendChild(sectionTitleEl);
     sectionBlock.appendChild(sectionParagraphEl);
-    
+
     const accordionContainer = document.createElement('div');
     accordionContainer.className = 'card p-4 md:p-6';
 
@@ -51,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="font-semibold mb-2">Sintaxe Markdown</h3>
                         <div class="code-block h-full flex-grow">
                             <button class="copy-icon" title="Copiar sintaxe"><i class="far fa-copy"></i></button>
-                            <pre><code>${item.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+                            <pre><code class="language-markdown">${item.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
                         </div>
                     </div>
                     <div class="flex flex-col">
