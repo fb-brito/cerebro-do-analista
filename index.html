@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,19 +10,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body class="antialiased">
 
     <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
         <div id="main-nav" class="container mx-auto px-6 py-3">
-            <!-- Navigation will be injected by JS -->
         </div>
     </header>
 
     <main class="container mx-auto p-4 md:p-8">
         <section class="text-center my-12 md:my-16 flex flex-col items-center">
             <h1 class="text-4xl md:text-5xl font-black dark-accent-color mb-4">O Cérebro do Analista de Dados</h1>
-            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Uma exploração interativa das competências, processos e estratégias que definem o analista de dados de alto impacto.</p>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Uma exploração interativa das competências,
+                processos e estratégias que definem o analista de dados de alto impacto.</p>
             <div id="audio-player" class="audio-player-container">
                 <div class="flex justify-between items-center mb-2">
                     <button id="prev-track" class="text-2xl disabled:opacity-50">⏮️</button>
@@ -45,10 +48,10 @@
                             <h4 class="font-bold dark-accent-color">1. Análise Descritiva</h4>
                         </div>
                         <div class="text-center text-2xl accent-color">↓</div>
-                         <div class="w-full max-w-sm card p-4 group border-l-4 border-transparent hover:border-blue-300">
+                        <div class="w-full max-w-sm card p-4 group border-l-4 border-transparent hover:border-blue-300">
                             <h4 class="font-bold dark-accent-color">2. Análise Diagnóstica</h4>
                         </div>
-                         <div class="text-center text-2xl accent-color">↓</div>
+                        <div class="text-center text-2xl accent-color">↓</div>
                         <div class="w-full max-w-sm card p-4 group border-l-4 border-transparent hover:border-blue-300">
                             <h4 class="font-bold dark-accent-color">3. Análise Preditiva</h4>
                         </div>
@@ -59,7 +62,8 @@
                     </div>
                 </div>
                 <div class="card p-6 flex flex-col justify-center">
-                    <h3 class="text-xl font-bold text-center mb-6">KPIs vs. OKRs: Medir Saúde vs. Impulsionar Mudança</h3>
+                    <h3 class="text-xl font-bold text-center mb-6">KPIs vs. OKRs: Medir Saúde vs. Impulsionar Mudança
+                    </h3>
                     <div class="flex flex-col md:flex-row gap-8 items-center text-center">
                         <div class="flex-1">
                             <p class="text-5xl mb-2">🌡️</p>
@@ -81,8 +85,23 @@
         <div id="processo" class="space-y-8 py-12 bg-gray-100 -mx-4 md:-mx-8 px-4 md:px-8">
             <h2 class="text-3xl font-bold text-center mb-8 accent-color">Processo: Execução com Rigor</h2>
             <div class="card p-6 md:p-8 max-w-4xl mx-auto">
-                 <div id="crisp-dm-container">
-                 </div>
+                <div id="crisp-dm-container">
+                </div>
+            </div>
+        </div>
+
+        <div id="toolkit" class="py-12">
+            <h2 class="text-3xl font-bold text-center mb-8 accent-color">Caixa de Ferramentas do Analista</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="flex border-b border-gray-300 mb-4">
+                    <button data-tab="pandas" class="toolkit-tab active">Python (Pandas)</button>
+                    <button data-tab="sql" class="toolkit-tab">SQL</button>
+                </div>
+
+                <div id="pandas-content" class="toolkit-content">
+                </div>
+                <div id="sql-content" class="toolkit-content hidden">
+                </div>
             </div>
         </div>
     </main>
@@ -91,99 +110,12 @@
         <p class="text-sm text-gray-600">Aplicação criada com base no guia "O Cérebro do Analista de Dados".</p>
     </footer>
 
+    <div id="copy-notification" class="copy-notification">
+        Comando copiado!
+    </div>
+
     <script src="navigation.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const audioPlayer = {
-                audioElement: document.getElementById('audio-element'),
-                trackNameEl: document.getElementById('track-name'),
-                prevBtn: document.getElementById('prev-track'),
-                nextBtn: document.getElementById('next-track'),
-                playlist: [ 'audio/1. O Analista de Dados 4.0.mp3' ],
-                currentTrackIndex: 0,
-                
-                loadTrack(index) {
-                    this.currentTrackIndex = index;
-                    const trackPath = this.playlist[index];
-                    this.audioElement.src = trackPath;
-                    this.trackNameEl.textContent = trackPath.split('/').pop().replace('.mp3', '');
-                    this.updateButtons();
-                },
-                playNext() {
-                    if (this.currentTrackIndex < this.playlist.length - 1) {
-                        this.loadTrack(this.currentTrackIndex + 1);
-                        this.audioElement.play();
-                    }
-                },
-                playPrev() {
-                    if (this.currentTrackIndex > 0) {
-                        this.loadTrack(this.currentTrackIndex - 1);
-                        this.audioElement.play();
-                    }
-                },
-                updateButtons() {
-                    this.prevBtn.disabled = this.currentTrackIndex === 0;
-                    this.nextBtn.disabled = this.currentTrackIndex === this.playlist.length - 1;
-                },
-                init() {
-                    if(this.audioElement){
-                        this.loadTrack(0);
-                        this.nextBtn.addEventListener('click', () => this.playNext());
-                        this.prevBtn.addEventListener('click', () => this.playPrev());
-                        this.audioElement.addEventListener('ended', () => this.playNext());
-                    }
-                }
-            };
-            audioPlayer.init();
-
-            const crispDmData = [
-                { title: "1. Compreensão do Negócio", content: "Definir os objetivos de negócio e traduzir um desafio empresarial em uma questão analítica clara. Fase mais crítica." },
-                { title: "2. Compreensão dos Dados", content: "Coletar dados iniciais, explorá-los para identificar padrões e verificar a qualidade geral. Formar hipóteses." },
-                { title: "3. Preparação dos Dados", content: "Fase mais demorada. Limpar dados, tratar valores nulos, criar novas variáveis (feature engineering) e formatar." },
-                { title: "4. Modelagem", content: "Aplicar técnicas analíticas ou de machine learning para extrair insights e construir modelos preditivos." },
-                { title: "5. Avaliação", content: "Avaliar os resultados técnicos no contexto dos objetivos de negócio. A solução resolve o problema original?" },
-                { title: "6. Implementação", content: "Colocar a solução (dashboard, modelo) em produção, treinar os usuários e planejar o monitoramento contínuo." }
-            ];
-            const crispDmContainer = document.getElementById('crisp-dm-container');
-            if(crispDmContainer){
-                crispDmData.forEach((step) => {
-                    const stepEl = document.createElement('div');
-                    stepEl.className = 'border-b border-gray-200';
-                    stepEl.innerHTML = `
-                        <button class="w-full text-left p-4 font-semibold accent-color focus:outline-none flex justify-between items-center">
-                            <span>${step.title}</span>
-                            <span class="accordion-icon transform transition-transform duration-300 text-2xl font-light">+</span>
-                        </button>
-                        <div class="process-step-content px-4 text-gray-600">
-                            <p class="py-4">${step.content}</p>
-                        </div>
-                    `;
-                    crispDmContainer.appendChild(stepEl);
-                    const button = stepEl.querySelector('button');
-                    const content = stepEl.querySelector('.process-step-content');
-                    const icon = button.querySelector('.accordion-icon');
-                    
-                    button.addEventListener('click', () => {
-                        const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
-                        
-                        crispDmContainer.querySelectorAll('.process-step-content').forEach(c => {
-                            if (c !== content) {
-                                c.style.maxHeight = '0px';
-                                c.previousElementSibling.querySelector('.accordion-icon').textContent = '+';
-                            }
-                        });
-
-                        if (!isOpen) {
-                            content.style.maxHeight = content.scrollHeight + "px";
-                            icon.textContent = '−';
-                        } else {
-                            content.style.maxHeight = '0px';
-                            icon.textContent = '+';
-                        }
-                    });
-                });
-            }
-        });
-    </script>
+    <script src="js/index.js"></script>
 </body>
+
 </html>

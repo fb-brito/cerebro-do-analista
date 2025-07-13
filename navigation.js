@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { href: './guia-sql.html', text: 'Guia SQL' }, // NOVO LINK
         { href: './guia-markdown.html', text: 'Guia Markdown' },
         { href: './paleta-cores.html', text: 'Paletas de Cores' },
-        { href: './analyst-brain-gamified-quiz.html', text: 'Quiz Gamificado', isHighlight: true }
+        { href: './index.html#toolkit', text: 'Quiz Gamificado', isHighlight: true }
     ];
 
     // Get the filename of the current page to identify it
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (link.isHighlight && !a.classList.contains('active')) {
             a.classList.add('accent-color', 'font-bold');
         }
-        
+
         li.appendChild(a);
         ul.appendChild(li);
     });
