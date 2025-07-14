@@ -18,19 +18,18 @@
     <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
         <div id="main-nav" class="container mx-auto px-6 py-3"></div>
     </header>
-    <main class="container mx-auto p-4 md:p-2">
-
-        <section id="podcast-component" class="max-w-2xl mx-auto mb-8">
-            <div class="card md:p-6 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <div class="md:col-span-1 w-full max-w-40 mx-auto">
+    <main class="container mx-auto p-4 md:p-8">
+        <section id="podcast-component" class="max-w-4xl mx-auto mb-8">
+            <div class="card md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <div class="md:col-span-4 w-full max-w-40 mx-auto">
                     <div class="swiper">
-                        <div class="swiper-wrapper" id="album-covers-container">
-                        </div>
+                        <div class="swiper-wrapper" id="album-covers-container"></div>
                     </div>
                 </div>
-                <div id="audio-player" class="md:col-span-2 w-full">
+                <div id="audio-player" class="md:col-span-7 w-full">
                     <div class="text-center md:text-left mb-2">
-                        <p class="text-sm font-semibold text-gray-600">Podcast: O Cérebro do Analista de Dados</p>
+                        <p class="text-sm font-semibold text-gray-600">Podcast: O Cérebro do Analista de Dados - A
+                            Reproduzir</p>
                         <p id="track-name" class="font-bold text-gray-800 truncate text-sm"></p>
                     </div>
                     <div class="flex items-center justify-center gap-2">
@@ -40,8 +39,17 @@
                         <button id="next-track"
                             class="text-2xl text-gray-600 hover:text-black disabled:opacity-50 transition-colors">⏭️</button>
                     </div>
-                    <div id="playlist-container" class="mt-2 border-t pt-2">
-                    </div>
+                    <div id="playlist-container" class="mt-2 border-t pt-2"></div>
+                </div>
+                <div id="playlist-filters" class="md:col-span-1 playlist-filters">
+                    <button class="playlist-filter-btn active" data-filter="all" title="Todas as Faixas"><img
+                            src="img/ico/todasfaixas.png" alt="Todas"></button>
+                    <button class="playlist-filter-btn" data-filter="geral" title="Playlist Geral"><img
+                            src="img/ico/geral.png" alt="Geral"></button>
+                    <button class="playlist-filter-btn" data-filter="aulas" title="Playlist Aulas"><img
+                            src="img/ico/aula.png" alt="Aulas"></button>
+                    <button class="playlist-filter-btn" data-filter="podcast" title="Playlist Podcast"><img
+                            src="img/ico/podcast.png" alt="Podcast"></button>
                 </div>
             </div>
         </section>

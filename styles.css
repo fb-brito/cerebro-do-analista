@@ -207,3 +207,37 @@ header nav a.active {
     color: var(--dark-primary-color);
     font-weight: 700;
 }
+
+/* ==========================================================================
+   Playlist Filter Styles
+   ========================================================================== */
+.playlist-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* Espaçamento entre os botões */
+    justify-content: center;
+}
+
+.playlist-filter-btn {
+    background-color: #f1f1f1; /* Fundo cinza claro */
+    border: 2px solid transparent;
+    border-radius: 0.5rem; /* rounded-lg */
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.playlist-filter-btn:hover {
+    background-color: #e2e8f0; /* Cinza um pouco mais escuro no hover */
+}
+
+.playlist-filter-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Estilo do botão quando a playlist está ativa */
+.playlist-filter-btn.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 121, 194, 0.3);
+}
