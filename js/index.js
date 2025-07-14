@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (podcastComponent) {
         
         const audioPlayer = {
+            // ... (outras propriedades como audioElement, etc. permanecem iguais) ...
             audioElement: document.getElementById('audio-element'),
             trackNameEl: document.getElementById('track-name'),
             playlistContainer: document.getElementById('playlist-container'),
@@ -14,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             filterButtons: document.querySelectorAll('.playlist-filter-btn'),
             swiperInstance: null,
 
-            // PLAYLIST COMPLETA COM TODOS OS 25 ARQUIVOS
             fullPlaylist: [
                 { id: 1, category: 'geral', title: '1. O Analista de Dados 4.0', audioSrc: 'audio/1. geral/1. O Analista de Dados 4.0.mp3' },
                 { id: 1, category: 'aulas', title: '1. [Aula 1] Visão Geral da Formação SQL Database Specialist', audioSrc: 'audio/2. aula/1. [Aula 1] Visão Geral da Formação SQL Database Specialist.wav' },
@@ -29,32 +29,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 { id: 10, category: 'aulas', title: '10. [Aula 10] A era dos dados e o futuro da modelagem - Parte 1', audioSrc: 'audio/2. aula/10. [Aula 10] A era dos dados e o futuro da modelagem - Parte 1.wav' },
                 { id: 11, category: 'aulas', title: '11. [Aula 11] A era dos dados e o futuro da modelagem - Parte 2', audioSrc: 'audio/2. aula/11. [Aula 11] A era dos dados e o futuro da modelagem - Parte 2.wav' },
                 { id: 12, category: 'aulas', title: '12. [Aula 12] Novo cenário e novas tecnologias - E agora', audioSrc: 'audio/2. aula/12. [Aula 12] Novo cenário e novas tecnologias - E agora.wav' },
-                { id: 1, category: 'podcast', title: '1. [Aula 1] Podcast', audioSrc: 'audio/3. podcast/1. [Aula 1] Podcast.wav' },
-                { id: 2, category: 'podcast', title: '2. [Aula 2] Podcast', audioSrc: 'audio/3. podcast/2. [Aula 2] Podcast.wav' },
-                { id: 3, category: 'podcast', title: '3. [Aula 3] Podcast', audioSrc: 'audio/3. podcast/3. [Aula 3] Podcast.wav' },
-                { id: 4, category: 'podcast', title: '4. [Aula 4] Podcast', audioSrc: 'audio/3. podcast/4. [Aula 4] Podcast.wav' },
-                { id: 5, category: 'podcast', title: '5. [Aula 5] Podcast', audioSrc: 'audio/3. podcast/5. [Aula 5] Podcast.wav' },
-                { id: 6, category: 'podcast', title: '6. [Aula 6] Podcast', audioSrc: 'audio/3. podcast/6. [Aula 6] Podcast.wav' },
-                { id: 7, category: 'podcast', title: '7. [Aula 7] Podcast', audioSrc: 'audio/3. podcast/7. [Aula 7] Podcast.wav' },
-                { id: 8, category: 'podcast', title: '8. [Aula 8] Podcast', audioSrc: 'audio/3. podcast/8. [Aula 8] Podcast.wav' },
-                { id: 9, category: 'podcast', title: '9. [Aula 9] Podcast', audioSrc: 'audio/3. podcast/9. [Aula 9] Podcast.wav' },
-                { id: 10, category: 'podcast', title: '10. [Aula 10] Podcast', audioSrc: 'audio/3. podcast/10. [Aula 10] Podcast.wav' },
-                { id: 11, category: 'podcast', title: '11. [Aula 11] Podcast', audioSrc: 'audio/3. podcast/11. [Aula 11] Podcast.wav' },
-                { id: 12, category: 'podcast', title: '12. [Aula 12] Podcast', audioSrc: 'audio/3. podcast/12. [Aula 12] Podcast.wav' }
+                { id: 1, category: 'podcast', title: '1. [Episódio 1] Podcast', audioSrc: 'audio/3. podcast/1. [Aula 1] Podcast.wav' },
+                { id: 2, category: 'podcast', title: '2. [Episódio 2] Podcast', audioSrc: 'audio/3. podcast/2. [Aula 2] Podcast.wav' },
+                { id: 3, category: 'podcast', title: '3. [Episódio 3] Podcast', audioSrc: 'audio/3. podcast/3. [Aula 3] Podcast.wav' },
+                { id: 4, category: 'podcast', title: '4. [Episódio 4] Podcast', audioSrc: 'audio/3. podcast/4. [Aula 4] Podcast.wav' },
+                { id: 5, category: 'podcast', title: '5. [Episódio 5] Podcast', audioSrc: 'audio/3. podcast/5. [Aula 5] Podcast.wav' },
+                { id: 6, category: 'podcast', title: '6. [Episódio 6] Podcast', audioSrc: 'audio/3. podcast/6. [Aula 6] Podcast.wav' },
+                { id: 7, category: 'podcast', title: '7. [Episódio 7] Podcast', audioSrc: 'audio/3. podcast/7. [Aula 7] Podcast.wav' },
+                { id: 8, category: 'podcast', title: '8. [Episódio 8] Podcast', audioSrc: 'audio/3. podcast/8. [Aula 8] Podcast.wav' },
+                { id: 9, category: 'podcast', title: '9. [Episódio 9] Podcast', audioSrc: 'audio/3. podcast/9. [Aula 9] Podcast.wav' },
+                { id: 10, category: 'podcast', title: '10. [Episódio 10] Podcast', audioSrc: 'audio/3. podcast/10. [Aula 10] Podcast.wav' },
+                { id: 11, category: 'podcast', title: '11. [Episódio 11] Podcast', audioSrc: 'audio/3. podcast/11. [Aula 11] Podcast.wav' },
+                { id: 12, category: 'podcast', title: '12. [Episódio 12] Podcast', audioSrc: 'audio/3. podcast/12. [Aula 12] Podcast.wav' }
             ],
             
             activePlaylist: [],
             currentTrackIndexInActivePlaylist: 0,
             activeFilter: 'all',
 
+            // LÓGICA ATUALIZADA E SIMPLIFICADA
             getCoverImage(track) {
                 switch (track.category) {
-                    case 'geral': return 'img/geral/geral.jpg';
-                    case 'podcast': return 'img/podcast/podcast.jpg';
+                    case 'geral':
+                        return 'img/geral/geral.jpg';
+                    case 'podcast':
+                        return 'img/podcast/podcast.jpg';
                     case 'aulas':
-                        if (track.id >= 1 && track.id <= 5) { return `img/aula/${track.id}.JPG`; }
+                        // Agora que todos os arquivos são .jpg, a lógica é simples e direta
                         return `img/aula/${track.id}.jpg`;
-                    default: return 'img/default.jpg';
+                    default:
+                        return 'img/default.jpg'; // Imagem padrão
                 }
             },
             
