@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -18,29 +19,38 @@
         <div id="main-nav" class="container mx-auto px-6 py-3"></div>
     </header>
     <main class="container mx-auto p-4 md:p-8">
-        <section class="text-center my-12 md:my-16 flex flex-col items-center">
+        <section id="podcast-component" class="mb-12">
+            <h3 class="text-xl font-bold text-center mb-4 dark-accent-color">PODCAST: O CÉREBRO DO ANALISTA DE DADOS
+            </h3>
+            <div class="card md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-1 w-full max-w-xs mx-auto">
+                    <div class="swiper">
+                        <div class="swiper-wrapper" id="album-covers-container">
+                        </div>
+                    </div>
+                </div>
+                <div id="audio-player" class="md:col-span-2 w-full">
+                    <div class="text-center md:text-left mb-3">
+                        <p class="text-sm text-gray-500">A REPRODUZIR</p>
+                        <p id="track-name" class="font-bold text-gray-700 truncate"></p>
+                    </div>
+                    <div class="flex items-center justify-center gap-4">
+                        <button id="prev-track"
+                            class="text-3xl text-gray-600 hover:text-black disabled:opacity-50 transition-colors">⏮️</button>
+                        <audio id="audio-element" controls class="w-full flex-grow"></audio>
+                        <button id="next-track"
+                            class="text-3xl text-gray-600 hover:text-black disabled:opacity-50 transition-colors">⏭️</button>
+                    </div>
+                    <div id="playlist-container" class="mt-4 border-t pt-2">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="text-center mb-12">
             <h1 class="text-4xl md:text-5xl font-black dark-accent-color mb-4">O Cérebro do Analista de Dados</h1>
             <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Uma exploração interativa das competências,
                 processos e estratégias que definem o analista de dados de alto impacto.</p>
-
-            <div id="audio-player" class="audio-player-container w-full max-w-xl mx-auto mt-4">
-
-                <div class="text-center mb-3">
-                    <p class="text-sm text-gray-500">A REPRODUZIR</p>
-                    <p id="track-name" class="font-bold text-gray-700 truncate"></p>
-                </div>
-
-                <div class="flex items-center justify-center gap-4">
-                    <button id="prev-track"
-                        class="text-3xl text-gray-600 hover:text-black disabled:opacity-50 transition-colors">⏮️</button>
-
-                    <audio id="audio-element" controls class="w-full flex-grow"></audio>
-
-                    <button id="next-track"
-                        class="text-3xl text-gray-600 hover:text-black disabled:opacity-50 transition-colors">⏭️</button>
-                </div>
-
-            </div>
         </section>
 
         <div id="fundamentos" class="space-y-8 py-12">
@@ -97,6 +107,7 @@
         <p class="text-sm text-gray-600">Aplicação criada com base no guia "O Cérebro do Analista de Dados".</p>
     </footer>
     <div id="copy-notification" class="copy-notification"></div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="navigation.js"></script>
     <script src="js/components.js"></script>
     <script src="js/index.js"></script>
