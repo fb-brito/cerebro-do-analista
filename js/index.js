@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
             swiperInstance: null,
 
             playlist: [
-                { audioSrc: 'audio/1. O Analista de Dados 4.0.mp3', imgSrc: 'img/1.jpg', title: '1. O Analista de Dados 4.0' },
-                { audioSrc: 'audio/2. [Aula 1] Visão Geral da Formação SQL Database Specialist.wav', imgSrc: 'img/2.jpg', title: '2. [Aula 1] Visão Geral da Formação SQL Database' },
-                { audioSrc: 'audio/3. [Aula 1] Podcast.wav', imgSrc: 'img/3.jpg', title: '3. [Aula 1] Podcast' },
-                { audioSrc: 'audio/4. [Aula 2] Pré-requisitos para essa formação.wav', imgSrc: 'img/4.jpg', title: '4. [Aula 2] Pré-requisitos para essa formação' },
+                { audioSrc: 'audio/1. O Analista de Dados 4.0.mp3', imgSrc: 'img/1.JPG', title: '1. O Analista de Dados 4.0' },
+                { audioSrc: 'audio/2. [Aula 1] Visão Geral da Formação SQL Database Specialist.wav', imgSrc: 'img/2.JPG', title: '2. [Aula 1] Visão Geral da Formação SQL Database' },
+                { audioSrc: 'audio/3. [Aula 1] Podcast.wav', imgSrc: 'img/3.JPG', title: '3. [Aula 1] Podcast' },
+                { audioSrc: 'audio/4. [Aula 2] Pré-requisitos para essa formação.wav', imgSrc: 'img/4.JPG', title: '4. [Aula 2] Pré-requisitos para essa formação' },
                 { audioSrc: 'audio/5. [Aula 2] Podcast.wav', imgSrc: 'img/5.jpg', title: '5. [Aula 2] Podcast' }
             ],
 
