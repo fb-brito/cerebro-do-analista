@@ -3,9 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const podcastComponent = document.getElementById('podcast-component');
 
     if (podcastComponent) {
-        
+
         const audioPlayer = {
-            // ... (outras propriedades como audioElement, etc. permanecem iguais) ...
             audioElement: document.getElementById('audio-element'),
             trackNameEl: document.getElementById('track-name'),
             playlistContainer: document.getElementById('playlist-container'),
@@ -42,39 +41,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 { id: 11, category: 'podcast', title: '11. [Episódio 11] Podcast', audioSrc: 'audio/3. podcast/11. [Aula 11] Podcast.wav' },
                 { id: 12, category: 'podcast', title: '12. [Episódio 12] Podcast', audioSrc: 'audio/3. podcast/12. [Aula 12] Podcast.wav' }
             ],
-            
+
             activePlaylist: [],
             currentTrackIndexInActivePlaylist: 0,
             activeFilter: 'all',
 
-            // LÓGICA ATUALIZADA E SIMPLIFICADA
             getCoverImage(track) {
                 switch (track.category) {
-                    case 'geral':
-                        return 'img/geral/geral.jpg';
-                    case 'podcast':
-                        return 'img/podcast/podcast.jpg';
+                    case 'geral': return 'img/geral/geral.jpg';
+                    case 'podcast': return 'img/podcast/podcast.jpg';
                     case 'aulas':
-                        // Agora que todos os arquivos são .jpg, a lógica é simples e direta
+                        if (track.id >= 1 && track.id <= 4) { return `img/aula/${track.id}.JPG`; }
                         return `img/aula/${track.id}.jpg`;
-                    default:
-                        return 'img/default.jpg'; // Imagem padrão
+                    default: return 'img/default.jpg';
                 }
             },
-            
+
             filterPlaylist(filter) {
                 this.activeFilter = filter;
                 this.activePlaylist = (filter === 'all')
                     ? [...this.fullPlaylist]
                     : this.fullPlaylist.filter(track => track.category === filter);
-                
+
                 this.filterButtons.forEach(button => {
                     button.classList.toggle('active', button.dataset.filter === filter);
                 });
-                
+
                 this.currentTrackIndexInActivePlaylist = 0;
                 this.renderAlbumCovers();
-                this.swiperInstance.slideTo(0, 0); // Volta para o primeiro slide sem animação
+                if (this.swiperInstance) {
+                    this.swiperInstance.slideTo(0, 0);
+                    this.swiperInstance.update();
+                }
                 this.loadTrack(0);
                 this.audioElement.pause();
             },
@@ -90,21 +88,23 @@ document.addEventListener('DOMContentLoaded', () => {
             renderPlaylistItem(index, isPlaying) {
                 const track = this.activePlaylist[index];
                 if (!track) return;
-                
+
                 const trackElement = document.createElement('button');
+                const originalIndex = this.fullPlaylist.indexOf(track);
                 trackElement.className = 'w-full text-left p-1.5 rounded-md hover:bg-gray-100 transition-colors playlist-item flex items-center gap-2 text-sm';
                 const icon = isPlaying ? '<i class="fas fa-volume-up accent-color"></i>' : '<i class="fas fa-headphones text-gray-400"></i>';
                 trackElement.innerHTML = `<div>${icon}</div><div>${track.title}</div>`;
                 if (isPlaying) trackElement.classList.add('playing');
-                
+
                 trackElement.addEventListener('click', () => {
-                    this.loadTrack(index);
+                    this.loadTrackByFullPlaylistIndex(originalIndex);
                     this.audioElement.play();
                 });
                 this.playlistContainer.appendChild(trackElement);
             },
-            
+
             renderAlbumCovers() {
+                if (!this.albumCoversContainer) return;
                 this.albumCoversContainer.innerHTML = '';
                 this.activePlaylist.forEach(track => {
                     const slide = document.createElement('div');
@@ -113,35 +113,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     slide.innerHTML = `<img src="${imgSrc}" alt="Capa para ${track.title}">`;
                     this.albumCoversContainer.appendChild(slide);
                 });
-                if(this.swiperInstance) this.swiperInstance.update();
             },
 
-            loadTrack(indexInActivePlaylist) {
-                if (indexInActivePlaylist >= 0 && indexInActivePlaylist < this.activePlaylist.length) {
-                    this.currentTrackIndexInActivePlaylist = indexInActivePlaylist;
-                    const track = this.activePlaylist[indexInActivePlaylist];
-                    this.audioElement.src = track.audioSrc;
-                    this.trackNameEl.textContent = track.title;
-                    
-                    this.updateButtons();
-                    this.renderPlaylist();
+            loadTrackByFullPlaylistIndex(index) {
+                const track = this.fullPlaylist[index];
+                if (!track) return;
 
-                    if (this.swiperInstance) {
-                        this.swiperInstance.slideTo(indexInActivePlaylist, 300);
-                    }
+                const activeIndex = this.activePlaylist.indexOf(track);
+                if (activeIndex === -1) return;
+
+                this.currentTrackIndexInActivePlaylist = activeIndex;
+                this.audioElement.src = track.audioSrc;
+                this.trackNameEl.textContent = track.title;
+
+                this.updateButtons();
+                this.renderPlaylist();
+
+                if (this.swiperInstance) {
+                    this.swiperInstance.slideTo(this.currentTrackIndexInActivePlaylist, 300);
                 }
             },
 
             playNext() {
                 if (this.currentTrackIndexInActivePlaylist < this.activePlaylist.length - 1) {
-                    this.loadTrack(this.currentTrackIndexInActivePlaylist + 1);
+                    this.loadTrackByFullPlaylistIndex(this.fullPlaylist.indexOf(this.activePlaylist[this.currentTrackIndexInActivePlaylist + 1]));
                     this.audioElement.play();
                 }
             },
 
             playPrev() {
                 if (this.currentTrackIndexInActivePlaylist > 0) {
-                    this.loadTrack(this.currentTrackIndexInActivePlaylist - 1);
+                    this.loadTrackByFullPlaylistIndex(this.fullPlaylist.indexOf(this.activePlaylist[this.currentTrackIndexInActivePlaylist - 1]));
                     this.audioElement.play();
                 }
             },
@@ -150,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.prevBtn.disabled = this.currentTrackIndexInActivePlaylist === 0;
                 this.nextBtn.disabled = this.currentTrackIndexInActivePlaylist >= this.activePlaylist.length - 1;
             },
-            
+
             init() {
                 this.activePlaylist = [...this.fullPlaylist];
                 this.renderAlbumCovers();
@@ -160,16 +162,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     coverflowEffect: { rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true },
                 });
 
-                this.loadTrack(0);
-                
+                this.loadTrackByFullPlaylistIndex(0);
+
                 this.nextBtn.addEventListener('click', () => this.playNext());
                 this.prevBtn.addEventListener('click', () => this.playPrev());
                 this.audioElement.addEventListener('ended', () => this.playNext());
-                
+
                 this.swiperInstance.on('slideChange', () => {
                     const newIndex = this.swiperInstance.activeIndex;
-                    if (newIndex !== this.currentTrackIndexInActivePlaylist) {
-                        this.loadTrack(newIndex);
+                    if (newIndex < this.activePlaylist.length && newIndex !== this.currentTrackIndexInActivePlaylist) {
+                        this.loadTrackByFullPlaylistIndex(this.fullPlaylist.indexOf(this.activePlaylist[newIndex]));
                         this.audioElement.play();
                     }
                 });
