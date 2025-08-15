@@ -56,28 +56,36 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let lives = 5;
     let answered = false;
-    let currentCorrectIndex; // Armazena o índice correto após o embaralhamento
+    let currentCorrectIndex;
 
     // =========================================================================
-    // 4. FUNÇÕES DO JOGO (LÓGICA ATUALIZADA)
+    // 4. FUNÇÕES DO JOGO
     // =========================================================================
 
-    // NOVA FUNÇÃO para embaralhar as respostas
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Troca os elementos
+            [array[i], array[j]] = [array[j], array[i]];
         }
         return array;
     }
 
     function updateXpDisplay() { xpText.textContent = `XP: ${score}`; }
 
+    // ---------------> INÍCIO DA CORREÇÃO <---------------
     function updateLivesDisplay(animateIndex = -1) {
         livesContainer.innerHTML = '';
         for (let i = 0; i < 5; i++) {
             const heartIcon = document.createElement('i');
-            heartIcon.className = i < lives ? 'fas fa-heart heart-icon' : 'fas fa-heart-broken heart-icon heart-broken';
+
+            // Lógica corrigida: Adiciona text-red-500 para vidas restantes
+            // e text-gray-400 para vidas perdidas.
+            if (i < lives) {
+                heartIcon.className = 'fas fa-heart heart-icon text-red-500';
+            } else {
+                heartIcon.className = 'fas fa-heart-broken heart-icon heart-broken text-gray-400';
+            }
+
             if (i === animateIndex) {
                 heartIcon.classList.add('animate-heart-break');
                 setTimeout(() => heartIcon.classList.remove('animate-heart-break'), 500);
@@ -85,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             livesContainer.appendChild(heartIcon);
         }
     }
+    // ---------------> FIM DA CORREÇÃO <---------------
 
     function startPhase() {
         currentLevelIndex = 0;
@@ -101,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadQuestion();
     }
 
-    // ATUALIZADA: Agora com a lógica para embaralhar as respostas
     function loadQuestion() {
         answered = false;
         feedbackArea.classList.add('hidden');
@@ -110,13 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const levelData = gameData[currentPhaseId].levels[currentLevelIndex];
         const questionData = levelData.questions[currentQuestionIndexInLevel];
 
-        // Guarda o texto da resposta correta ANTES de embaralhar
         const correctAnswerText = questionData.options[questionData.correctAnswer];
-
-        // Cria uma cópia e embaralha as opções
         const shuffledOptions = shuffleArray([...questionData.options]);
-
-        // Encontra o NOVO índice da resposta correta no array embaralhado
         currentCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
 
         updateLivesDisplay();
@@ -131,13 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.className = 'w-full text-left p-4 border rounded-lg hover:bg-gray-100 transition-colors quiz-option';
             button.textContent = option;
-            button.dataset.index = index; // O índice agora é da posição embaralhada
+            button.dataset.index = index;
             button.addEventListener('click', selectAnswer);
             optionsContainer.appendChild(button);
         });
     }
 
-    // ATUALIZADA: Agora compara com o índice correto da pergunta embaralhada
     function selectAnswer(e) {
         if (answered) return;
         answered = true;
@@ -148,7 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll('.quiz-option').forEach(btn => btn.disabled = true);
 
-        // Compara com o índice correto que guardamos após o embaralhamento
         if (selectedAnswerIndex === currentCorrectIndex) {
             score++;
             updateXpDisplay();
@@ -187,27 +188,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ATUALIZADA: Agora destaca a resposta correta na sua nova posição embaralhada
     function showExplanationAndContinue(questionData) {
         feedbackArea.innerHTML = `<p class="font-bold text-red-700">Incorreto.</p><p class="text-sm mt-1">${questionData.explanation}</p>`;
-        // Usa o currentCorrectIndex para destacar a resposta certa
         document.querySelector(`.quiz-option[data-index='${currentCorrectIndex}']`).classList.add('bg-green-200', 'border-green-500');
         nextBtn.textContent = "Próxima Pergunta";
         nextBtn.classList.remove('hidden');
     }
 
-    // ATUALIZADA: Agora define o título como "Fase SQL - Game Over"
     function showGameOver() {
         gameScreen.classList.add('hidden');
         phaseCompleteScreen.classList.remove('hidden');
         const phaseData = gameData[currentPhaseId];
-        phaseCompleteTitle.textContent = `${phaseData.phaseName} - Game Over`; // Define o título correto
+        phaseCompleteTitle.textContent = `${phaseData.phaseName} - Game Over`;
         phaseScoreText.textContent = `Seu XP final foi: ${score}`;
         phaseStatusText.textContent = "Você perdeu todas as suas vidas. Tente novamente para se tornar um mestre!";
         phaseStatusText.className = "font-bold text-red-600";
     }
 
-    // Funções de final de nível e fase (sem alterações lógicas, apenas o título da fase foi ajustado)
     function handleNext() {
         currentQuestionIndexInLevel++;
         const levelData = gameData[currentPhaseId].levels[currentLevelIndex];

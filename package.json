@@ -1,0 +1,26 @@
+{
+  "name": "cerebro-do-analista",
+  "version": "1.0.0",
+  "description": "[![Status do Projeto](https://img.shields.io/badge/status-em%20desenvolvimento-yellow.svg)](https://shields.io/)\r [![Licença](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)",
+  "main": "index.js",
+  "scripts": {
+    "tailwind:init": "tailwindcss init -p",
+    "tailwind:watch": "tailwindcss -i ./css/input.css -o ./css/styles.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fb-brito/cerebro-do-analista.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fb-brito/cerebro-do-analista/issues"
+  },
+  "homepage": "https://github.com/fb-brito/cerebro-do-analista#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.4"
+  }
+}

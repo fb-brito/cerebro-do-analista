@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Markdown - Cérebro do Analista</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body class="antialiased flex flex-col h-full">
+    <div id="header-placeholder"></div>
+    <main class="container mx-auto p-4 flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex flex-col h-full">
+            <label for="markdown-input" class="font-semibold mb-2 text-gray-700">Digite seu Markdown aqui:</label>
+            <textarea id="markdown-input" class="w-full h-full p-4 border rounded-md resize-none font-mono text-sm"
+                spellcheck="false"># Olá, Mundo!
+
+Este é o seu editor de Markdown em tempo real.
+
+## Funcionalidades
+
+- Digite na **esquerda**.
+- Veja o resultado na **direita**.
+
+**Exemplo de código:**
+```javascript
+function greet(name) {
+  console.log(`Olá, ${name}!`);
+}
+
+Uma citação para inspirar.
+
+Continue a explorar e crie documentos incríveis!</textarea>
+        </div>
+        <div class="flex flex-col h-full">
+            <label class="font-semibold mb-2 text-gray-700">Visualização:</label>
+            <div id="html-preview" class="w-full h-full p-4 border rounded-md bg-white overflow-y-auto prose"></div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script type="module" src="/js/main.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/editor.js"></script>
+
+</body>
+
+</html>

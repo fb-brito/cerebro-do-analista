@@ -1,6 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
+export function initializeNavigation() {
     const navContainer = document.getElementById('main-nav');
-    if (!navContainer) return;
+    if (!navContainer) {
+        console.error("Erro Crítico: Container de navegação '#main-nav' não foi encontrado no DOM. O menu não pode ser construído.");
+        return;
+    }
 
     const navLinks = [
         { href: './index.html', text: 'Principal' },
@@ -12,20 +15,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 { href: './guia-git.html', text: 'Guia Git' },
                 { href: './guia-sql.html', text: 'Guia SQL' },
                 { href: './guia-markdown.html', text: 'Guia Markdown' },
+                { href: './editor-markdown.html', text: 'Editor Markdown' } // <-- NOVO LINK ADICIONADO AQUI
             ]
         },
         { href: './paleta-cores.html', text: 'Paletas de Cores' },
-        { href: './quiz.html', text: 'Quiz Gamificado', isHighlight: true } // LINK ATUALIZADO
+        { href: './quiz.html', text: 'Quiz Gamificado', isHighlight: true }
     ];
 
-    const currentPage = window.location.pathname.split('/').pop();
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
     const ul = document.createElement('ul');
     ul.className = 'flex justify-center flex-wrap items-center space-x-2 md:space-x-4 text-sm md:text-base font-semibold text-gray-600';
 
     navLinks.forEach(link => {
         const li = document.createElement('li');
-
         if (link.isDropdown) {
             li.className = 'relative';
             li.innerHTML = `
@@ -34,16 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div class="dropdown-menu absolute mt-2 py-2 rounded-md border bg-white shadow-lg">
-                    ${link.sublinks.map(sublink => `
-                        <a href="${sublink.href}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">${sublink.text}</a>
-                    `).join('')}
+                    ${link.sublinks.map(sublink => `<a href="${sublink.href}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">${sublink.text}</a>`).join('')}
                 </div>
             `;
         } else {
             const a = document.createElement('a');
             a.href = link.href;
             a.textContent = link.text;
-            if (link.href.includes(currentPage)) {
+            const linkPage = link.href.split('/').pop();
+            if (currentPage === linkPage || (currentPage === '' && linkPage === 'index.html')) {
                 a.classList.add('active');
             }
             if (link.isHighlight && !a.classList.contains('active')) {
@@ -54,22 +56,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ul.appendChild(li);
     });
 
+    navContainer.innerHTML = '';
     navContainer.appendChild(ul);
 
-    // LÓGICA DE CONTROLE DO DROPDOWN COM JAVASCRIPT
+    // LÓGICA DO DROPDOWN CORRIGIDA COM TIMER
     const dropdowns = document.querySelectorAll('.relative');
     let leaveTimer;
 
     dropdowns.forEach(dropdown => {
-        const toggle = dropdown.querySelector('.dropdown-toggle');
         const menu = dropdown.querySelector('.dropdown-menu');
-
-        if (toggle && menu) {
+        if (menu) {
             dropdown.addEventListener('mouseenter', () => {
                 clearTimeout(leaveTimer);
                 menu.classList.add('is-visible');
             });
-
             dropdown.addEventListener('mouseleave', () => {
                 leaveTimer = setTimeout(() => {
                     menu.classList.remove('is-visible');
@@ -77,4 +77,4 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
-});
+}

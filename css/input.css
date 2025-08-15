@@ -1,0 +1,31 @@
+/* Diretivas do Tailwind - Elas devem vir primeiro */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos Customizados da Aplicação */
+.dropdown-menu {
+    display: none; /* Oculto por padrão */
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+    min-width: 160px; /* Garante que o dropdown tenha uma largura mínima */
+}
+
+.dropdown-menu.is-visible {
+    display: block; /* Visível quando a classe é aplicada via JS */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Estilo para o link da página ativa na navegação */
+a.active {
+    color: #004AAD; /* Cor azul forte para o link ativo */
+    font-weight: 700; /* Negrito */
+}
+
+/* Estilo para destacar sublinks ativos */
+a.active-sublink {
+    background-color: #e0eaf8; /* Um fundo azul claro */
+    font-weight: 600; /* Semi-negrito */
+}
