@@ -15,7 +15,8 @@ export function initializeNavigation() {
                 { href: './guia-git.html', text: 'Guia Git' },
                 { href: './guia-sql.html', text: 'Guia SQL' },
                 { href: './guia-markdown.html', text: 'Guia Markdown' },
-                { href: './editor-markdown.html', text: 'Editor Markdown' } // <-- NOVO LINK ADICIONADO AQUI
+                { href: './editor-markdown.html', text: 'Editor Markdown' },
+                { href: './mapa-mental.html', text: 'Gerador de Mapa Mental' } // O link correto está aqui
             ]
         },
         { href: './paleta-cores.html', text: 'Paletas de Cores' },
@@ -59,7 +60,6 @@ export function initializeNavigation() {
     navContainer.innerHTML = '';
     navContainer.appendChild(ul);
 
-    // LÓGICA DO DROPDOWN CORRIGIDA COM TIMER
     const dropdowns = document.querySelectorAll('.relative');
     let leaveTimer;
 
