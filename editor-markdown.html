@@ -2,7 +2,7 @@
 <html lang="pt-BR" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Editor Markdown - Cérebro do Analista</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,11 @@
         <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
             <div class="flex flex-col h-full">
                 <label for="markdown-input" class="font-semibold mb-2 text-gray-700">Digite seu Markdown aqui:</label>
-                <textarea id="markdown-input" class="w-full h-full p-4 border rounded-md resize-none font-mono text-sm" spellcheck="false"># Olá, Mundo!
+                <div class="flex-grow flex border rounded-md overflow-hidden">
+                    <div id="line-numbers" class="p-4 bg-gray-100 text-right text-gray-500 font-mono text-sm select-none">
+                        <span>1</span>
+                    </div>
+                    <textarea id="markdown-input" class="w-full h-full p-4 resize-none font-mono text-sm border-l" spellcheck="false"># Olá, Mundo!
 
 Este é o seu editor de Markdown em tempo real.
 
@@ -45,6 +49,7 @@ function greet(name) {
 Uma citação para inspirar.
 
 Continue a explorar e crie documentos incríveis!</textarea>
+</div>
 </div>
 <div class="flex flex-col h-full">
 <label class="font-semibold mb-2 text-gray-700">Visualização:</label>

@@ -5,27 +5,47 @@
 
 /* Estilos Customizados da Aplicação */
 .dropdown-menu {
-    display: none; /* Oculto por padrão */
+    display: none;
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
-    min-width: 160px; /* Garante que o dropdown tenha uma largura mínima */
+    min-width: 160px;
 }
 
 .dropdown-menu.is-visible {
-    display: block; /* Visível quando a classe é aplicada via JS */
+    display: block;
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Estilo para o link da página ativa na navegação */
 a.active {
-    color: #004AAD; /* Cor azul forte para o link ativo */
-    font-weight: 700; /* Negrito */
+    color: #004AAD;
+    font-weight: 700;
 }
 
-/* Estilo para destacar sublinks ativos */
 a.active-sublink {
-    background-color: #e0eaf8; /* Um fundo azul claro */
-    font-weight: 600; /* Semi-negrito */
+    background-color: #e0eaf8;
+    font-weight: 600;
+}
+
+/* ESTILOS PARA O EDITOR COM NÚMERO DE LINHAS ATUALIZADO */
+#line-numbers {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    min-width: 40px; /* Garante uma largura mínima para a calha de números */
+}
+
+#line-numbers, #markdown-input {
+    line-height: 1.5;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#markdown-input {
+    padding: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border: none;
+    outline: none;
+    box-shadow: none;
 }

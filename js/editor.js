@@ -3,59 +3,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const htmlPreview = document.getElementById('html-preview');
     const exportMdBtn = document.getElementById('export-md-btn');
     const exportPdfBtn = document.getElementById('export-pdf-btn');
-    const filenameInput = document.getElementById('filename-input'); // <-- NOVO ELEMENTO
+    const filenameInput = document.getElementById('filename-input');
+    const lineNumbers = document.getElementById('line-numbers');
 
-    // Verifica se todos os elementos essenciais existem
-    if (markdownInput && htmlPreview && exportMdBtn && exportPdfBtn && filenameInput) {
+    if (markdownInput && htmlPreview && exportMdBtn && exportPdfBtn && filenameInput && lineNumbers) {
         
-        // --- LÓGICA EXISTENTE DO EDITOR ---
+        // --- LÓGICA DE NÚMERO DE LINHAS CORRIGIDA DEFINITIVAMENTE ---
+        const updateLineNumbers = () => {
+            const lineCount = markdownInput.value.split('\n').length;
+            lineNumbers.innerHTML = '';
+            
+            // Cria um fragmento de documento para melhor performance
+            const fragment = document.createDocumentFragment();
+            for (let i = 1; i <= lineCount; i++) {
+                // TROCADO <span> POR <div> PARA GARANTIR A QUEBRA DE LINHA
+                const lineNumberElement = document.createElement('div');
+                lineNumberElement.textContent = i;
+                fragment.appendChild(lineNumberElement);
+            }
+            // Adiciona todos os números de uma vez
+            lineNumbers.appendChild(fragment);
+        };
+
         const updatePreview = () => {
             const markdownText = markdownInput.value;
             const htmlContent = marked.parse(markdownText);
             htmlPreview.innerHTML = htmlContent;
         };
-        markdownInput.addEventListener('input', updatePreview);
+        
+        markdownInput.addEventListener('input', () => {
+            updatePreview();
+            updateLineNumbers();
+        });
+        
+        markdownInput.addEventListener('scroll', () => {
+            lineNumbers.scrollTop = markdownInput.scrollTop;
+        });
+
         updatePreview();
+        updateLineNumbers();
 
-        // --- LÓGICA DE EXPORTAÇÃO ATUALIZADA ---
-
-        // Função auxiliar para obter o nome do arquivo
         const getSanitizedFilename = () => {
-            // Pega o valor do campo e remove espaços extras
             const rawName = filenameInput.value.trim();
-            // Se o campo estiver vazio, usa 'documento'. Caso contrário, usa o nome digitado.
             return rawName === '' ? 'documento' : rawName;
         };
 
-        // 1. Exportar como Markdown (.md)
         exportMdBtn.addEventListener('click', () => {
             const markdownContent = markdownInput.value;
-            const filename = getSanitizedFilename(); // Pega o nome do arquivo do campo
-
+            const filename = getSanitizedFilename();
             const blob = new Blob([markdownContent], { type: 'text/markdown' });
-            
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = `${filename}.md`; // Usa o nome dinâmico com a extensão .md
-            
+            link.download = `${filename}.md`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         });
 
-        // 2. Exportar como PDF
         exportPdfBtn.addEventListener('click', () => {
             const elementToExport = document.getElementById('html-preview');
-            const filename = getSanitizedFilename(); // Pega o nome do arquivo do campo
-
+            const filename = getSanitizedFilename();
             const options = {
                 margin:       1,
-                filename:     `${filename}.pdf`, // Usa o nome dinâmico com a extensão .pdf
+                filename:     `${filename}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
-
             html2pdf().set(options).from(elementToExport).save();
         });
     }
