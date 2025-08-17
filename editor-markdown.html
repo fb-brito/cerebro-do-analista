@@ -22,30 +22,34 @@
         .editor-panel { display: flex; flex-direction: column; overflow: hidden; }
         .editor-content-area { flex-grow: 1; overflow-y: auto; }
         
-        /* ***** INÍCIO DA CORREÇÃO DEFINITIVA DE LAYOUT ***** */
         .editor-textarea-container {
             flex-grow: 1;
-            display: grid; /* MUDANÇA: Usando grid para controle preciso */
-            grid-template-columns: auto 1fr; /* Coluna da esquerda auto-ajustável, coluna da direita preenche o resto */
+            display: grid;
+            grid-template-columns: auto 1fr;
             overflow: hidden;
         }
         #line-numbers {
-            padding: 1.5rem 1rem; /* py-6 e px-4 */
-            overflow: hidden; /* Garante que não haja scrollbar na calha */
+            padding: 1.5rem 1rem;
+            overflow: hidden;
         }
         #markdown-input {
-            padding: 1.5rem 1rem; /* py-6 e px-4 */
+            padding: 1.5rem 1rem;
             overflow-y: scroll;
             margin: 0; border: 0;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             font-size: 1em;
             box-sizing: border-box;
         }
-        /* ***** FIM DA CORREÇÃO DEFINITIVA DE LAYOUT ***** */
 
         .gfm-badge { transition: all 0.3s ease-in-out; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { width: 1rem; height: 1rem; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+
+        /* ***** INÍCIO DA CORREÇÃO DE ALINHAMENTO ***** */
+        .editor-panel-header {
+            height: 65px; /* Força uma altura fixa para ambos os cabeçalhos */
+        }
+        /* ***** FIM DA CORREÇÃO DE ALINHAMENTO ***** */
     </style>
 </head>
 
@@ -70,7 +74,7 @@
         <section class="editor-panels-container">
             
             <div class="editor-panel bg-white border rounded-lg shadow-sm">
-                <div class="flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
+                <div class="editor-panel-header flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
                     <h2 class="text-lg font-bold text-gray-800">Digite seu Markdown aqui:</h2>
                     <div id="gfm-badge" class="gfm-badge" title="">
                         <span id="gfm-badge-text">GFM</span>
@@ -83,10 +87,10 @@
                     </div>
                     <textarea id="markdown-input" class="resize-none font-mono w-full h-full" spellcheck="false"></textarea>
                 </div>
-                </div>
+            </div>
 
             <div class="editor-panel bg-white border rounded-lg shadow-sm">
-                <div class="flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
+                <div class="editor-panel-header flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
                     <h2 class="text-lg font-bold text-gray-800">Visualização:</h2>
                     <button id="generate-map-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">Gerar Mapa Mental</button>
                 </div>
