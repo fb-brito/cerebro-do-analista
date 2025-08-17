@@ -22,19 +22,26 @@
         .editor-panel { display: flex; flex-direction: column; overflow: hidden; }
         .editor-content-area { flex-grow: 1; overflow-y: auto; }
         
+        /* ***** INÍCIO DA CORREÇÃO DEFINITIVA DE LAYOUT ***** */
         .editor-textarea-container {
             flex-grow: 1;
-            display: flex;
+            display: grid; /* MUDANÇA: Usando grid para controle preciso */
+            grid-template-columns: auto 1fr; /* Coluna da esquerda auto-ajustável, coluna da direita preenche o resto */
             overflow: hidden;
-            /* ***** INÍCIO DA CORREÇÃO ***** */
-            /* Remove padding do topo e mantém apenas o de baixo para o "respiro" final */
-            padding-top: 0;
-            padding-bottom: 1.5rem; /* Equivalente a py-6 */
-            /* ***** FIM DA CORREÇÃO ***** */
         }
-
-        #markdown-input { overflow-y: scroll; background-color: transparent; margin: 0; padding: 0 1rem; border: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 1em; box-sizing: border-box;}
-        #line-numbers { margin: 0; padding: 0 1rem; border: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 1em; box-sizing: border-box; }
+        #line-numbers {
+            padding: 1.5rem 1rem; /* py-6 e px-4 */
+            overflow: hidden; /* Garante que não haja scrollbar na calha */
+        }
+        #markdown-input {
+            padding: 1.5rem 1rem; /* py-6 e px-4 */
+            overflow-y: scroll;
+            margin: 0; border: 0;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        /* ***** FIM DA CORREÇÃO DEFINITIVA DE LAYOUT ***** */
 
         .gfm-badge { transition: all 0.3s ease-in-out; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -74,9 +81,9 @@
                     <div id="line-numbers" class="bg-gray-100 font-mono text-gray-400 select-none">
                         <span>1</span>
                     </div>
-                    <textarea id="markdown-input" class="flex-1 resize-none font-mono w-full h-full" spellcheck="false"></textarea>
+                    <textarea id="markdown-input" class="resize-none font-mono w-full h-full" spellcheck="false"></textarea>
                 </div>
-            </div>
+                </div>
 
             <div class="editor-panel bg-white border rounded-lg shadow-sm">
                 <div class="flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
