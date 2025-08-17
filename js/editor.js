@@ -1,34 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (código existente sem alteração) ...
     marked.setOptions({
         breaks: true
     });
 
     const markdownInput = document.getElementById('markdown-input');
     const htmlPreview = document.getElementById('html-preview');
-    // ... (restante das declarações de variáveis) ...
+    const lineNumbers = document.getElementById('line-numbers');
+    const generateMapBtn = document.getElementById('generate-map-btn');
+    const documentTitleInput = document.getElementById('document-title');
+    const exportMdBtn = document.getElementById('export-md-btn');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+    const gfmBadge = document.getElementById('gfm-badge');
+    const gfmBadgeText = document.getElementById('gfm-badge-text');
+    const gfmBadgeSpinner = document.getElementById('gfm-badge-spinner');
+    const statusMessage = document.getElementById('status-message');
 
-    // ***** INÍCIO DA CORREÇÃO DEFINITIVA *****
+    let debounceTimer;
 
-    // NOVA FUNÇÃO: Percorre a árvore de dados e remove nós vazios
-    const pruneEmptyNodes = (node) => {
-        if (!node || !node.children) {
-            return; // Se não tem filhos, não há o que fazer aqui
-        }
-
-        // Primeiro, limpa os filhos dos filhos (recursão)
-        node.children.forEach(pruneEmptyNodes);
-
-        // Depois, filtra os filhos do nó atual
+    const postProcessTree = (node) => {
+        if (!node || !node.children) return;
+        node.children.forEach(postProcessTree);
+        const newChildren = [];
+        node.children.forEach(child => {
+            if (!child.content.trim() && child.children && child.children.length > 0) {
+                newChildren.push(...child.children);
+            } else {
+                newChildren.push(child);
+            }
+        });
+        node.children = newChildren;
         node.children = node.children.filter(child => {
-            // Mantém o nó se ele tiver conteúdo OU se ele tiver filhos que não foram removidos
             const hasContent = child.content && child.content.trim() !== '';
             const hasChildren = child.children && child.children.length > 0;
             return hasContent || hasChildren;
         });
     };
-
-    // ***** FIM DA CORREÇÃO DEFINITIVA *****
 
     const processMarkdown = (text) => {
         updateBadgeUI('analyzing');
@@ -39,37 +45,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             renderPreview(sanitizedText);
             updateLineNumbers();
-            
             try {
                 const { Transformer } = window.markmap;
                 const transformer = new Transformer();
                 const { root } = transformer.transform(sanitizedText);
-
-                // ***** CHAMA A NOVA FUNÇÃO DE LIMPEZA AQUI *****
-                pruneEmptyNodes(root);
-
-                console.log("--- ESTRUTURA DE NÓS (CORRIGIDA) ---");
-                console.log(JSON.stringify(root, null, 2));
+                postProcessTree(root);
             } catch (e) {
-                console.error("Erro ao transformar para depuração:", e);
+                console.error("Erro ao transformar Markdown:", e);
             }
-
             updateBadgeUI('success');
         }, 100);
     };
 
-    // --- RESTANTE DO CÓDIGO (sem alterações) ---
-    const lineNumbers = document.getElementById('line-numbers');
-    // ... (todo o resto do código permanece idêntico) ...
-    const generateMapBtn = document.getElementById('generate-map-btn');
-    const documentTitleInput = document.getElementById('document-title');
-    const exportMdBtn = document.getElementById('export-md-btn');
-    const exportPdfBtn = document.getElementById('export-pdf-btn');
-    const gfmBadge = document.getElementById('gfm-badge');
-    const gfmBadgeText = document.getElementById('gfm-badge-text');
-    const gfmBadgeSpinner = document.getElementById('gfm-badge-spinner');
-    const statusMessage = document.getElementById('status-message');
-    let debounceTimer;
     const updateLineNumbers = () => { if (!markdownInput || !lineNumbers) return; const lineCount = markdownInput.value.split('\n').length; lineNumbers.innerHTML = Array.from({ length: lineCount }, (_, i) => `<span>${i + 1}</span>`).join(''); };
     const renderPreview = (text) => { if (!htmlPreview) return; htmlPreview.innerHTML = marked.parse(text); };
     if(markdownInput && lineNumbers) { markdownInput.addEventListener('scroll', () => { lineNumbers.scrollTop = markdownInput.scrollTop; }); }
