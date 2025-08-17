@@ -21,7 +21,18 @@
         .editor-panels-container { flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; min-height: 0; }
         .editor-panel { display: flex; flex-direction: column; overflow: hidden; }
         .editor-content-area { flex-grow: 1; overflow-y: auto; }
-        .editor-textarea-container { flex-grow: 1; display: flex; overflow: hidden; padding: 1.5rem 0; }
+        
+        .editor-textarea-container {
+            flex-grow: 1;
+            display: flex;
+            overflow: hidden;
+            /* ***** INÍCIO DA CORREÇÃO ***** */
+            /* Remove padding do topo e mantém apenas o de baixo para o "respiro" final */
+            padding-top: 0;
+            padding-bottom: 1.5rem; /* Equivalente a py-6 */
+            /* ***** FIM DA CORREÇÃO ***** */
+        }
+
         #markdown-input { overflow-y: scroll; background-color: transparent; margin: 0; padding: 0 1rem; border: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 1em; box-sizing: border-box;}
         #line-numbers { margin: 0; padding: 0 1rem; border: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 1em; box-sizing: border-box; }
 
