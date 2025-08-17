@@ -1,52 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // FORMA CORRETA de acessar as ferramentas da biblioteca Markmap
-    const { Transformer, Markmap } = window.markmap;
-
-    // Elementos da página
+    const { Transformer } = window.markmap;
     const mindmapContainer = document.getElementById('mindmap-container');
     const markdownUpload = document.getElementById('markdown-upload');
     const initialMessage = document.getElementById('initial-message');
-    const exportPdfBtn = document.getElementById('export-pdf-btn');
+    const uploadToolbar = document.getElementById('upload-toolbar');
     
-    // Instância do Transformer para converter Markdown
     const transformer = new Transformer();
-    let mm; // Variável para guardar a instância do mapa mental
 
-    // Verifica se os elementos essenciais existem
-    if (mindmapContainer && markdownUpload && initialMessage && exportPdfBtn) {
-        
-        const renderMindmap = (markdownContent) => {
-            initialMessage.style.display = 'none';
-            mindmapContainer.innerHTML = '';
-
-            const { root, features } = transformer.transform(markdownContent);
-            
-            // Cria a visualização do mapa mental no nosso <svg>
-            mm = Markmap.create(mindmapContainer, null, root);
-
-            exportPdfBtn.classList.remove('hidden');
-        };
-
-        markdownUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
+    // A MESMA FUNÇÃO SANITIZADORA DO EDITOR
+    const sanitizeMarkdown = (rawText) => {
+        if (!rawText) return '';
+        let sanitizedText = rawText.replace(/\t/g, '    ');
+        const lines = sanitizedText.split('\n');
+        const processedLines = [];
+        for (const line of lines) {
+            let processedLine = line.trimEnd();
+            if (/^\s*[-*+]\s*$/.test(processedLine)) continue;
+             if (/^\s+[-*+]/.test(processedLine)) {
+                const indent = processedLine.match(/^\s+/)[0];
+                const content = processedLine.trimStart();
+                const indentLevel = Math.ceil(indent.length / 4);
+                processedLine = '    '.repeat(indentLevel) + content;
             }
+            processedLines.push(processedLine);
+        }
+        return processedLines.join('\n');
+    };
 
-            const reader = new FileReader();
-            
-            reader.onload = (e) => {
-                const markdownContent = e.target.result;
-                renderMindmap(markdownContent);
-            };
+    const renderMindmap = (markdownContent) => {
+        initialMessage.style.display = 'none';
+        mindmapContainer.innerHTML = '';
+        
+        try {
+            const sanitizedText = sanitizeMarkdown(markdownContent);
+            const { root } = transformer.transform(sanitizedText);
+            window.markmap.Markmap.create(mindmapContainer, null, root);
+        } catch (error) {
+            console.error("Erro ao renderizar mapa mental:", error);
+            initialMessage.textContent = 'Ocorreu um erro ao processar o arquivo. Verifique a formatação do Markdown.';
+            initialMessage.style.display = 'block';
+        }
+    };
 
-            reader.readAsText(file);
-        });
+    // VERIFICA AS DUAS JORNADAS DO USUÁRIO
+    const contentFromEditor = localStorage.getItem('markdownForMindmap');
 
-        // Lógica para exportação de PDF será adicionada aqui no próximo passo.
-
-    } else {
-        console.error("Não foi possível encontrar um ou mais elementos essenciais na página do mapa mental.");
+    if (contentFromEditor) {
+        // JORNADA 1: Veio do Editor
+        localStorage.removeItem('markdownForMindmap'); // Limpa para não recarregar
+        // A LINHA QUE ESCONDIA O BOTÃO FOI REMOVIDA DAQUI
+        renderMindmap(contentFromEditor);
     }
+    
+    // A LÓGICA DE UPLOAD AGORA SEMPRE ESTARÁ ATIVA
+    markdownUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => renderMindmap(e.target.result);
+        reader.readAsText(file);
+    });
 });

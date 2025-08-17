@@ -1,68 +1,94 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
-    <title>Editor Markdown - Cérebro do Analista</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Markdown com Validação GFM - Cérebro do Analista</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body, html { height: 100%; overflow: hidden; }
+        body { display: flex; flex-direction: column; }
+        main { flex-grow: 1; display: flex; flex-direction: column; min-height: 0; }
+        
+        #line-numbers, #markdown-input {
+            line-height: 1.6;
+        }
+        #line-numbers span { display: block; text-align: right; }
+
+        .editor-panels-container { flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; min-height: 0; }
+        .editor-panel { display: flex; flex-direction: column; overflow: hidden; }
+        .editor-content-area { flex-grow: 1; overflow-y: auto; }
+        .editor-textarea-container { flex-grow: 1; display: flex; overflow: hidden; padding: 1.5rem 0; }
+        #markdown-input { overflow-y: scroll; background-color: transparent; margin: 0; padding: 0 1rem; border: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 1em; box-sizing: border-box;}
+        #line-numbers { margin: 0; padding: 0 1rem; border: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 1em; box-sizing: border-box; }
+
+        .gfm-badge { transition: all 0.3s ease-in-out; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { width: 1rem; height: 1rem; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+    </style>
 </head>
-<body class="antialiased flex flex-col h-full">
+
+<body class="antialiased bg-gray-50">
     <div id="header-placeholder"></div>
-    <main class="container mx-auto p-4 flex-grow flex flex-col">
 
-        <div id="editor-toolbar" class="flex items-end justify-between gap-4 mb-2">
-            <div class="flex-grow">
-                <label for="filename-input" class="text-xs font-semibold text-gray-600">Nome do Documento</label>
-                <input type="text" id="filename-input" placeholder="Digite aqui o nome do arquivo" class="w-full p-1 border rounded-md text-sm">
+    <main class="container mx-auto p-4">
+        
+        <section class="mb-4 p-4 bg-white border rounded-lg shadow-sm flex-shrink-0">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex-grow">
+                    <label for="document-title" class="text-sm font-semibold text-gray-600 block mb-1">Nome do Documento</label>
+                    <input type="text" id="document-title" placeholder="Digite o nome do arquivo..." class="w-full max-w-sm p-2 border rounded-md">
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button id="export-md-btn" class="px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">Exportar como .md</button>
+                    <button id="export-pdf-btn" class="px-4 py-2 bg-red-700 text-white font-semibold rounded-lg hover:bg-red-800 transition-colors">Exportar como PDF</button>
+                </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button id="export-md-btn" class="px-3 py-1 bg-gray-600 text-white text-xs font-semibold rounded hover:bg-gray-700 transition-colors">Exportar como Markdown (.md)</button>
-                <button id="export-pdf-btn" class="px-3 py-1 bg-red-700 text-white text-xs font-semibold rounded hover:bg-red-800 transition-colors">Exportar como PDF</button>
-            </div>
-        </div>
+        </section>
 
-        <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
-            <div class="flex flex-col h-full">
-                <label for="markdown-input" class="font-semibold mb-2 text-gray-700">Digite seu Markdown aqui:</label>
-                <div class="flex-grow flex border rounded-md overflow-hidden">
-                    <div id="line-numbers" class="p-4 bg-gray-100 text-right text-gray-500 font-mono text-sm select-none">
+        <section class="editor-panels-container">
+            
+            <div class="editor-panel bg-white border rounded-lg shadow-sm">
+                <div class="flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
+                    <h2 class="text-lg font-bold text-gray-800">Digite seu Markdown aqui:</h2>
+                    <div id="gfm-badge" class="gfm-badge" title="">
+                        <span id="gfm-badge-text">GFM</span>
+                        <div id="gfm-badge-spinner" class="spinner hidden"></div>
+                    </div>
+                </div>
+                <div class="editor-textarea-container">
+                    <div id="line-numbers" class="bg-gray-100 font-mono text-gray-400 select-none">
                         <span>1</span>
                     </div>
-                    <textarea id="markdown-input" class="w-full h-full p-4 resize-none font-mono text-sm border-l" spellcheck="false"># Olá, Mundo!
+                    <textarea id="markdown-input" class="flex-1 resize-none font-mono w-full h-full" spellcheck="false"></textarea>
+                </div>
+            </div>
 
-Este é o seu editor de Markdown em tempo real.
+            <div class="editor-panel bg-white border rounded-lg shadow-sm">
+                <div class="flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
+                    <h2 class="text-lg font-bold text-gray-800">Visualização:</h2>
+                    <button id="generate-map-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">Gerar Mapa Mental</button>
+                </div>
+                <div id="html-preview" class="p-4 md:py-6 prose editor-content-area">
+                </div>
+            </div>
 
-## Funcionalidades
+        </section>
+    </main>
 
-- Digite na **esquerda**.
-- Veja o resultado na **direita**.
+    <footer id="status-footer" class="text-center p-2 text-sm text-gray-500 sticky bottom-0 bg-gray-50 w-full flex-shrink-0">
+        <span id="status-message"></span>
+    </footer>
 
-**Exemplo de código:**
-```javascript
-function greet(name) {
-  console.log(`Olá, ${name}!`);
-}
-Uma citação para inspirar.
-
-Continue a explorar e crie documentos incríveis!</textarea>
-</div>
-</div>
-<div class="flex flex-col h-full">
-<label class="font-semibold mb-2 text-gray-700">Visualização:</label>
-<div id="html-preview" class="w-full h-full p-4 border rounded-md bg-white overflow-y-auto prose"></div>
-</div>
-</div>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-<script type="module" src="/js/main.js"></script>
-<script src="/js/components.js"></script>
-<script src="/js/editor.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script type="module" src="/js/main.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/editor.js"></script>
 </body>
 </html>
