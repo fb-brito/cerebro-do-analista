@@ -11,28 +11,57 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+    
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
 
     <style>
-        body, html { height: 100%; overflow: hidden; }
+        /* ESTRUTURA BASE DA PÁGINA */
+        body, html { height: 100vh; overflow: hidden; }
         body { display: flex; flex-direction: column; }
-        main { flex-grow: 1; display: flex; flex-direction: column; min-height: 0; }
-        .editor-panels-container { flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; min-height: 0; }
-        .editor-panel { display: flex; flex-direction: column; overflow: hidden; }
-        .editor-panel-header { height: 65px; }
+        main { flex-grow: 1; min-height: 0; display: flex; flex-direction: column; }
         
-        /* Container para o editor CodeMirror preencher o espaço */
-        .codemirror-container {
-            flex-grow: 1;
-            overflow: hidden;
-            position: relative; /* Necessário para o CodeMirror se dimensionar */
+        .editor-panels-container {
+            flex-grow: 1; /* Faz a seção dos painéis ocupar o espaço restante */
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            min-height: 0; /* Essencial para o scroll em flex children */
         }
-        /* Força o editor a ocupar toda a altura e usar nossa fonte mono */
+        
+        .editor-panel {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Garante que o conteúdo não vaze do painel */
+        }
+        
+        .editor-panel-header {
+            height: 65px;
+            flex-shrink: 0; /* Impede que o cabeçalho encolha */
+        }
+
+        /* ***** INÍCIO DA CORREÇÃO DE SCROLL DEFINITIVA ***** */
+        .codemirror-container {
+            flex-grow: 1; /* Faz o container do editor preencher o espaço vertical */
+            position: relative; /* Base de posicionamento para o CodeMirror */
+        }
+        
+        /* Regra que força o CodeMirror a se dimensionar corretamente dentro do seu container */
         .CodeMirror {
-            height: 100% !important;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
             font-size: 1em !important;
             line-height: 1.6 !important;
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
         }
+
+        #html-preview {
+            flex-grow: 1;
+            overflow-y: auto; /* Garante que o preview tenha seu próprio scroll */
+        }
+        /* ***** FIM DA CORREÇÃO DE SCROLL DEFINITIVA ***** */
 
         .gfm-badge { transition: all 0.3s ease-in-out; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -59,21 +88,18 @@
 
         <section class="editor-panels-container">
             <div class="editor-panel bg-white border rounded-lg shadow-sm">
-                <div class="editor-panel-header flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
+                <div class="editor-panel-header flex items-center justify-between p-3 border-b bg-gray-50">
                     <h2 class="text-lg font-bold text-gray-800">Digite seu Markdown aqui:</h2>
-                    <div id="gfm-badge" class="gfm-badge" title="">
-                        <span id="gfm-badge-text">GFM</span>
-                        <div id="gfm-badge-spinner" class="spinner hidden"></div>
-                    </div>
+                    <div id="gfm-badge" class="gfm-badge"></div>
                 </div>
                 <div id="codemirror-editor-container" class="codemirror-container"></div>
             </div>
             <div class="editor-panel bg-white border rounded-lg shadow-sm">
-                <div class="editor-panel-header flex items-center justify-between p-3 border-b bg-gray-50 flex-shrink-0">
+                <div class="editor-panel-header flex items-center justify-between p-3 border-b bg-gray-50">
                     <h2 class="text-lg font-bold text-gray-800">Visualização:</h2>
                     <button id="generate-map-btn" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">Gerar Mapa Mental</button>
                 </div>
-                <div id="html-preview" class="p-4 md:py-6 prose"></div>
+                <div id="html-preview" class="p-4 md:py-6 prose max-w-none"></div>
             </div>
         </section>
     </main>
@@ -88,10 +114,8 @@
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.15.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.15.4"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
-    
     <script type="module" src="/js/main.js"></script>
     <script src="/js/components.js"></script>
     <script src="/js/editor.js"></script>

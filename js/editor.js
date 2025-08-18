@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
         breaks: true
     });
     
-    // CORREÇÃO: O texto completo do guia, como deveria ser
     const defaultMarkdownText = `# Guia: Como Criar seu Mapa Mental
 
 - ## O Título Principal (Nó Raiz)
@@ -23,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 - Você pode continuar criando níveis ainda mais profundos.
 
 - ## Dicas de Formatação
-    - Você pode usar **negrito** para destacar um texto, envolvendo-o com \`**dois asteriscos**\`.
-    - E também pode usar *itálico* com \`*um asterisco*\`.
+    - Você pode usar **negrito** para destacar um texto, envolvendo-o com \`**dois asteriscos**\`.\n    - E também pode usar *itálico* com \`*um asterisco*\`.
 
 - ## Agora é a sua vez!
     - Apague este guia e cole seu próprio texto.
@@ -52,11 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
         theme: 'default'
     });
 
-    // 4. FUNÇÕES CENTRAIS (Sanitização, Badge, etc. - mantidas e funcionais)
+    // 4. FUNÇÕES CENTRAIS
     const sanitizeMarkdown = (rawText) => { if (!rawText) return ''; let sanitizedText = rawText.trim(); sanitizedText = sanitizedText.replace(/\t/g, '    '); const lines = sanitizedText.split('\n'); const processedLines = []; for (const line of lines) { let processedLine = line.trimEnd(); if (/^\s*[-*+]\s*$/.test(processedLine)) continue; processedLines.push(processedLine); } return sanitizedText; };
     const postProcessTree = (node) => { if (!node || !node.children) return; node.children.forEach(postProcessTree); const newChildren = []; node.children.forEach(child => { if (!child.content.trim() && child.children && child.children.length > 0) { newChildren.push(...child.children); } else { newChildren.push(child); } }); node.children = newChildren; node.children = node.children.filter(child => { const hasContent = child.content && child.content.trim() !== ''; const hasChildren = child.children && child.children.length > 0; return hasContent || hasChildren; }); };
     const updateBadgeUI = (state) => { if (!gfmBadge || !gfmBadgeText || !gfmBadgeSpinner || !statusMessage) return; gfmBadge.classList.remove('bg-gray-400', 'bg-green-500', 'bg-orange-400', 'text-white'); gfmBadgeSpinner.classList.add('hidden'); switch (state) { case 'analyzing': gfmBadge.classList.add('bg-gray-400', 'text-white'); gfmBadgeSpinner.classList.remove('hidden'); gfmBadge.title = 'Analisando...'; statusMessage.textContent = 'Analisando e adequando ao padrão GFM...'; break; case 'success': gfmBadge.classList.add('bg-green-500', 'text-white'); gfmBadge.title = 'Selo de Qualidade GFM Conquistado!'; statusMessage.textContent = 'Validação concluída com sucesso!'; break; case 'modified': gfmBadge.classList.add('bg-orange-400', 'text-white'); gfmBadge.title = 'Conteúdo modificado. Revalidando...'; statusMessage.textContent = 'Revalidando...'; break; case 'neutral': default: gfmBadge.classList.add('bg-gray-400', 'text-white'); gfmBadge.title = 'Aguardando conteúdo para análise GFM.'; statusMessage.textContent = 'Cole seu texto ou carregue um arquivo para obter o selo de qualidade GFM.'; break; } };
-    const renderPreview = (text) => { if (htmlPreview) htmlPreview.innerHTML = marked.parse(text); };
+    const renderPreview = (text) => { if (htmlPreview) htmlPreview.innerHTML = `<div class="prose prose-sm max-w-none">${marked.parse(text)}</div>`; };
 
     const processMarkdown = (text) => {
         updateBadgeUI('analyzing');
@@ -71,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     };
 
-    // 5. EVENT LISTENERS (adaptados para CodeMirror)
+    // 5. EVENT LISTENERS
     let debounceTimer;
     editor.on('change', (instance) => {
         const text = instance.getValue();
@@ -83,36 +81,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 800);
     });
 
-    if (exportMdBtn) {
-        exportMdBtn.addEventListener('click', () => {
-            const content = editor.getValue();
-            let filename = (documentTitleInput.value.trim() || 'documento') + '.md';
-            const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-        });
-    }
-
-    if (exportPdfBtn) {
-        exportPdfBtn.addEventListener('click', () => {
-            let filename = (documentTitleInput.value.trim() || 'documento') + '.pdf';
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-            pdf.html(htmlPreview, { callback: function (pdf) { pdf.save(filename); }, margin: [15, 15, 15, 15], autoPaging: 'text', width: 180, windowWidth: htmlPreview.scrollWidth, });
-        });
-    }
-
-    if (generateMapBtn) {
-        generateMapBtn.addEventListener('click', () => {
-            const sanitizedContent = editor.getValue();
-            if (sanitizedContent.trim()) {
-                localStorage.setItem('markdownForMindmap', sanitizedContent);
-                window.open('mapa-mental.html', '_blank');
-            } else {
-                alert('Insira um conteúdo Markdown antes de gerar o mapa mental.');
-            }
-        });
-    }
+    if (exportMdBtn) { exportMdBtn.addEventListener('click', () => { const content = editor.getValue(); let filename = (documentTitleInput.value.trim() || 'documento') + '.md'; const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }); }
+    if (exportPdfBtn) { exportPdfBtn.addEventListener('click', () => { let filename = (documentTitleInput.value.trim() || 'documento') + '.pdf'; const { jsPDF } = window.jspdf; const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' }); pdf.html(htmlPreview, { callback: function (pdf) { pdf.save(filename); }, margin: [15, 15, 15, 15], autoPaging: 'text', width: 180, windowWidth: htmlPreview.scrollWidth, }); }); }
+    if (generateMapBtn) { generateMapBtn.addEventListener('click', () => { const sanitizedContent = editor.getValue(); if (sanitizedContent.trim()) { localStorage.setItem('markdownForMindmap', sanitizedContent); window.open('mapa-mental.html', '_blank'); } else { alert('Insira um conteúdo Markdown antes de gerar o mapa mental.'); } }); }
 
     // 6. INICIALIZAÇÃO DA PÁGINA
     processMarkdown(defaultMarkdownText);
