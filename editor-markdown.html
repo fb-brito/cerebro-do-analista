@@ -16,36 +16,35 @@
 
     <style>
         /* ESTRUTURA BASE DA PÁGINA */
-        body, html { height: 100vh; overflow: hidden; }
+        /* --- CORREÇÃO DA BARRA DE STATUS APLICADA AQUI (overflow: hidden removido) --- */
+        body, html { height: 100vh; }
         body { display: flex; flex-direction: column; }
         main { flex-grow: 1; min-height: 0; display: flex; flex-direction: column; }
         
         .editor-panels-container {
-            flex-grow: 1; /* Faz a seção dos painéis ocupar o espaço restante */
+            flex-grow: 1;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
-            min-height: 0; /* Essencial para o scroll em flex children */
+            min-height: 0;
         }
         
         .editor-panel {
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Garante que o conteúdo não vaze do painel */
+            overflow: hidden;
         }
         
         .editor-panel-header {
             height: 65px;
-            flex-shrink: 0; /* Impede que o cabeçalho encolha */
+            flex-shrink: 0;
         }
 
-        /* ***** INÍCIO DA CORREÇÃO DE SCROLL DEFINITIVA ***** */
         .codemirror-container {
-            flex-grow: 1; /* Faz o container do editor preencher o espaço vertical */
-            position: relative; /* Base de posicionamento para o CodeMirror */
+            flex-grow: 1;
+            position: relative;
         }
         
-        /* Regra que força o CodeMirror a se dimensionar corretamente dentro do seu container */
         .CodeMirror {
             position: absolute;
             top: 0;
@@ -59,10 +58,9 @@
 
         #html-preview {
             flex-grow: 1;
-            overflow-y: auto; /* Garante que o preview tenha seu próprio scroll */
+            overflow-y: auto;
         }
-        /* ***** FIM DA CORREÇÃO DE SCROLL DEFINITIVA ***** */
-
+        
         .gfm-badge { transition: all 0.3s ease-in-out; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.5rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { width: 1rem; height: 1rem; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
@@ -90,7 +88,10 @@
             <div class="editor-panel bg-white border rounded-lg shadow-sm">
                 <div class="editor-panel-header flex items-center justify-between p-3 border-b bg-gray-50">
                     <h2 class="text-lg font-bold text-gray-800">Digite seu Markdown aqui:</h2>
-                    <div id="gfm-badge" class="gfm-badge"></div>
+                    <div id="gfm-badge" class="gfm-badge">
+                        <span id="gfm-badge-text"></span>
+                        <div id="gfm-badge-spinner" class="spinner hidden"></div>
+                    </div>
                 </div>
                 <div id="codemirror-editor-container" class="codemirror-container"></div>
             </div>
@@ -117,7 +118,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/markdown/markdown.min.js"></script>
     <script type="module" src="/js/main.js"></script>
-    <script src="/js/components.js"></script>
     <script src="/js/editor.js"></script>
 </body>
 </html>
