@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const transformer = new Transformer();
 
     const postProcessTree = (node) => { if (!node || !node.children) return; node.children.forEach(postProcessTree); const newChildren = []; node.children.forEach(child => { if (!child.content.trim() && child.children && child.children.length > 0) { newChildren.push(...child.children); } else { newChildren.push(child); } }); node.children = newChildren; node.children = node.children.filter(child => { const hasContent = child.content && child.content.trim() !== ''; const hasChildren = child.children && child.children.length > 0; return hasContent || hasChildren; }); };
-    const sanitizeMarkdown = (rawText) => { if (!rawText) return ''; let sanitizedText = rawText.trim(); sanitizedText = sanitizedText.replace(/\t/g, '    '); const lines = sanitizedText.split('\n'); const processedLines = []; for (const line of lines) { let processedLine = line.trimEnd(); if (/^\s*[-*+]\s*$/.test(processedLine)) continue; processedLines.push(processedLine); } return sanitizedText; };
+    const sanitizeMarkdown = (rawText) => { if (!rawText) return ''; let sanitizedText = rawText.trim(); sanitizedText = sanitizedText.replace(/\t/g, '    '); const lines = sanitizedText.split('\n'); const processedLines = []; for (const line of lines) { let processedLine = line.trimEnd(); if (/^\s*[-*+]\s*$/.test(processedLine)) continue; processedLines.push(processedLine); } return processedLines.join('\n'); };
 
     const renderMindmap = (markdownContent) => {
         if (!mindmapContainer || !initialMessage) return;
@@ -30,22 +30,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportAsPdf = () => {
         const svgElement = mindmapContainer;
 
-        if (!svgElement || svgElement.children.length === 0) {
+        if (!svgElement || !svgElement.children.length === 0) {
             alert("Não há mapa mental para exportar. Por favor, carregue um arquivo primeiro.");
             return;
         }
 
         try {
             const { jsPDF } = window.jspdf;
+            const scale = 2.5;
             
-            // --- CORREÇÃO DE DIMENSIONAMENTO APLICADA AQUI ---
-            // Mede o tamanho real do elemento SVG renderizado na tela. É o método mais confiável.
-            const margin = 20;
-            const canvasWidth = svgElement.clientWidth + (margin * 2);
-            const canvasHeight = svgElement.clientHeight + (margin * 2);
-
-            // getBBox ainda é útil para sabermos o deslocamento (offset) do conteúdo dentro do SVG.
+            // Mede as dimensões reais do conteúdo (bbox) e do container (clientWidth)
             const bbox = svgElement.getBBox();
+            const clientWidth = svgElement.clientWidth;
+            const clientHeight = svgElement.clientHeight;
+
+            // --- CORREÇÃO DE ALINHAMENTO APLICADA AQUI ---
+            // Calcula o offset (deslocamento) necessário para centralizar o conteúdo do bbox
+            // dentro do espaço visível do container.
+            const offsetX = (clientWidth - bbox.width) / 2;
+            const offsetY = (clientHeight - bbox.height) / 2;
+            
+            // Define o tamanho final do PDF baseado no container visível
+            const pdfWidth = clientWidth;
+            const pdfHeight = clientHeight;
+            
+            // O canvas precisa ser escalado para a alta resolução
+            const canvasWidth = pdfWidth * scale;
+            const canvasHeight = pdfHeight * scale;
 
             const svgString = new XMLSerializer().serializeToString(svgElement);
             const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
@@ -57,20 +68,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 canvas.height = canvasHeight;
                 const ctx = canvas.getContext('2d');
                 
+                ctx.scale(scale, scale);
                 ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                ctx.fillRect(0, 0, pdfWidth, pdfHeight);
 
-                // Desenha a imagem usando o deslocamento do bbox para garantir o alinhamento correto.
-                ctx.drawImage(img, -bbox.x + margin, -bbox.y + margin);
+                // Desenha a imagem usando o novo offset para garantir a centralização
+                ctx.drawImage(img, -bbox.x + offsetX, -bbox.y + offsetY);
 
                 const pngDataUrl = canvas.toDataURL('image/png');
 
                 const doc = new jsPDF({
-                    orientation: canvasWidth > canvasHeight ? 'l' : 'p',
+                    orientation: pdfWidth > pdfHeight ? 'l' : 'p',
                     unit: 'pt',
-                    format: [canvasWidth, canvasHeight]
+                    format: [pdfWidth, pdfHeight]
                 });
-                doc.addImage(pngDataUrl, 'PNG', 0, 0, canvasWidth, canvasHeight);
+                doc.addImage(pngDataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
                 doc.save('mapa-mental.pdf');
             };
             img.onerror = function() {
