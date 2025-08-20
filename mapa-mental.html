@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +10,7 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 
-<body class="antialiased flex flex-col h-screen">
+<body class="antialiased flex flex-col h-screen bg-gray-50">
     <div id="header-placeholder"></div>
 
     <main class="container mx-auto p-4 flex-grow flex flex-col">
@@ -19,21 +18,20 @@
             <h1 class="text-3xl md:text-4xl font-black dark-accent-color">Visualizador de Mapa Mental</h1>
         </section>
 
-        <div id="upload-toolbar" class="flex items-center justify-center gap-4 mb-4 p-2 rounded-md">
+        <div id="upload-toolbar" class="flex items-center justify-center flex-wrap gap-4 mb-4 p-3 bg-white border rounded-lg shadow-sm">
             <label for="markdown-upload"
                 class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
                 <span>Carregar Arquivo Markdown (.md)</span>
                 <input type="file" id="markdown-upload" class="hidden" accept=".md">
             </label>
+            <button id="export-pdf-btn" class="px-4 py-2 bg-red-700 text-white font-semibold rounded-lg hover:bg-red-800 transition-colors">Exportar como PDF</button>
         </div>
 
-        <div class="relative flex-grow border rounded-lg bg-gray-50 flex items-center justify-center">
+        <div id="mindmap-capture-area" class="relative flex-grow border rounded-lg bg-white shadow-sm flex items-center justify-center p-2">
             <svg id="mindmap-container" class="w-full h-full"></svg>
-            
-            <div id="initial-message" class="absolute text-gray-400 flex flex-col items-center gap-4">
-                
+            <div id="initial-message" class="absolute text-gray-400 flex flex-col items-center gap-4 text-center">
                 <img src="/img/ico/mapa-mental.png" alt="Ícone de Mapa Mental" class="w-24 h-24 opacity-50">
-                <p>Seu mapa mental aparecerá aqui</p>
+                <p>Seu mapa mental aparecerá aqui.<br>Carregue um arquivo .md para começar.</p>
             </div>
         </div>
     </main>
@@ -41,10 +39,10 @@
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/markmap-lib@0.15.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.15.4"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script type="module" src="/js/main.js"></script>
-    <script src="/js/components.js"></script>
     <script src="/js/mapa-mental.js"></script>
 </body>
-
 </html>
