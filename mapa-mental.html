@@ -6,30 +6,32 @@
     <title>Gerador de Mapa Mental - Cérebro do Analista</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 
-<body class="antialiased flex flex-col h-screen bg-gray-50">
+<body class="antialiased flex flex-col h-screen bg-light dark:bg-dark">
     <div id="header-placeholder"></div>
 
     <main class="container mx-auto p-4 flex-grow flex flex-col">
-        <section class="text-center mb-4">
-            <h1 class="text-3xl md:text-4xl font-black dark-accent-color">Visualizador de Mapa Mental</h1>
+        <section class="text-center pt-8 mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gradient">Visualizador de Mapa Mental</h1>
         </section>
 
-        <div id="upload-toolbar" class="flex items-center justify-center flex-wrap gap-4 mb-4 p-3 bg-white border rounded-lg shadow-sm">
+        <div id="upload-toolbar" class="flex items-center justify-center flex-wrap gap-4 mb-4 p-3 glass-card rounded-2xl">
             <label for="markdown-upload"
-                class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                class="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-sky-600 transition-colors cursor-pointer">
                 <span>Carregar Arquivo Markdown (.md)</span>
                 <input type="file" id="markdown-upload" class="hidden" accept=".md">
             </label>
-            <button id="export-pdf-btn" class="px-4 py-2 bg-red-700 text-white font-semibold rounded-lg hover:bg-red-800 transition-colors">Exportar como PDF</button>
+            
+            <button id="export-pdf-btn" class="px-4 py-2 bg-pink-500 text-white font-semibold rounded-lg hover:bg-pink-600 transition-colors" style="background-color: #ec4899; color: white;">Exportar como PDF</button>
+
         </div>
 
-        <div id="mindmap-capture-area" class="relative flex-grow border rounded-lg bg-white shadow-sm flex items-center justify-center p-2">
+        <div id="mindmap-capture-area" class="relative flex-grow glass-card rounded-2xl flex items-center justify-center p-2">
             <svg id="mindmap-container" class="w-full h-full"></svg>
-            <div id="initial-message" class="absolute text-gray-400 flex flex-col items-center gap-4 text-center">
+            <div id="initial-message" class="absolute text-gray-400 dark:text-gray-500 flex flex-col items-center gap-4 text-center">
                 <img src="/img/ico/mapa-mental.png" alt="Ícone de Mapa Mental" class="w-24 h-24 opacity-50">
                 <p>Seu mapa mental aparecerá aqui.<br>Carregue um arquivo .md para começar.</p>
             </div>
