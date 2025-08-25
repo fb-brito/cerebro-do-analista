@@ -7,23 +7,22 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Saira:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         .filter-btn.active {
-            background-color: #004AAD;
-            color: white;
+            /* Esta classe é controlada pelo input.css agora */
         }
         .palette-card .color-strip {
             height: 4rem;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased bg-light dark:bg-dark">
     <div id="header-placeholder"></div>
     <main class="container mx-auto p-4 md:p-8">
-        <section class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-black dark-accent-color mb-4">Galeria de Paletas de Cores</h1>
-            <p class="text-lg text-gray-600 max-w-3xl mx-auto">Uma coleção de paletas de cores para inspirar os seus projetos. Filtre por categoria e clique num código para o copiar.</p>
+        <section class="text-center mb-16 pt-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gradient mb-6">Galeria de Paletas de Cores</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Uma coleção de paletas de cores para inspirar os seus projetos. Filtre por categoria e clique num código para o copiar.</p>
         </section>
         <div id="filters" class="flex justify-center flex-wrap gap-2 mb-8"></div>
         <div id="palette-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>

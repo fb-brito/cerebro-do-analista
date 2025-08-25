@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. ESTRUTURA DE DADOS (Inalterada)
     const gameData = {
         "sql": {
             phaseName: "Fase SQL: O Mestre das Queries",
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     levelName: "Nível 1: Fundamentos de SELECT",
                     questions: [
                         { question: "Qual comando seleciona TODAS as colunas de uma tabela chamada 'clientes'?", options: ["SELECT * FROM clientes;", "SELECT all FROM clientes;", "GET * FROM clientes;", "SELECT clientes;"], correctAnswer: 0, explanation: "O asterisco (*) é o caractere coringa em SQL usado para representar 'todas as colunas'." },
-                        { question: "Como você selecionaria apenas as colunas 'nome' e 'email' de uma tabela 'usuarios'?", options: ["SELECT (nome, email) FROM usuarios;", "SELECT nome, email FROM usuarios;", "SELECT nome AND email FROM usuarios;", "GET nome, email FROM usuarios;"], correctAnswer: 1, explanation: "As colunas desejadas são listadas e separadas por vírgula após o comando SELECT." },
+                        { question: "Como você selecionaria apenas as colunas 'nome' e 'email' de uma tabela 'usuarios'?", options: ["SELECT (nome, email) FROM usuarios;", "SELECT nome, email FROM usuarios;", "SELECT nome AND email FROM usuarios;", "GET nome, email FROM usuarios;"], correctAnswer: 1, explanation: "As colunas desejadas são listadas e separadas por vírgula apόs o comando SELECT." },
                         { question: "Qual cláusula é usada para filtrar linhas e retornar apenas aquelas onde a 'cidade' é 'São Paulo'?", options: ["FILTER BY cidade = 'São Paulo';", "IF cidade = 'São Paulo';", "HAVING cidade = 'São Paulo';", "WHERE cidade = 'São Paulo';"], correctAnswer: 3, explanation: "A cláusula WHERE é fundamental para filtrar registros com base em condições específicas." },
                         { question: "Para ordenar os resultados de uma consulta de produtos pelo 'preco' do mais caro para o mais barato, qual comando você usaria?", options: ["ORDER BY preco DESC;", "SORT BY preco;", "ORDER BY preco ASC;", "GROUP BY preco;"], correctAnswer: 0, explanation: "ORDER BY ordena os resultados, e a palavra-chave DESC (descendente) especifica a ordem do maior para o menor." },
                         { question: "Como você selecionaria uma lista de países únicos, sem repetições, da coluna 'pais' em uma tabela de 'fornecedores'?", options: ["SELECT UNIQUE pais FROM fornecedores;", "SELECT pais FROM fornecedores;", "SELECT DISTINCT pais FROM fornecedores;", "SELECT NOREPEATING pais FROM fornecedores;"], correctAnswer: 2, explanation: "A palavra-chave DISTINCT remove linhas duplicadas do conjunto de resultados, retornando apenas valores únicos." }
@@ -29,8 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         }
     };
-
-    // 2. ELEMENTOS DA INTERFACE (DOM)
     const phaseCompleteTitle = document.getElementById('phase-complete-title');
     const gameScreen = document.getElementById('game-screen');
     const levelCompleteScreen = document.getElementById('level-complete-screen');
@@ -49,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const phaseStatusText = document.getElementById('phase-status-text');
     const restartPhaseBtn = document.getElementById('restart-phase-btn');
 
-    // 3. VARIÁVEIS DE ESTADO DO JOGO
     let currentPhaseId = "sql";
     let currentLevelIndex = 0;
     let currentQuestionIndexInLevel = 0;
@@ -57,10 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let lives = 5;
     let answered = false;
     let currentCorrectIndex;
-
-    // =========================================================================
-    // 4. FUNÇÕES DO JOGO
-    // =========================================================================
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -72,28 +64,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateXpDisplay() { xpText.textContent = `XP: ${score}`; }
 
-    // ---------------> INÍCIO DA CORREÇÃO <---------------
     function updateLivesDisplay(animateIndex = -1) {
         livesContainer.innerHTML = '';
         for (let i = 0; i < 5; i++) {
             const heartIcon = document.createElement('i');
-
-            // Lógica corrigida: Adiciona text-red-500 para vidas restantes
-            // e text-gray-400 para vidas perdidas.
             if (i < lives) {
-                heartIcon.className = 'fas fa-heart heart-icon text-red-500';
+                heartIcon.className = 'fas fa-heart text-red-500';
             } else {
-                heartIcon.className = 'fas fa-heart-broken heart-icon heart-broken text-gray-400';
-            }
-
-            if (i === animateIndex) {
-                heartIcon.classList.add('animate-heart-break');
-                setTimeout(() => heartIcon.classList.remove('animate-heart-break'), 500);
+                heartIcon.className = 'fas fa-heart-broken text-gray-400';
             }
             livesContainer.appendChild(heartIcon);
         }
     }
-    // ---------------> FIM DA CORREÇÃO <---------------
 
     function startPhase() {
         currentLevelIndex = 0;
@@ -132,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         optionsContainer.innerHTML = '';
         shuffledOptions.forEach((option, index) => {
             const button = document.createElement('button');
-            button.className = 'w-full text-left p-4 border rounded-lg hover:bg-gray-100 transition-colors quiz-option';
+            button.className = 'w-full text-left p-4 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors quiz-option';
             button.textContent = option;
             button.dataset.index = index;
             button.addEventListener('click', selectAnswer);
@@ -153,8 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectedAnswerIndex === currentCorrectIndex) {
             score++;
             updateXpDisplay();
-            selectedButton.classList.add('bg-green-200', 'border-green-500');
-            feedbackArea.innerHTML = `<p class="font-bold text-green-700">Correto!</p><p class="text-sm mt-1">${questionData.explanation}</p>`;
+            selectedButton.className += ' bg-green-200 dark:bg-green-500/20 border-green-500';
+            feedbackArea.innerHTML = `<p class="font-bold text-green-700 dark:text-green-400">Correto!</p><p class="text-sm mt-1 text-gray-600 dark:text-gray-300">${questionData.explanation}</p>`;
             feedbackArea.classList.remove('hidden');
             nextBtn.textContent = "Próxima Pergunta";
             nextBtn.classList.remove('hidden');
@@ -164,13 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleIncorrectAnswer(selectedButton, questionData) {
-        selectedButton.classList.add('bg-red-200', 'border-red-500');
-        const lifeIndexToAnimate = lives > 0 ? lives - 1 : -1;
+        selectedButton.className += ' bg-red-200 dark:bg-red-500/20 border-red-500';
         lives = Math.max(0, lives - 1);
-        updateLivesDisplay(lifeIndexToAnimate);
+        updateLivesDisplay();
 
         if (lives > 0) {
-            feedbackArea.innerHTML = `<p class="font-bold text-red-700">Incorreto.</p><p class="text-sm mt-2">Você tem ${lives} vidas restantes. Deseja usar uma para tentar de novo?</p><div class="flex justify-center gap-4 mt-4"><button id="retry-yes-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">Sim, tentar de novo</button><button id="retry-no-btn" class="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">Não, pular</button></div>`;
+            feedbackArea.innerHTML = `<p class="font-bold text-red-700 dark:text-red-400">Incorreto.</p><p class="text-sm mt-2 text-gray-600 dark:text-gray-300">Você tem ${lives} vidas restantes. Deseja usar uma para tentar de novo?</p><div class="flex justify-center gap-4 mt-4"><button id="retry-yes-btn" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">Sim, tentar de novo</button><button id="retry-no-btn" class="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg hover:bg-gray-600">Não, pular</button></div>`;
             document.getElementById('retry-yes-btn').addEventListener('click', useLifeAndRetry);
             document.getElementById('retry-no-btn').addEventListener('click', () => showExplanationAndContinue(questionData));
         } else {
@@ -184,13 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackArea.classList.add('hidden');
         document.querySelectorAll('.quiz-option').forEach(btn => {
             btn.disabled = false;
-            btn.classList.remove('bg-red-200', 'border-red-500');
+            btn.className = 'w-full text-left p-4 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors quiz-option';
         });
     }
 
     function showExplanationAndContinue(questionData) {
-        feedbackArea.innerHTML = `<p class="font-bold text-red-700">Incorreto.</p><p class="text-sm mt-1">${questionData.explanation}</p>`;
-        document.querySelector(`.quiz-option[data-index='${currentCorrectIndex}']`).classList.add('bg-green-200', 'border-green-500');
+        feedbackArea.innerHTML = `<p class="font-bold text-red-700 dark:text-red-400">Incorreto.</p><p class="text-sm mt-1 text-gray-600 dark:text-gray-300">${questionData.explanation}</p>`;
+        document.querySelector(`.quiz-option[data-index='${currentCorrectIndex}']`).className += ' bg-green-200 dark:bg-green-500/20 border-green-500';
         nextBtn.textContent = "Próxima Pergunta";
         nextBtn.classList.remove('hidden');
     }
@@ -202,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         phaseCompleteTitle.textContent = `${phaseData.phaseName} - Game Over`;
         phaseScoreText.textContent = `Seu XP final foi: ${score}`;
         phaseStatusText.textContent = "Você perdeu todas as suas vidas. Tente novamente para se tornar um mestre!";
-        phaseStatusText.className = "font-bold text-red-600";
+        phaseStatusText.className = "font-bold text-red-600 dark:text-red-400";
     }
 
     function handleNext() {
@@ -248,18 +229,16 @@ document.addEventListener('DOMContentLoaded', () => {
         phaseScoreText.textContent = `Sua pontuação final foi: ${score} de ${totalQuestions} (${userPercentage.toFixed(0)}%)`;
         if (userPercentage >= phaseData.passingScorePercentage) {
             phaseStatusText.textContent = "Parabéns, você foi aprovado e desbloqueou a próxima fase!";
-            phaseStatusText.className = "font-bold text-green-600";
+            phaseStatusText.className = "font-bold text-green-600 dark:text-green-400";
         } else {
             phaseStatusText.textContent = `Você não atingiu os ${phaseData.passingScorePercentage}% necessários para passar. Tente novamente!`;
-            phaseStatusText.className = "font-bold text-red-600";
+            phaseStatusText.className = "font-bold text-red-600 dark:text-red-400";
         }
     }
 
-    // EVENT LISTENERS GERAIS
     nextBtn.addEventListener('click', handleNext);
     nextLevelBtn.addEventListener('click', handleNextLevel);
     restartPhaseBtn.addEventListener('click', startPhase);
 
-    // INICIALIZAÇÃO
     startPhase();
 });
