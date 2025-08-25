@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             },
 
+            // ================= INÍCIO DA CORREÇÃO =================
             filterPlaylist(filter) {
                 this.activeFilter = filter;
                 this.activePlaylist = (filter === 'all')
@@ -69,13 +70,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 this.currentTrackIndexInActivePlaylist = 0;
                 this.renderAlbumCovers();
+
                 if (this.swiperInstance) {
                     this.swiperInstance.slideTo(0, 0);
                     this.swiperInstance.update();
                 }
-                this.loadTrack(0);
+
+                // Lógica corrigida para carregar a primeira faixa da playlist filtrada
+                const firstTrackOfActivePlaylist = this.activePlaylist[0];
+                if (firstTrackOfActivePlaylist) {
+                    const originalIndex = this.fullPlaylist.indexOf(firstTrackOfActivePlaylist);
+                    this.loadTrackByFullPlaylistIndex(originalIndex);
+                }
+
                 this.audioElement.pause();
             },
+            // ================= FIM DA CORREÇÃO =================
 
             renderPlaylist() {
                 this.playlistContainer.innerHTML = '';
@@ -91,11 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const trackElement = document.createElement('button');
                 const originalIndex = this.fullPlaylist.indexOf(track);
-                trackElement.className = 'w-full text-left p-1.5 rounded-md hover:bg-gray-100 transition-colors playlist-item flex items-center gap-2 text-sm';
-                const icon = isPlaying ? '<i class="fas fa-volume-up accent-color"></i>' : '<i class="fas fa-headphones text-gray-400"></i>';
-                trackElement.innerHTML = `<div>${icon}</div><div>${track.title}</div>`;
-                if (isPlaying) trackElement.classList.add('playing');
-
+                trackElement.className = 'w-full text-left p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors playlist-item flex items-center gap-2 text-sm';
+                const icon = isPlaying ? '<i class="fas fa-volume-up text-primary"></i>' : '<i class="fas fa-headphones text-gray-400"></i>';
+                trackElement.innerHTML = `<div>${icon}</div><div class="truncate">${track.title}</div>`;
+                if (isPlaying) trackElement.classList.add('playing', 'font-semibold', 'text-primary');
+                
                 trackElement.addEventListener('click', () => {
                     this.loadTrackByFullPlaylistIndex(originalIndex);
                     this.audioElement.play();
@@ -110,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const slide = document.createElement('div');
                     slide.className = 'swiper-slide';
                     const imgSrc = this.getCoverImage(track);
-                    slide.innerHTML = `<img src="${imgSrc}" alt="Capa para ${track.title}">`;
+                    slide.innerHTML = `<img src="${imgSrc}" alt="Capa para ${track.title}" class="rounded-lg shadow-lg">`;
                     this.albumCoversContainer.appendChild(slide);
                 });
             },
@@ -161,13 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     effect: 'coverflow', grabCursor: true, centeredSlides: true, slidesPerView: 'auto',
                     coverflowEffect: { rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true },
                 });
-
                 this.loadTrackByFullPlaylistIndex(0);
 
                 this.nextBtn.addEventListener('click', () => this.playNext());
                 this.prevBtn.addEventListener('click', () => this.playPrev());
                 this.audioElement.addEventListener('ended', () => this.playNext());
-
                 this.swiperInstance.on('slideChange', () => {
                     const newIndex = this.swiperInstance.activeIndex;
                     if (newIndex < this.activePlaylist.length && newIndex !== this.currentTrackIndexInActivePlaylist) {
@@ -175,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.audioElement.play();
                     }
                 });
-
                 this.filterButtons.forEach(button => {
                     button.addEventListener('click', (e) => {
                         this.filterPlaylist(e.currentTarget.dataset.filter);
@@ -202,13 +209,13 @@ document.addEventListener('DOMContentLoaded', () => {
         crispDmContainer.innerHTML = '';
         crispDmData.forEach((step) => {
             const stepEl = document.createElement('div');
-            stepEl.className = 'accordion-item border-b border-gray-200';
+            stepEl.className = 'accordion-item border-b border-gray-200 dark:border-white/10 last:border-b-0';
             stepEl.innerHTML = `
-                <button class="accordion-button w-full text-left p-4 font-semibold accent-color focus:outline-none flex justify-between items-center">
+                <button class="accordion-button w-full text-left p-4 font-semibold text-primary focus:outline-none flex justify-between items-center">
                     <span>${step.title}</span>
                     <span class="accordion-icon transform transition-transform duration-300 text-2xl font-light">+</span>
                 </button>
-                <div class="accordion-content px-4 text-gray-600" style="max-height: 0px; overflow: hidden;">
+                <div class="accordion-content px-4 text-gray-600 dark:text-gray-300" style="max-height: 0px; overflow: hidden;">
                     <p class="py-4">${step.content}</p>
                 </div>
             `;

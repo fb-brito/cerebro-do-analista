@@ -1,9 +1,54 @@
-/* Diretivas do Tailwind - Elas devem vir primeiro */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Estilos Customizados da Aplicação */
+/* === NOVOS ESTILOS BASE === */
+body {
+    @apply bg-light dark:bg-dark text-gray-800 dark:text-gray-300 transition-colors duration-300;
+    font-family: 'Inter', sans-serif;
+}
+
+/* === NOVAS CLASSES DE UTILIDADE === */
+.text-gradient {
+    background: linear-gradient(135deg, theme('colors.primary'), theme('colors.accent'));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    @apply backdrop-blur-md border border-white/20;
+}
+
+.dark .glass-card {
+    background: rgba(15, 23, 42, 0.3); /* Cor 'dark' com opacidade */
+    @apply border-white/10;
+}
+
+.hover-lift {
+    @apply transition-all duration-300 ease-in-out;
+}
+
+.hover-lift:hover {
+    @apply -translate-y-1 shadow-2xl;
+}
+
+/* === ESTILOS DO PLAYER ATUALIZADOS === */
+.playlist-filter-btn {
+    @apply w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-gray-300;
+}
+
+.playlist-filter-btn.active {
+    @apply bg-primary text-white scale-110 shadow-lg;
+}
+.playlist-filter-btn:not(.active):hover {
+    @apply bg-gray-300 dark:bg-slate-600;
+}
+
+
+/* === ESTILOS CUSTOMIZADOS ORIGINAIS MANTIDOS === */
+/* Necessários para a navegação e outras páginas */
 .dropdown-menu {
     display: none;
     opacity: 0;
@@ -18,8 +63,9 @@
     transform: translateY(0);
 }
 
+/* Cor do link ativo atualizada para a nova paleta */
 a.active {
-    color: #004AAD;
+    color: theme('colors.primary');
     font-weight: 700;
 }
 
@@ -28,17 +74,17 @@ a.active-sublink {
     font-weight: 600;
 }
 
-/* ESTILOS PARA O EDITOR COM NÚMERO DE LINHAS ATUALIZADO */
-#line-numbers {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    min-width: 40px; /* Garante uma largura mínima para a calha de números */
-}
-
+/* Estilos do editor.js mantidos */
 #line-numbers, #markdown-input {
     line-height: 1.5;
     padding-top: 1rem;
     padding-bottom: 1rem;
+}
+
+#line-numbers {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    min-width: 40px;
 }
 
 #markdown-input {
