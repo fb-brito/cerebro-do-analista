@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Dados mantidos do snapshot original
     const markdownGuideData = {
         sectionTitle: 'Sintaxe Essencial do Markdown',
         sectionDescription: 'Estes são os elementos de formatação mais comuns para criar documentos bem estruturados em Markdown.',
@@ -13,49 +14,34 @@ document.addEventListener('DOMContentLoaded', () => {
             { title: 'Lista de Tarefas', code: '- [x] Tarefa concluída\n- [ ] Tarefa pendente', preview: '<ul><li><input type="checkbox" checked disabled> Tarefa concluída</li><li><input type="checkbox" disabled> Tarefa pendente</li></ul>' }
         ]
     };
-
     const mainContainer = document.getElementById('markdown-guide');
     if (!mainContainer) return;
 
     mainContainer.innerHTML = '';
 
-    const sectionBlock = document.createElement('div');
-    sectionBlock.className = 'mb-12';
-
-    const sectionTitleEl = document.createElement('h3');
-    sectionTitleEl.className = 'section-title';
-    sectionTitleEl.textContent = markdownGuideData.sectionTitle;
-
-    const sectionParagraphEl = document.createElement('p');
-    sectionParagraphEl.className = 'text-gray-600 mb-6';
-    sectionParagraphEl.textContent = markdownGuideData.sectionDescription;
-
-    sectionBlock.appendChild(sectionTitleEl);
-    sectionBlock.appendChild(sectionParagraphEl);
-
     const accordionContainer = document.createElement('div');
-    accordionContainer.className = 'card p-4 md:p-6';
+    accordionContainer.className = 'glass-card rounded-2xl p-4 md:p-6 hover-lift';
 
     markdownGuideData.commands.forEach(item => {
         const accordionItem = document.createElement('div');
-        accordionItem.className = 'accordion-item border-b border-gray-200 last:border-b-0';
+        accordionItem.className = 'accordion-item border-b border-gray-200 dark:border-white/10 last:border-b-0';
         accordionItem.innerHTML = `
-            <button class="accordion-button w-full text-left py-4 font-semibold dark-accent-color focus:outline-none flex justify-between items-center">
+            <button class="accordion-button w-full text-left py-4 font-semibold text-primary focus:outline-none flex justify-between items-center">
                 <span>${item.title}</span>
                 <span class="accordion-icon transform transition-transform duration-300 text-2xl font-light">+</span>
             </button>
-            <div class="accordion-content px-4 text-gray-700" style="max-height: 0px; overflow: hidden;">
+            <div class="accordion-content px-4 text-gray-700 dark:text-gray-300" style="max-height: 0px; overflow: hidden;">
                 <div class="py-4 grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                     <div class="flex flex-col">
-                        <h3 class="font-semibold mb-2">Sintaxe Markdown</h3>
+                        <h3 class="font-semibold mb-2 text-gray-800 dark:text-gray-200">Sintaxe Markdown</h3>
                         <div class="code-block h-full flex-grow">
                             <button class="copy-icon" title="Copiar sintaxe"><i class="far fa-copy"></i></button>
                             <pre><code class="language-markdown">${item.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
                         </div>
                     </div>
                     <div class="flex flex-col">
-                        <h3 class="font-semibold mb-2">Resultado</h3>
-                        <div class="preview-block h-full flex-grow p-4 border rounded-md bg-gray-50">${item.preview}</div>
+                        <h3 class="font-semibold mb-2 text-gray-800 dark:text-gray-200">Resultado</h3>
+                        <div class="preview-block h-full flex-grow p-4 border rounded-md bg-gray-50 dark:bg-slate-800 dark:border-slate-700">${item.preview}</div>
                     </div>
                 </div>
             </div>
@@ -70,8 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    sectionBlock.appendChild(accordionContainer);
-    mainContainer.appendChild(sectionBlock);
+    mainContainer.appendChild(accordionContainer);
 
     initializeAccordions('#markdown-guide');
 });
