@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Projetos: Gráfico de Gantt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* ===== Timeline do Gantt ===== */
+        .gantt-timeline-scroll {
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .gantt-grid-header {
+            display: flex;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .dark .gantt-grid-header {
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .gantt-grid-cell {
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 0.75rem;
+            padding: 0.5rem 0;
+            border-right: 1px solid rgba(226, 232, 240, 0.5);
+            font-family: monospace;
+        }
+
+        .dark .gantt-grid-cell {
+            border-right: 1px solid rgba(51, 65, 85, 0.3);
+        }
+
+        .gantt-row {
+            height: 3.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        }
+
+        .dark .gantt-row {
+            border-bottom: 1px solid rgba(51, 65, 85, 0.15);
+        }
+
+        .gantt-bar-container {
+            position: absolute;
+            height: 1.75rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-size: 0.75rem;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .gantt-bar-progress {
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.22);
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .gantt-bar-text {
+            position: relative;
+            z-index: 10;
+            padding-left: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .color-blue {
+            background-color: #3b82f6;
+        }
+
+        .color-purple {
+            background-color: #8b5cf6;
+        }
+
+        .color-green {
+            background-color: #10b981;
+        }
+
+        .color-yellow {
+            background-color: #f59e0b;
+        }
+
+        .color-pink {
+            background-color: #ec4899;
+        }
+
+        .color-red {
+            background-color: #ef4444;
+        }
+
+        /* ===== Edição Inline ===== */
+        .inline-input {
+            padding: 0.35rem 0.6rem;
+            border: 1px solid rgba(203, 213, 225, 0.9);
+            border-radius: 0.375rem;
+            background: white;
+            font-size: 0.8rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            color: #1e293b;
+        }
+
+        .inline-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+        }
+
+        .inline-input.error {
+            border-color: #ef4444;
+        }
+
+        .dark .inline-input {
+            border-color: rgba(71, 85, 105, 0.8);
+            background: rgba(15, 23, 42, 0.6);
+            color: #e2e8f0;
+        }
+
+        .dark .inline-input:focus {
+            border-color: #6366f1;
+        }
+
+        .edit-row td {
+            padding: 0 !important;
+        }
+
+        .edit-row-inner {
+            padding: 0.875rem 1rem;
+            background: rgba(99, 102, 241, 0.04);
+            border-top: 2px solid rgba(99, 102, 241, 0.3);
+            border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .dark .edit-row-inner {
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+
+        /* Botões compactos da edição inline */
+        .compact-btn-save,
+        .compact-btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.75rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1.6;
+            border-radius: 0.4rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+
+        .compact-btn-save {
+            background: #6366f1;
+            color: #fff;
+            border: 1.5px solid #6366f1;
+            box-shadow: 0 1px 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .compact-btn-save:hover {
+            background: #4f46e5;
+            border-color: #4f46e5;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.45);
+        }
+
+        .compact-btn-cancel {
+            background: transparent;
+            color: #64748b;
+            border: 1.5px solid #e2e8f0;
+        }
+
+        .compact-btn-cancel:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .dark .compact-btn-cancel {
+            color: #94a3b8;
+            border-color: #334155;
+        }
+
+        .dark .compact-btn-cancel:hover {
+            background: rgba(51, 65, 85, 0.5);
+        }
+
+        /* ===== Barra de progresso nas linhas da tabela ===== */
+        .task-progress-row {
+            transition: filter 0.15s;
+        }
+
+        .task-progress-row:hover {
+            filter: brightness(0.96);
+        }
+
+        /* ===== Linha de Hoje no Gantt — tracejada ===== */
+        .gantt-today-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            border-left: 2px dashed rgba(239, 68, 68, 0.75);
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .gantt-today-label {
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: #ef4444;
+            background: white;
+            padding: 1px 5px;
+            border-radius: 99px;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(239, 68, 68, 0.2);
+        }
+
+        .dark .gantt-today-label {
+            background: #1e293b;
+        }
+
+        .gantt-today-header-mark {
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 7px solid #ef4444;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        /* ===== Popup de Confirmação de Exclusão ===== */
+        .delete-modal-backdrop {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+        }
+
+        .delete-modal-box {
+            animation: popIn 0.18s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="antialiased bg-light dark:bg-dark text-gray-800 dark:text-gray-200">
+    <div id="header-placeholder"></div>
+
+    <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Seção de Título -->
+        <section class="text-center mb-10 pt-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-gradient mb-4">Gráfico de Gantt Online</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                Planeje cronogramas, acompanhe prazos de cursos e projetos e gerencie suas tarefas de forma visual e
+                intuitiva.
+            </p>
+        </section>
+
+        <!-- Painel de Ações do Projeto -->
+        <section class="mb-8">
+            <div class="glass-card rounded-2xl p-6 flex flex-wrap gap-4 items-center justify-between shadow-sm">
+                <!-- Ações de Nova Tarefa e Limpeza -->
+                <div class="flex flex-wrap gap-3">
+                    <button id="btn-new-task"
+                        class="px-5 py-2.5 bg-primary hover:bg-primary/95 text-white font-semibold rounded-lg flex items-center gap-2 shadow transition-all duration-300 transform hover:-translate-y-0.5">
+                        <i class="fas fa-plus"></i> Nova Tarefa
+                    </button>
+                    <button id="btn-clear-all"
+                        class="px-5 py-2.5 bg-gray-200 dark:bg-slate-700 hover:bg-red-500 dark:hover:bg-red-600 hover:text-white text-gray-700 dark:text-gray-200 font-semibold rounded-lg flex items-center gap-2 transition-all duration-300">
+                        <i class="fas fa-trash-alt"></i> Limpar Tudo
+                    </button>
+                </div>
+
+                <!-- Dropdown de Templates / Projetos de Exemplo -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="text-sm font-semibold text-gray-500"><i class="fas fa-folder-open mr-1"></i> Carregar
+                        Exemplo:</span>
+                    <button id="btn-template-estudos"
+                        class="px-4 py-2 text-xs font-semibold rounded-md border border-gray-300 dark:border-slate-600 hover:border-primary dark:hover:border-primary text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                        📚 Estudos (SQL)
+                    </button>
+                    <button id="btn-template-sprint"
+                        class="px-4 py-2 text-xs font-semibold rounded-md border border-gray-300 dark:border-slate-600 hover:border-primary dark:hover:border-primary text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">
+                        💻 Projeto Ágil (Sprint)
+                    </button>
+                </div>
+
+                <!-- Importar / Exportar -->
+                <div class="flex items-center gap-2">
+                    <button id="btn-export"
+                        class="p-2.5 bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-600 dark:text-gray-300 hover:text-primary hover:border-primary transition-colors"
+                        title="Exportar Projeto (JSON)">
+                        <i class="fas fa-file-export"></i>
+                    </button>
+                    <input type="file" id="file-import" accept=".json" class="hidden">
+                    <button id="btn-import-trigger"
+                        class="p-2.5 bg-gray-100 dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-600 dark:text-gray-300 hover:text-primary hover:border-primary transition-colors"
+                        title="Importar Projeto (JSON)">
+                        <i class="fas fa-file-import"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Área Principal do Gantt (Layout Empilhado) -->
+        <section class="flex flex-col gap-8 mb-16">
+
+            <!-- Painel de Tarefas com Edição Inline -->
+            <div class="w-full glass-card rounded-2xl shadow-sm overflow-hidden flex flex-col">
+                <div
+                    class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-200 dark:border-slate-700">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-list-check text-primary"></i> Painel de Tarefas
+                    </h2>
+                    <span id="task-counter"
+                        class="text-xs px-2 py-1 bg-primary/10 text-primary font-bold rounded-full">0 tarefas</span>
+                </div>
+                <!-- Tabela de Tarefas -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr
+                                class="border-b border-gray-200 dark:border-slate-700 text-gray-400 font-semibold text-xs">
+                                <th class="pb-2 pt-3 pl-4">Tarefa / Fase</th>
+                                <th class="pb-2 pt-3">Período</th>
+                                <th class="pb-2 pt-3 text-center">Prog.</th>
+                                <th class="pb-2 pt-3 text-right pr-4">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-table-body" class="divide-y divide-gray-100 dark:divide-slate-800/50">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="empty-tasks-message" class="text-center py-12 px-4 text-gray-400 hidden">
+                    <p class="text-5xl mb-3">📁</p>
+                    <p class="text-sm">Nenhuma tarefa adicionada.<br>Clique em <strong>+ Nova Tarefa</strong> ou
+                        carregue um exemplo acima!</p>
+                </div>
+            </div>
+
+            <!-- Timeline do Gantt -->
+            <div class="w-full glass-card rounded-2xl p-6 shadow-sm flex flex-col overflow-hidden">
+                <div class="flex items-center justify-between mb-4 border-b border-gray-200 dark:border-slate-700 pb-3">
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fas fa-chart-gantt text-primary"></i> Linha do Tempo (Gantt)
+                    </h2>
+                    <span class="text-xs text-gray-500 font-mono"><i class="fas fa-calendar-alt mr-1"></i>Visão
+                        Geral</span>
+                </div>
+                <!-- Container do Gráfico de Gantt com Rolagem Lateral -->
+                <div class="gantt-timeline-scroll w-full rounded-lg border border-gray-200 dark:border-slate-700"
+                    id="gantt-chart-container">
+                    <div class="gantt-grid-header" id="gantt-timeline-header"></div>
+                    <div id="gantt-rows-container" class="relative bg-white/40 dark:bg-slate-900/10"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- ===== Popup de Confirmação de Exclusão ===== -->
+    <div id="delete-confirm-modal"
+        class="fixed inset-0 z-[9999] flex items-center justify-center delete-modal-backdrop hidden">
+        <div class="delete-modal-box bg-white dark:bg-slate-900 w-full max-w-sm rounded-2xl p-6 mx-4 shadow-2xl border border-gray-200 dark:border-slate-800">
+            <!-- Ícone -->
+            <div
+                class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 mx-auto mb-4">
+                <i class="fas fa-trash-alt text-red-500 text-xl"></i>
+            </div>
+            <!-- Título -->
+            <h3 class="text-center text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">Confirmar Exclusão</h3>
+            <p class="text-center text-sm text-gray-500 dark:text-gray-400 mb-2">Você está prestes a excluir:</p>
+            <p id="delete-task-name"
+                class="text-center text-sm font-semibold text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-slate-800 rounded-lg px-3 py-2 mb-5 italic">
+            </p>
+            <p class="text-center text-xs text-gray-500 dark:text-gray-400 mb-5">Esta ação não pode ser desfeita.</p>
+            <!-- Botões -->
+            <div class="flex gap-3">
+                <button id="btn-cancel-delete"
+                    class="flex-1 px-4 py-2.5 border border-gray-300 dark:border-slate-600 text-gray-600 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                    Cancelar
+                </button>
+                <button id="btn-confirm-delete"
+                    class="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <i class="fas fa-trash"></i> Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="./js/main.js"></script>
+    <script src="./js/components.js"></script>
+    <!-- Script principal do Gantt -->
+    <script src="./js/gantt.js"></script>
+</body>
+
+</html>

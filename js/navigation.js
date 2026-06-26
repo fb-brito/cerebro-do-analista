@@ -16,7 +16,14 @@ export function initializeNavigation() {
                 { href: './guia-sql.html', text: 'Guia SQL' },
                 { href: './guia-markdown.html', text: 'Guia Markdown' },
                 { href: './editor-markdown.html', text: 'Editor Markdown' },
-                { href: './mapa-mental.html', text: 'Gerador de Mapa Mental' } // O link correto está aqui
+                { href: './mapa-mental.html', text: 'Gerador de Mapa Mental' }
+            ]
+        },
+        {
+            text: 'Projetos',
+            isDropdown: true,
+            sublinks: [
+                { href: './gantt.html', text: 'Gráfico de Gantt' }
             ]
         },
         { href: './paleta-cores.html', text: 'Paletas de Cores' },
