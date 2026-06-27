@@ -23,7 +23,8 @@ export function initializeNavigation() {
             text: 'Projetos',
             isDropdown: true,
             sublinks: [
-                { href: './gantt.html', text: 'Gráfico de Gantt' }
+                { href: './gantt.html', text: 'Gráfico de Gantt' },
+                { href: './kanban.html', text: 'Quadro Kanban' }
             ]
         },
         { href: './paleta-cores.html', text: 'Paletas de Cores' },
