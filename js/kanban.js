@@ -14,10 +14,11 @@ function initializeKanban() {
     let currentViews = []; // Filtros visíveis de acordo com layout
     let columnColors = {}; // Armazena as cores personalizadas das colunas
     let tagColors = {}; // Armazena as cores personalizadas das etiquetas (tags)
+    let customFields = []; // [BRANCO] Campos customizados globais
 
     // ===== Estado de Navegação e Modais =====
     let currentView = 'status'; // será preenchido dinamicamente
-    let currentLayout = 'gerenciamento'; // 'gerenciamento', 'conteudo', 'fluxo'
+    let currentLayout = 'branco'; // 'branco', 'gerenciamento', 'conteudo', 'fluxo'
     let currentCalendarDate = new Date();
 
     let activeDeleteType = null; // 'task', 'column', 'clear'
@@ -101,7 +102,11 @@ function initializeKanban() {
     }
 
     function applyLayoutVisuals() {
-        if (currentLayout === 'gerenciamento') {
+        if (currentLayout === 'branco') {
+            mainTitle.textContent = "Quadro Branco";
+            mainDesc.textContent = "Um espaço totalmente livre para você criar suas próprias regras e campos.";
+            lblPriority.textContent = "Campos Customizados";
+        } else if (currentLayout === 'gerenciamento') {
             mainTitle.textContent = "Gerenciamento de Tarefas";
             mainDesc.textContent = "Organize suas atividades diárias e sprints.";
             lblPriority.textContent = "Prioridade";
@@ -117,7 +122,22 @@ function initializeKanban() {
     }
 
     function getDefaultTemplates(layout) {
-        if (layout === 'gerenciamento') {
+        if (layout === 'branco') {
+            return {
+                views: [
+                    { id: 'status', icon: 'fa-arrow-right-long', label: 'Quadro' },
+                    { id: 'calendar', icon: 'fa-calendar-days', label: 'Calendário' }
+                ],
+                statuses: [], // Sem status inicial
+                priorities: [],
+                categories: [],
+                platforms: [],
+                healths: [],
+                tagColors: {},
+                customFields: [],
+                tasks: [] // Sem tarefas iniciais
+            };
+        } else if (layout === 'gerenciamento') {
             return {
                 views: [
                     { id: 'status', icon: 'fa-arrow-right-long', label: 'Status' },
@@ -204,7 +224,7 @@ function initializeKanban() {
         currentView = currentViews[0].id;
 
         // Controle de versão de Cache para injetar as colunas atualizadas com emojis e views do Notion
-        const CACHE_VERSION = 'v6';
+        const CACHE_VERSION = 'v7';
         if (localStorage.getItem(getStorageKey('cache_version')) !== CACHE_VERSION) {
             localStorage.removeItem(getStorageKey('tasks'));
             localStorage.removeItem(getStorageKey('statuses'));
@@ -213,6 +233,7 @@ function initializeKanban() {
             localStorage.removeItem(getStorageKey('platforms'));
             localStorage.removeItem(getStorageKey('healths'));
             localStorage.removeItem(getStorageKey('tag_colors'));
+            localStorage.removeItem(getStorageKey('custom_fields'));
             localStorage.setItem(getStorageKey('cache_version'), CACHE_VERSION);
         }
 
@@ -248,6 +269,10 @@ function initializeKanban() {
         if (storedTagColors) tagColors = JSON.parse(storedTagColors);
         else { tagColors = defs.tagColors || {}; saveTagColors(); }
 
+        const storedCustomFields = localStorage.getItem(getStorageKey('custom_fields'));
+        if (storedCustomFields) customFields = JSON.parse(storedCustomFields);
+        else { customFields = defs.customFields || []; saveCustomFields(); }
+
         applyLayoutVisuals();
         renderViewButtons();
     }
@@ -258,8 +283,9 @@ function initializeKanban() {
     function saveCategories() { localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories)); }
     function savePlatforms() { localStorage.setItem(getStorageKey('platforms'), JSON.stringify(platforms)); }
     function saveHealths() { localStorage.setItem(getStorageKey('healths'), JSON.stringify(healths)); }
-    function saveColumnColors() { localStorage.setItem(getStorageKey('column_colors'), JSON.stringify(columnColors)); }
     function saveTagColors() { localStorage.setItem(getStorageKey('tag_colors'), JSON.stringify(tagColors)); }
+    function saveColumnColors() { localStorage.setItem(getStorageKey('column_colors'), JSON.stringify(columnColors)); }
+    function saveCustomFields() { localStorage.setItem(getStorageKey('custom_fields'), JSON.stringify(customFields)); }
 
     function renderViewButtons() {
         const viewsContainer = document.getElementById('kanban-views');
@@ -403,10 +429,10 @@ function initializeKanban() {
                         <button class="btn-col-edit text-gray-400 hover:text-primary transition-colors p-1" data-col="${colValue}" title="Renomear / Mudar Cor">
                             <i class="fas fa-pen text-xs"></i>
                         </button>
-                        ${!isDefaultCol ? `<button class="btn-col-delete text-gray-400 hover:text-red-500 transition-colors p-1" data-col="${colValue}" title="Excluir Cartão"><i class="fas fa-trash-alt text-xs"></i></button>` : ''}
+                        ${!isDefaultCol ? `<button class="btn-col-delete text-gray-400 hover:text-red-500 transition-colors p-1" data-col="${colValue}" title="Excluir coluna"><i class="fas fa-trash-alt text-xs"></i></button>` : ''}
                     </div>
                 </div>
-                <button class="btn-col-add text-gray-400 hover:text-primary transition-colors p-1 shrink-0" title="Adicionar item"><i class="fas fa-plus text-xs"></i></button>
+                <button class="btn-col-add text-gray-400 hover:text-primary transition-colors p-1 shrink-0" title="Adicionar post-it"><i class="fas fa-plus text-xs"></i></button>
             `;
 
             colHeader.querySelector('.btn-col-add').addEventListener('click', e => { e.stopPropagation(); openModal(null, colValue); });
@@ -438,12 +464,24 @@ function initializeKanban() {
                 }
 
                 let tagsHTML = '';
-                if (currentView !== 'status' && currentView !== 'contentByStatus') tagsHTML += getCustomBadge(task.status, 'status');
-                if (currentView !== 'priority') tagsHTML += getCustomBadge(task.priority, 'priority');
-                if (currentView !== 'category') tagsHTML += getCustomBadge(task.category, 'category');
-                if (currentView !== 'platform' && currentView !== 'nextByPlatform') tagsHTML += getCustomBadge(task.platform, 'platform');
-                if (currentView !== 'health') tagsHTML += getCustomBadge(task.health, 'health');
-                if (currentView !== 'budget' && task.budget && task.budget !== 'Sem Orçamento') tagsHTML += `<span class="badge-status bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">R$ ${task.budget}</span>`;
+                if (currentLayout === 'branco') {
+                    if (task.customValues) {
+                        customFields.forEach(field => {
+                            const val = task.customValues[field.id];
+                            if (val) {
+                                let theme = tagColors[val] || 'default';
+                                tagsHTML += `<span class="kanban-tag-themed tag-theme-${theme}">${val}</span>`;
+                            }
+                        });
+                    }
+                } else {
+                    if (currentView !== 'status' && currentView !== 'contentByStatus') tagsHTML += getCustomBadge(task.status, 'status');
+                    if (currentView !== 'priority') tagsHTML += getCustomBadge(task.priority, 'priority');
+                    if (currentView !== 'category') tagsHTML += getCustomBadge(task.category, 'category');
+                    if (currentView !== 'platform' && currentView !== 'nextByPlatform') tagsHTML += getCustomBadge(task.platform, 'platform');
+                    if (currentView !== 'health') tagsHTML += getCustomBadge(task.health, 'health');
+                    if (currentView !== 'budget' && task.budget && task.budget !== 'Sem Orçamento') tagsHTML += `<span class="badge-status bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">R$ ${task.budget}</span>`;
+                }
 
                 cardEl.innerHTML = `
                     <div class="flex justify-between items-start gap-2">
@@ -541,13 +579,7 @@ function initializeKanban() {
             kanbanBoardContainer.appendChild(columnEl);
         });
 
-        if (currentView !== 'calendar') {
-            const addColCard = document.createElement('div');
-            addColCard.className = 'kanban-column flex flex-col items-center justify-center border border-dashed border-gray-300 dark:border-slate-800 hover:border-primary/45 hover:bg-gray-50/20 dark:hover:bg-slate-900/10 rounded-2xl p-6 min-h-[150px] max-h-[180px] shrink-0 cursor-pointer transition-colors duration-200';
-            addColCard.innerHTML = `<div class="text-gray-400 hover:text-primary flex flex-col items-center gap-2 font-semibold text-xs"><i class="fas fa-plus-circle text-xl"></i><span>Criar Cartão</span></div>`;
-            addColCard.addEventListener('click', () => openColumnModal());
-            kanbanBoardContainer.appendChild(addColCard);
-        }
+
     }
 
     function renderCalendar() {
@@ -636,28 +668,43 @@ function initializeKanban() {
         const wrapBudget = document.getElementById('wrap-budget');
         const wrapHealth = document.getElementById('wrap-health');
         const wrapCategory = document.getElementById('wrap-category');
+        const fixedFieldsWrapper = document.getElementById('fixed-fields-wrapper');
+        const dynamicCustomFieldsContainer = document.getElementById('dynamic-custom-fields-container');
+        const btnAddCustomField = document.getElementById('btn-add-custom-field');
 
         dynamicFieldsRow.classList.add('hidden');
         wrapPlatform.classList.add('hidden');
         wrapBudget.classList.add('hidden');
         wrapHealth.classList.add('hidden');
         wrapCategory.classList.add('hidden');
-
-        if (currentLayout === 'gerenciamento') {
-            wrapCategory.classList.remove('hidden');
-        } else if (currentLayout === 'conteudo') {
-            dynamicFieldsRow.classList.remove('hidden');
-            wrapPlatform.classList.remove('hidden');
-        } else if (currentLayout === 'fluxo') {
-            dynamicFieldsRow.classList.remove('hidden');
-            wrapBudget.classList.remove('hidden');
-            wrapHealth.classList.remove('hidden');
+        
+        if (currentLayout === 'branco') {
+            document.getElementById('lbl-item-status').textContent = "Coluna";
+            fixedFieldsWrapper.classList.add('hidden');
+            dynamicCustomFieldsContainer.classList.remove('hidden');
+            btnAddCustomField.classList.remove('hidden');
+            renderCustomFieldsUI(taskId);
+        } else {
+            document.getElementById('lbl-item-status').textContent = "Status";
+            fixedFieldsWrapper.classList.remove('hidden');
+            dynamicCustomFieldsContainer.classList.add('hidden');
+            btnAddCustomField.classList.add('hidden');
+            if (currentLayout === 'gerenciamento') {
+                wrapCategory.classList.remove('hidden');
+            } else if (currentLayout === 'conteudo') {
+                dynamicFieldsRow.classList.remove('hidden');
+                wrapPlatform.classList.remove('hidden');
+            } else if (currentLayout === 'fluxo') {
+                dynamicFieldsRow.classList.remove('hidden');
+                wrapBudget.classList.remove('hidden');
+                wrapHealth.classList.remove('hidden');
+            }
         }
 
         if (taskId) {
             const task = tasks.find(t => t.id === taskId);
             if (!task) return;
-            modalTitle.textContent = "Editar Item";
+            modalTitle.textContent = "Editar post-it";
             modalItemId.value = task.id;
             itemTitleInput.value = task.title || '';
             itemStatusSelect.value = task.status || statuses[0] || '';
@@ -672,7 +719,7 @@ function initializeKanban() {
             itemNotesTextarea.value = task.notes || '';
             if (btnDeleteModalItem) btnDeleteModalItem.classList.remove('hidden');
         } else {
-            modalTitle.textContent = "Novo Item do Kanban";
+            modalTitle.textContent = "Novo post-it";
             modalItemId.value = '';
             if (defaultColValue) {
                 if (currentView === 'status' || currentView === 'contentByStatus') itemStatusSelect.value = defaultColValue;
@@ -729,11 +776,32 @@ function initializeKanban() {
             assignee: itemAssigneeInput.value.trim(),
             startDate: itemStartDateInput.value,
             endDate: itemEndDateInput.value,
-            notes: itemNotesTextarea.value.trim()
+            notes: itemNotesTextarea.value.trim(),
+            customValues: {}
         };
+        
+        if (currentLayout === 'branco') {
+            customFields.forEach(field => {
+                const select = document.getElementById(`custom-field-${field.id}`);
+                if (select) {
+                    taskData.customValues[field.id] = select.value;
+                    const colorInput = document.getElementById(`custom-color-${field.id}`);
+                    if (colorInput && select.value) {
+                        tagColors[select.value] = colorInput.value;
+                    }
+                }
+            });
+        }
+
         if (taskId) {
             const idx = tasks.findIndex(t => t.id === taskId);
-            if (idx !== -1) tasks[idx] = { ...tasks[idx], ...taskData };
+            // preserve existing customValues if not in branco
+            if (idx !== -1) {
+                if (currentLayout !== 'branco' && tasks[idx].customValues) {
+                    taskData.customValues = tasks[idx].customValues;
+                }
+                tasks[idx] = { ...tasks[idx], ...taskData };
+            }
         } else {
             tasks.push({ id: Date.now().toString(), ...taskData });
         }
@@ -742,13 +810,15 @@ function initializeKanban() {
         if (statusColorInput && itemStatusSelect.value) {
             tagColors[itemStatusSelect.value] = statusColorInput.value;
         }
-        const categoryColorInput = document.getElementById('category-color-input');
-        if (categoryColorInput && itemCategorySelect.value) {
-            tagColors[itemCategorySelect.value] = categoryColorInput.value;
-        }
-        const platformColorInput = document.getElementById('platform-color-input');
-        if (platformColorInput && itemPlatformSelect.value) {
-            tagColors[itemPlatformSelect.value] = platformColorInput.value;
+        if (currentLayout !== 'branco') {
+            const categoryColorInput = document.getElementById('category-color-input');
+            if (categoryColorInput && itemCategorySelect.value) {
+                tagColors[itemCategorySelect.value] = categoryColorInput.value;
+            }
+            const platformColorInput = document.getElementById('platform-color-input');
+            if (platformColorInput && itemPlatformSelect.value) {
+                tagColors[itemPlatformSelect.value] = platformColorInput.value;
+            }
         }
         saveTagColors();
 
@@ -758,7 +828,7 @@ function initializeKanban() {
     function openColumnModal(oldName = '') {
         columnForm.reset();
         if (oldName) {
-            columnModalTitle.textContent = "Editar Cartão";
+            columnModalTitle.textContent = "Editar Coluna";
             columnModalOldName.value = oldName;
             columnNameInput.value = oldName;
             
@@ -773,7 +843,7 @@ function initializeKanban() {
                 if (tColor.updateUI) tColor.updateUI(tColor.value);
             }
         } else {
-            columnModalTitle.textContent = "Novo Cartão";
+            columnModalTitle.textContent = "Nova Coluna";
             columnModalOldName.value = '';
             columnNameInput.value = '';
             
@@ -800,7 +870,7 @@ function initializeKanban() {
         if (!newName) return;
         let colArray = (currentView === 'status' || currentView === 'contentByStatus') ? statuses : currentView === 'priority' ? priorities : categories;
 
-        if (colArray.includes(newName) && newName !== oldName) { showToast("Esse nome de cartão já existe!"); return; }
+        if (colArray.includes(newName) && newName !== oldName) { showToast("Esse nome de coluna já existe!"); return; }
         if (oldName) {
             const idx = colArray.indexOf(oldName);
             if (idx !== -1) {
@@ -837,7 +907,7 @@ function initializeKanban() {
         }
 
         if (currentView === 'status' || currentView === 'contentByStatus') saveStatuses(); else if (currentView === 'priority') savePriorities(); else saveCategories();
-        closeColumnModal(); render(); showToast(oldName ? "Cartão editado!" : "Novo cartão criado!");
+        closeColumnModal(); render(); showToast(oldName ? "Coluna editada!" : "Nova coluna criada!");
     }
 
     function openDeleteModal(idOrName, type) {
@@ -850,8 +920,8 @@ function initializeKanban() {
             deleteItemNameEl.classList.remove('hidden'); deleteModalWarning.textContent = "Esta ação não pode ser desfeita."; deleteBtnText.textContent = "Excluir";
         } else if (type === 'column') {
             activeDeleteColType = currentView;
-            deleteModalTitle.textContent = "Excluir Cartão de Grupo"; deleteModalDesc.textContent = "Você está prestes a excluir o cartão:"; deleteItemNameEl.textContent = idOrName;
-            deleteItemNameEl.classList.remove('hidden'); deleteModalWarning.textContent = "Atenção: Todos os itens de tarefas inseridos neste cartão serão deletados permanentemente."; deleteBtnText.textContent = "Excluir Cartão";
+            deleteModalTitle.textContent = "Excluir Coluna"; deleteModalDesc.textContent = "Você está prestes a excluir a coluna:"; deleteItemNameEl.textContent = idOrName;
+            deleteItemNameEl.classList.remove('hidden'); deleteModalWarning.textContent = "Atenção: Todas as tarefas inseridas nesta coluna ficarão sem a propriedade selecionada."; deleteBtnText.textContent = "Excluir Coluna";
         } else if (type === 'clear') {
             deleteModalTitle.textContent = "Limpar Todo o Kanban"; deleteModalDesc.textContent = "Você tem certeza de que deseja apagar absolutamente TODAS as tarefas deste layout?";
             deleteItemNameEl.classList.add('hidden'); deleteModalWarning.textContent = "Esta ação é irreversível e limpará todo o histórico deste quadro."; deleteBtnText.textContent = "Limpar Tudo";
@@ -897,7 +967,9 @@ function initializeKanban() {
         });
     });
 
-    btnNewItem.addEventListener('click', () => openModal());
+    btnNewItem.addEventListener('click', () => {
+        openColumnModal();
+    });
     btnCloseModal.addEventListener('click', closeModal);
     btnCancelModal.addEventListener('click', closeModal);
     itemForm.addEventListener('submit', handleFormSubmit);
@@ -946,6 +1018,8 @@ function initializeKanban() {
         
         const pickers = document.querySelectorAll('.custom-color-picker-container');
         pickers.forEach(container => {
+            if (container.querySelector('input')) return; // Already initialized
+            
             const inputId = container.getAttribute('data-input-id');
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
@@ -1055,7 +1129,195 @@ function initializeKanban() {
         }
     });
 
-    loadData(); render();
+    // ===== Lógica de Campos Dinâmicos (Quadro Branco) =====
+    let editingFieldId = null;
+
+    function renderCustomFieldsUI(taskId) {
+        const container = document.getElementById('dynamic-custom-fields-container');
+        container.innerHTML = '';
+        const task = taskId ? tasks.find(t => t.id === taskId) : null;
+        const taskValues = task && task.customValues ? task.customValues : {};
+
+        customFields.forEach(field => {
+            const fieldWrapper = document.createElement('div');
+            fieldWrapper.className = 'mb-4 p-3 border border-gray-100 dark:border-slate-800 rounded-lg bg-gray-50/50 dark:bg-slate-800/50 relative';
+            
+            // Header: Title and Actions
+            const header = document.createElement('div');
+            header.className = 'flex justify-between items-center mb-2';
+            
+            const titleCont = document.createElement('div');
+            titleCont.className = 'flex items-center gap-2 flex-1';
+            
+            if (editingFieldId === field.id) {
+                const inputEl = document.createElement('input');
+                inputEl.type = 'text';
+                inputEl.className = 'text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider bg-white dark:bg-slate-700 border border-primary rounded px-2 py-1 focus:outline-none w-full max-w-[200px]';
+                inputEl.value = field.name;
+                titleCont.appendChild(inputEl);
+                
+                const saveEdit = () => {
+                    const newName = inputEl.value.trim();
+                    if (newName) {
+                        field.name = newName;
+                        saveCustomFields();
+                    }
+                    editingFieldId = null;
+                    renderCustomFieldsUI(taskId);
+                };
+                inputEl.addEventListener('blur', saveEdit);
+                inputEl.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') saveEdit();
+                    if (e.key === 'Escape') {
+                        editingFieldId = null;
+                        renderCustomFieldsUI(taskId);
+                    }
+                });
+                setTimeout(() => inputEl.focus(), 10);
+            } else {
+                const label = document.createElement('label');
+                label.className = 'block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer';
+                label.textContent = field.name;
+                label.title = "Clique no lápis para renomear";
+                titleCont.appendChild(label);
+                
+                const btnEditTitle = document.createElement('button');
+                btnEditTitle.type = 'button';
+                btnEditTitle.className = 'text-gray-400 hover:text-primary transition-colors';
+                btnEditTitle.innerHTML = '<i class="fas fa-pencil-alt text-[10px]"></i>';
+                btnEditTitle.onclick = () => {
+                    editingFieldId = field.id;
+                    renderCustomFieldsUI(taskId);
+                };
+                titleCont.appendChild(btnEditTitle);
+            }
+            
+            const btnDeleteField = document.createElement('button');
+            btnDeleteField.type = 'button';
+            btnDeleteField.className = 'text-gray-400 hover:text-rose-500 transition-colors ml-auto';
+            btnDeleteField.innerHTML = '<i class="fas fa-trash-alt text-[10px]"></i>';
+            btnDeleteField.onclick = () => {
+                if(confirm(`Tem certeza que deseja excluir a propriedade "${field.name}" e todos os seus valores em todos os cartões?`)) {
+                    customFields = customFields.filter(f => f.id !== field.id);
+                    tasks.forEach(t => {
+                        if (t.customValues) delete t.customValues[field.id];
+                    });
+                    saveTasks();
+                    saveCustomFields();
+                    renderCustomFieldsUI(taskId);
+                }
+            };
+            
+            header.appendChild(titleCont);
+            header.appendChild(btnDeleteField);
+            fieldWrapper.appendChild(header);
+            
+            // Body: Select and Add Option
+            const bodyCont = document.createElement('div');
+            bodyCont.className = 'flex flex-col gap-2';
+            
+            const rowCont = document.createElement('div');
+            rowCont.className = 'flex items-center gap-2 w-full';
+            
+            const select = document.createElement('select');
+            select.className = 'flex-1 px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 focus:outline-none focus:border-primary text-sm';
+            select.id = `custom-field-${field.id}`;
+            select.innerHTML = '<option value="">(Vazio)</option>';
+            
+            field.options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                if (taskValues[field.id] === opt) option.selected = true;
+                select.appendChild(option);
+            });
+            rowCont.appendChild(select);
+            
+            // Re-use color picker logic (dummy input for now, we attach it manually)
+            const colorContainer = document.createElement('div');
+            colorContainer.className = 'custom-color-picker-container';
+            colorContainer.dataset.inputId = `custom-color-${field.id}`;
+            rowCont.appendChild(colorContainer);
+            
+            const btnAddOpt = document.createElement('button');
+            btnAddOpt.type = 'button';
+            btnAddOpt.className = 'px-3 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-lg text-sm font-semibold transition-colors shrink-0';
+            btnAddOpt.textContent = '+ Subcampo';
+            btnAddOpt.onclick = () => {
+                const inputOpt = document.createElement('input');
+                inputOpt.type = 'text';
+                inputOpt.className = 'px-3 py-1.5 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:border-primary text-sm w-32 shadow-sm';
+                inputOpt.placeholder = 'Novo subcampo';
+                
+                const saveOpt = () => {
+                    const newOpt = inputOpt.value.trim();
+                    if (newOpt && !field.options.includes(newOpt)) {
+                        field.options.push(newOpt);
+                        saveCustomFields();
+                        const option = document.createElement('option');
+                        option.value = newOpt;
+                        option.textContent = newOpt;
+                        select.appendChild(option);
+                        select.value = newOpt;
+                    }
+                    if (inputOpt.parentNode) {
+                        rowCont.replaceChild(btnAddOpt, inputOpt);
+                    }
+                };
+
+                inputOpt.addEventListener('blur', saveOpt);
+                inputOpt.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') saveOpt();
+                    if (e.key === 'Escape' && inputOpt.parentNode) {
+                        rowCont.replaceChild(btnAddOpt, inputOpt);
+                    }
+                });
+                
+                rowCont.replaceChild(inputOpt, btnAddOpt);
+                setTimeout(() => inputOpt.focus(), 10);
+            };
+            rowCont.appendChild(btnAddOpt);
+            
+            bodyCont.appendChild(rowCont);
+            fieldWrapper.appendChild(bodyCont);
+            container.appendChild(fieldWrapper);
+            
+            // Initialize Color Picker for this field
+            initColorPickers(); // Will attach to the new container
+            const colorInput = document.getElementById(`custom-color-${field.id}`);
+            if (colorInput) {
+                const currentOpt = select.value;
+                if (currentOpt && tagColors[currentOpt]) {
+                    colorInput.value = tagColors[currentOpt];
+                    if (colorInput.updateUI) colorInput.updateUI(colorInput.value);
+                }
+                
+                select.addEventListener('change', () => {
+                    if (select.value && tagColors[select.value]) {
+                        colorInput.value = tagColors[select.value];
+                        if (colorInput.updateUI) colorInput.updateUI(colorInput.value);
+                    } else if (colorInput.updateUI) {
+                        colorInput.updateUI('default');
+                    }
+                });
+            }
+        });
+    }
+
+    const btnAddCustomField = document.getElementById('btn-add-custom-field');
+    if (btnAddCustomField) {
+        btnAddCustomField.addEventListener('click', () => {
+            const newField = {
+                id: 'cf_' + Date.now(),
+                name: 'Novo Campo',
+                options: []
+            };
+            customFields.push(newField);
+            saveCustomFields();
+            editingFieldId = newField.id;
+            renderCustomFieldsUI(modalItemId.value);
+        });
+    }
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeKanban);
