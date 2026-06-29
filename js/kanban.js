@@ -942,7 +942,14 @@ function initializeKanban() {
             else if (activeDeleteColType === 'category') { categories = categories.filter(c => c !== cName); saveCategories(); tasks = tasks.filter(t => t.category !== cName); }
             saveTasks(); showToast("Cartão e tarefas anexadas excluídos!");
         } else if (activeDeleteType === 'clear') {
-            tasks = []; saveTasks(); showToast("Quadro atual limpo!");
+            tasks = []; saveTasks(); 
+            if (currentLayout === 'branco') {
+                statuses = []; saveStatuses();
+                customFields = []; saveCustomFields();
+                tagColors = {}; saveTagColors();
+                columnColors = {}; saveColumnColors();
+            }
+            showToast("Quadro atual limpo!");
         }
         closeDeleteModal(); render();
     }
@@ -988,17 +995,106 @@ function initializeKanban() {
     btnClearKanban.addEventListener('click', () => openDeleteModal(null, 'clear'));
 
     btnExportKanban.addEventListener('click', () => {
-        if (!tasks.length) return showToast("Sem tarefas para exportar.");
-        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(tasks, null, 2));
+        if (!tasks.length && !statuses.length) return showToast("Sem dados para exportar.");
+        const exportData = {
+            tasks: tasks,
+            statuses: statuses,
+            priorities: priorities,
+            categories: categories,
+            platforms: platforms,
+            healths: healths,
+            columnColors: columnColors,
+            tagColors: tagColors,
+            customFields: customFields
+        };
+        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportData, null, 2));
         const a = document.createElement('a'); a.href = dataUri; a.download = `kanban-${currentLayout}-export.json`; a.click();
     });
     btnImportKanbanTrigger.addEventListener('click', () => fileImportKanban.click());
     fileImportKanban.addEventListener('change', e => {
+        if (!e.target.files || !e.target.files[0]) return;
         const fr = new FileReader();
         fr.onload = ev => {
-            try { const p = JSON.parse(ev.target.result); if (Array.isArray(p)) { tasks = p; saveTasks(); render(); showToast("Tarefas importadas!"); } } catch { showToast("Erro de arquivo."); }
+            try { 
+                const p = JSON.parse(ev.target.result); 
+                
+                let importedTasks = [];
+                let isLegacy = false;
+
+                if (Array.isArray(p)) { 
+                    importedTasks = p; 
+                    isLegacy = true;
+                } else if (p && typeof p === 'object' && Array.isArray(p.tasks)) {
+                    importedTasks = p.tasks;
+                    statuses = p.statuses || [];
+                    priorities = p.priorities || [];
+                    categories = p.categories || [];
+                    platforms = p.platforms || [];
+                    healths = p.healths || [];
+                    columnColors = p.columnColors || {};
+                    tagColors = p.tagColors || {};
+                    customFields = p.customFields || [];
+                } else {
+                    return showToast("Formato de arquivo inválido.");
+                }
+
+                tasks = importedTasks; saveTasks(); 
+
+                if (isLegacy) {
+                    let changedStatuses = false;
+                    let changedPriorities = false;
+                    let changedCategories = false;
+                    let changedPlatforms = false;
+                    let changedHealths = false;
+                    let changedCustomFields = false;
+
+                    tasks.forEach(t => {
+                        if (t.status && !statuses.includes(t.status)) { statuses.push(t.status); changedStatuses = true; }
+                        if (t.priority && !priorities.includes(t.priority)) { priorities.push(t.priority); changedPriorities = true; }
+                        if (t.category && !categories.includes(t.category)) { categories.push(t.category); changedCategories = true; }
+                        if (t.platform && !platforms.includes(t.platform)) { platforms.push(t.platform); changedPlatforms = true; }
+                        if (t.health && !healths.includes(t.health)) { healths.push(t.health); changedHealths = true; }
+                        
+                        if (t.customValues) {
+                            Object.keys(t.customValues).forEach(cfId => {
+                                let cf = customFields.find(f => f.id === cfId);
+                                if (!cf) {
+                                    cf = { id: cfId, name: 'Campo Customizado', options: [] };
+                                    customFields.push(cf);
+                                    changedCustomFields = true;
+                                }
+                                const val = t.customValues[cfId];
+                                if (val && !cf.options.includes(val)) {
+                                    cf.options.push(val);
+                                    changedCustomFields = true;
+                                }
+                            });
+                        }
+                    });
+
+                    if (changedStatuses) saveStatuses();
+                    if (changedPriorities) savePriorities();
+                    if (changedCategories) saveCategories();
+                    if (changedPlatforms) savePlatforms();
+                    if (changedHealths) saveHealths();
+                    if (changedCustomFields) saveCustomFields();
+                } else {
+                    saveStatuses();
+                    savePriorities();
+                    saveCategories();
+                    savePlatforms();
+                    saveHealths();
+                    saveColumnColors();
+                    saveTagColors();
+                    saveCustomFields();
+                }
+
+                render(); 
+                showToast("Kanban importado com sucesso!"); 
+            } catch (err) { console.error(err); showToast("Erro de arquivo."); }
         };
         fr.readAsText(e.target.files[0]);
+        e.target.value = ''; // reseta para permitir mesma seleção novamente
     });
 
     btnCalendarPrev.addEventListener('click', () => { currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1); renderCalendar(); });
