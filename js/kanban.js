@@ -273,109 +273,6 @@ function initializeKanban() {
         if (storedCustomFields) customFields = JSON.parse(storedCustomFields);
         else { customFields = defs.customFields || []; saveCustomFields(); }
 
-        if (currentLayout === 'gerenciamento') {
-            let changed = false;
-            let tasksChanged = false;
-
-            const cfStatusIndex = customFields.findIndex(f => f.id === 'status');
-            if (cfStatusIndex !== -1) {
-                customFields.splice(cfStatusIndex, 1);
-                changed = true;
-            }
-
-            // Deduplicate and enforce 'priority'
-            let sysPriIdx = customFields.findIndex(f => f.id === 'priority');
-            const manPriIdx = customFields.findIndex(f => f.id !== 'priority' && f.name && f.name.toLowerCase() === 'prioridade');
-
-            if (sysPriIdx === -1 && manPriIdx === -1) {
-                customFields.push({ id: 'priority', name: 'Prioridade', options: [...priorities] });
-                changed = true;
-            } else if (manPriIdx !== -1) {
-                const manualField = customFields[manPriIdx];
-                if (sysPriIdx === -1) {
-                    // Convert manual to system
-                    const oldId = manualField.id;
-                    manualField.id = 'priority';
-                    tasks.forEach(t => {
-                        if (t.customValues && t.customValues[oldId]) {
-                            t.customValues['priority'] = t.customValues[oldId];
-                            t.priority = t.customValues[oldId];
-                            delete t.customValues[oldId];
-                            tasksChanged = true;
-                        }
-                    });
-                    changed = true;
-                } else {
-                    // Both exist: merge manual into system and delete manual
-                    const sysField = customFields[sysPriIdx];
-                    manualField.options.forEach(opt => {
-                        if (!sysField.options.includes(opt)) sysField.options.push(opt);
-                    });
-                    tasks.forEach(t => {
-                        if (t.customValues && t.customValues[manualField.id]) {
-                            if (!t.customValues['priority'] || t.customValues['priority'] === '(Vazio)') {
-                                t.customValues['priority'] = t.customValues[manualField.id];
-                                t.priority = t.customValues[manualField.id];
-                            }
-                            delete t.customValues[manualField.id];
-                            tasksChanged = true;
-                        }
-                    });
-                    customFields.splice(manPriIdx, 1);
-                    changed = true;
-                }
-            }
-
-            // Deduplicate and enforce 'category'
-            let sysCatIdx = customFields.findIndex(f => f.id === 'category');
-            const manCatIdx = customFields.findIndex(f => f.id !== 'category' && f.name && f.name.toLowerCase() === 'categoria');
-
-            if (sysCatIdx === -1 && manCatIdx === -1) {
-                customFields.push({ id: 'category', name: 'Categoria', options: [...categories] });
-                changed = true;
-            } else if (manCatIdx !== -1) {
-                const manualField = customFields[manCatIdx];
-                // Recalculate sysCatIdx because splicing above might have shifted indexes
-                sysCatIdx = customFields.findIndex(f => f.id === 'category');
-                
-                if (sysCatIdx === -1) {
-                    const oldId = manualField.id;
-                    manualField.id = 'category';
-                    tasks.forEach(t => {
-                        if (t.customValues && t.customValues[oldId]) {
-                            t.customValues['category'] = t.customValues[oldId];
-                            t.category = t.customValues[oldId];
-                            delete t.customValues[oldId];
-                            tasksChanged = true;
-                        }
-                    });
-                    changed = true;
-                } else {
-                    const sysField = customFields[sysCatIdx];
-                    manualField.options.forEach(opt => {
-                        if (!sysField.options.includes(opt)) sysField.options.push(opt);
-                    });
-                    tasks.forEach(t => {
-                        if (t.customValues && t.customValues[manualField.id]) {
-                            if (!t.customValues['category'] || t.customValues['category'] === '(Vazio)') {
-                                t.customValues['category'] = t.customValues[manualField.id];
-                                t.category = t.customValues[manualField.id];
-                            }
-                            delete t.customValues[manualField.id];
-                            tasksChanged = true;
-                        }
-                    });
-                    // Find it again since indexes might have shifted
-                    const currentManCatIdx = customFields.findIndex(f => f.id === manualField.id);
-                    if (currentManCatIdx !== -1) customFields.splice(currentManCatIdx, 1);
-                    changed = true;
-                }
-            }
-
-            if (changed) saveCustomFields();
-            if (tasksChanged) saveTasks();
-        }
-
         applyLayoutVisuals();
         renderViewButtons();
     }
@@ -388,17 +285,7 @@ function initializeKanban() {
     function saveHealths() { localStorage.setItem(getStorageKey('healths'), JSON.stringify(healths)); }
     function saveTagColors() { localStorage.setItem(getStorageKey('tag_colors'), JSON.stringify(tagColors)); }
     function saveColumnColors() { localStorage.setItem(getStorageKey('column_colors'), JSON.stringify(columnColors)); }
-    function saveCustomFields() { 
-        if (currentLayout === 'gerenciamento') {
-            const cfStatus = customFields.find(f => f.id === 'status');
-            if (cfStatus) { statuses = cfStatus.options; saveStatuses(); }
-            const cfPriority = customFields.find(f => f.id === 'priority');
-            if (cfPriority) { priorities = cfPriority.options; savePriorities(); }
-            const cfCategory = customFields.find(f => f.id === 'category');
-            if (cfCategory) { categories = cfCategory.options; saveCategories(); }
-        }
-        localStorage.setItem(getStorageKey('custom_fields'), JSON.stringify(customFields)); 
-    }
+    function saveCustomFields() { localStorage.setItem(getStorageKey('custom_fields'), JSON.stringify(customFields)); }
 
     function renderViewButtons() {
         const viewsContainer = document.getElementById('kanban-views');
@@ -408,14 +295,7 @@ function initializeKanban() {
             btn.className = 'view-btn px-4 py-2 text-sm font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-600 dark:text-gray-300 flex items-center gap-2 transition-all';
             if (v.id === currentView) btn.classList.add('active-view');
             btn.setAttribute('data-view', v.id);
-            
-            let label = v.label;
-            if (currentLayout === 'gerenciamento') {
-                const cf = customFields.find(f => f.id === v.id);
-                if (cf) label = cf.name;
-            }
-            
-            btn.innerHTML = `<i class="fas ${v.icon}"></i> ${label}`;
+            btn.innerHTML = `<i class="fas ${v.icon}"></i> ${v.label}`;
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active-view'));
                 btn.classList.add('active-view');
@@ -584,10 +464,9 @@ function initializeKanban() {
                 }
 
                 let tagsHTML = '';
-                if (currentLayout === 'branco' || currentLayout === 'gerenciamento') {
+                if (currentLayout === 'branco') {
                     if (task.customValues) {
                         customFields.forEach(field => {
-                            if (currentLayout === 'gerenciamento' && ['priority', 'category'].includes(field.id)) return;
                             const val = task.customValues[field.id];
                             if (val) {
                                 let theme = tagColors[val] || 'default';
@@ -595,8 +474,7 @@ function initializeKanban() {
                             }
                         });
                     }
-                } 
-                if (currentLayout !== 'branco') {
+                } else {
                     if (currentView !== 'status' && currentView !== 'contentByStatus') tagsHTML += getCustomBadge(task.status, 'status');
                     if (currentView !== 'priority') tagsHTML += getCustomBadge(task.priority, 'priority');
                     if (currentView !== 'category') tagsHTML += getCustomBadge(task.category, 'category');
@@ -678,21 +556,6 @@ function initializeKanban() {
                                 else if (currentView === 'category') saveCategories();
                                 else if (currentView === 'platform' || currentView === 'nextByPlatform') savePlatforms();
                                 else if (currentView === 'health') saveHealths();
-                                
-                                if (currentLayout === 'gerenciamento') {
-                                    if (currentView === 'status') {
-                                        const cf = customFields.find(f => f.id === 'status');
-                                        if (cf) cf.options = [...statuses];
-                                    } else if (currentView === 'priority') {
-                                        const cf = customFields.find(f => f.id === 'priority');
-                                        if (cf) cf.options = [...priorities];
-                                    } else if (currentView === 'category') {
-                                        const cf = customFields.find(f => f.id === 'category');
-                                        if (cf) cf.options = [...categories];
-                                    }
-                                    saveCustomFields();
-                                }
-                                
                                 render();
                             }
                         }
@@ -815,37 +678,20 @@ function initializeKanban() {
         wrapHealth.classList.add('hidden');
         wrapCategory.classList.add('hidden');
         
-        const wrapStatus = document.getElementById('wrap-status');
-        if (wrapStatus) wrapStatus.classList.remove('hidden');
-
-        let newTaskValues = null;
-        if (currentLayout === 'branco' || currentLayout === 'gerenciamento') {
+        if (currentLayout === 'branco') {
             document.getElementById('lbl-item-status').textContent = "Coluna";
             fixedFieldsWrapper.classList.add('hidden');
             dynamicCustomFieldsContainer.classList.remove('hidden');
             btnAddCustomField.classList.remove('hidden');
-            
-            if (currentLayout === 'gerenciamento') {
-                if (taskId) {
-                    const task = tasks.find(t => t.id === taskId);
-                    if (task) {
-                        if (!task.customValues) task.customValues = {};
-                        task.customValues['priority'] = task.priority || priorities[3] || priorities[0] || '';
-                        task.customValues['category'] = task.category || categories[3] || categories[0] || '';
-                    }
-                } else {
-                    newTaskValues = {};
-                    newTaskValues['priority'] = (currentView === 'priority' ? defaultColValue : priorities[0]) || '';
-                    newTaskValues['category'] = (currentView === 'category' ? defaultColValue : categories[0]) || '';
-                }
-            }
-            renderCustomFieldsUI(taskId, newTaskValues, true);
+            renderCustomFieldsUI(taskId);
         } else {
             document.getElementById('lbl-item-status').textContent = "Status";
             fixedFieldsWrapper.classList.remove('hidden');
             dynamicCustomFieldsContainer.classList.add('hidden');
             btnAddCustomField.classList.add('hidden');
-            if (currentLayout === 'conteudo') {
+            if (currentLayout === 'gerenciamento') {
+                wrapCategory.classList.remove('hidden');
+            } else if (currentLayout === 'conteudo') {
                 dynamicFieldsRow.classList.remove('hidden');
                 wrapPlatform.classList.remove('hidden');
             } else if (currentLayout === 'fluxo') {
@@ -934,7 +780,7 @@ function initializeKanban() {
             customValues: {}
         };
         
-        if (currentLayout === 'branco' || currentLayout === 'gerenciamento') {
+        if (currentLayout === 'branco') {
             customFields.forEach(field => {
                 const select = document.getElementById(`custom-field-${field.id}`);
                 if (select) {
@@ -945,11 +791,6 @@ function initializeKanban() {
                     }
                 }
             });
-            if (currentLayout === 'gerenciamento') {
-                taskData.status = itemStatusSelect.value;
-                taskData.priority = taskData.customValues['priority'] || '';
-                taskData.category = taskData.customValues['category'] || '';
-            }
         }
 
         if (taskId) {
@@ -1066,21 +907,6 @@ function initializeKanban() {
         }
 
         if (currentView === 'status' || currentView === 'contentByStatus') saveStatuses(); else if (currentView === 'priority') savePriorities(); else saveCategories();
-        
-        if (currentLayout === 'gerenciamento') {
-            if (currentView === 'status') {
-                const cf = customFields.find(f => f.id === 'status');
-                if (cf) cf.options = [...statuses];
-            } else if (currentView === 'priority') {
-                const cf = customFields.find(f => f.id === 'priority');
-                if (cf) cf.options = [...priorities];
-            } else if (currentView === 'category') {
-                const cf = customFields.find(f => f.id === 'category');
-                if (cf) cf.options = [...categories];
-            }
-            saveCustomFields();
-        }
-        
         closeColumnModal(); render(); showToast(oldName ? "Coluna editada!" : "Nova coluna criada!");
     }
 
@@ -1114,21 +940,6 @@ function initializeKanban() {
             if (activeDeleteColType === 'status' || activeDeleteColType === 'contentByStatus') { statuses = statuses.filter(s => s !== cName); saveStatuses(); tasks = tasks.filter(t => t.status !== cName); }
             else if (activeDeleteColType === 'priority') { priorities = priorities.filter(p => p !== cName); savePriorities(); tasks = tasks.filter(t => t.priority !== cName); }
             else if (activeDeleteColType === 'category') { categories = categories.filter(c => c !== cName); saveCategories(); tasks = tasks.filter(t => t.category !== cName); }
-            
-            if (currentLayout === 'gerenciamento') {
-                if (activeDeleteColType === 'status' || activeDeleteColType === 'contentByStatus') {
-                    const cf = customFields.find(f => f.id === 'status');
-                    if (cf) cf.options = [...statuses];
-                } else if (activeDeleteColType === 'priority') {
-                    const cf = customFields.find(f => f.id === 'priority');
-                    if (cf) cf.options = [...priorities];
-                } else if (activeDeleteColType === 'category') {
-                    const cf = customFields.find(f => f.id === 'category');
-                    if (cf) cf.options = [...categories];
-                }
-                saveCustomFields();
-            }
-            
             saveTasks(); showToast("Cartão e tarefas anexadas excluídos!");
         } else if (activeDeleteType === 'clear') {
             tasks = []; saveTasks(); 
@@ -1417,21 +1228,11 @@ function initializeKanban() {
     // ===== Lógica de Campos Dinâmicos (Quadro Branco) =====
     let editingFieldId = null;
 
-    function renderCustomFieldsUI(taskId, newTaskValues = null, isFreshOpen = false) {
+    function renderCustomFieldsUI(taskId) {
         const container = document.getElementById('dynamic-custom-fields-container');
-        
-        let currentDomValues = {};
-        if (!isFreshOpen) {
-            customFields.forEach(field => {
-                const select = document.getElementById(`custom-field-${field.id}`);
-                if (select) currentDomValues[field.id] = select.value;
-            });
-        }
-        
         container.innerHTML = '';
         const task = taskId ? tasks.find(t => t.id === taskId) : null;
-        let taskValues = newTaskValues ? newTaskValues : (task && task.customValues ? task.customValues : {});
-        taskValues = { ...taskValues, ...currentDomValues };
+        const taskValues = task && task.customValues ? task.customValues : {};
 
         customFields.forEach(field => {
             const fieldWrapper = document.createElement('div');
