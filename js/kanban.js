@@ -140,7 +140,7 @@ function initializeKanban() {
         } else if (layout === 'gerenciamento') {
             return {
                 views: [
-                    { id: 'status', icon: 'fa-arrow-right-long', label: 'Status' },
+                    { id: 'status', icon: 'fa-arrow-right-long', label: 'Quadro' },
                     { id: 'priority', icon: 'fa-arrow-up-long', label: 'Prioridade' },
                     { id: 'category', icon: 'fa-tags', label: 'Categorias' },
                     { id: 'calendar', icon: 'fa-calendar-days', label: 'Calendário' }
@@ -161,7 +161,7 @@ function initializeKanban() {
         } else if (layout === 'conteudo') {
             return {
                 views: [
-                    { id: 'status', icon: 'fa-arrow-right-long', label: 'Fluxo de status' },
+                    { id: 'status', icon: 'fa-arrow-right-long', label: 'Quadro' },
                     { id: 'platform', icon: 'fa-desktop', label: 'Plataforma' },
                     { id: 'priority', icon: 'fa-arrow-up-long', label: 'Prioridade' },
                     { id: 'calendar', icon: 'fa-calendar-days', label: 'Calendário' },
@@ -193,7 +193,7 @@ function initializeKanban() {
         } else if (layout === 'fluxo') {
             return {
                 views: [
-                    { id: 'status', icon: 'fa-project-diagram', label: 'Fluxo' },
+                    { id: 'status', icon: 'fa-project-diagram', label: 'Quadro' },
                     { id: 'priority', icon: 'fa-arrow-up-long', label: 'Prioridade' },
                     { id: 'budget', icon: 'fa-money-bill', label: 'Orçamento' },
                     { id: 'health', icon: 'fa-heartbeat', label: 'Saúde do projeto' },
