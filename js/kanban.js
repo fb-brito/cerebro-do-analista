@@ -273,6 +273,72 @@ function initializeKanban() {
         if (storedCustomFields) customFields = JSON.parse(storedCustomFields);
         else { customFields = defs.customFields || []; saveCustomFields(); }
 
+        // --- INÍCIO: Sincronização e Deduplicação (Gerenciamento) ---
+        if (currentLayout === 'gerenciamento') {
+            let tasksChanged = false;
+            let customFieldsChanged = false;
+
+            const syncField = (sysId, sysName, sysGlobalArray, saveGlobalFunc) => {
+                let sysF = customFields.find(f => f.id === sysId);
+                const manIdx = customFields.findIndex(f => f.id !== sysId && f.name && f.name.toLowerCase() === sysName.toLowerCase());
+                
+                if (manIdx !== -1) {
+                    const manF = customFields[manIdx];
+                    const oldId = manF.id;
+                    if (!sysF) {
+                        manF.id = sysId;
+                        sysF = manF;
+                        customFieldsChanged = true;
+                        tasks.forEach(t => {
+                            if (t.customValues && t.customValues[oldId]) {
+                                t.customValues[sysId] = t.customValues[oldId];
+                                t[sysId] = t.customValues[sysId];
+                                delete t.customValues[oldId];
+                                tasksChanged = true;
+                            }
+                        });
+                    } else {
+                        manF.options.forEach(opt => {
+                            if (!sysF.options.includes(opt)) sysF.options.push(opt);
+                        });
+                        customFields.splice(manIdx, 1);
+                        customFieldsChanged = true;
+                        tasks.forEach(t => {
+                            if (t.customValues && t.customValues[oldId]) {
+                                if (!t.customValues[sysId]) {
+                                    t.customValues[sysId] = t.customValues[oldId];
+                                    t[sysId] = t.customValues[sysId];
+                                }
+                                delete t.customValues[oldId];
+                                tasksChanged = true;
+                            }
+                        });
+                    }
+                }
+                
+                if (!sysF) {
+                    sysF = { id: sysId, name: sysName, options: [...sysGlobalArray] };
+                    customFields.push(sysF);
+                    customFieldsChanged = true;
+                }
+                
+                if (sysF && sysF.options) {
+                    // Sync options to global array to fix filter rendering
+                    sysF.options.forEach(opt => {
+                        if (!sysGlobalArray.includes(opt)) sysGlobalArray.push(opt);
+                    });
+                    saveGlobalFunc();
+                }
+            };
+
+            syncField('priority', 'Prioridade', priorities, savePriorities);
+            syncField('category', 'Categoria', categories, saveCategories);
+
+            if (tasksChanged) saveTasks();
+            if (customFieldsChanged) saveCustomFields();
+        }
+        // --- FIM: Sincronização e Deduplicação ---
+
         applyLayoutVisuals();
         renderViewButtons();
     }
@@ -387,8 +453,14 @@ function initializeKanban() {
         kanbanBoardContainer.innerHTML = '';
         let columns = [];
         if (currentView === 'status' || currentView === 'contentByStatus') columns = statuses;
-        else if (currentView === 'priority') columns = priorities;
-        else if (currentView === 'category') columns = categories;
+        else if (currentView === 'priority') {
+            columns = priorities.length > 0 ? [...priorities] : ['Alto', 'Média', 'Baixo'];
+            if (!columns.includes('Sem Prioridade')) columns.push('Sem Prioridade');
+        }
+        else if (currentView === 'category') {
+            columns = categories.length > 0 ? [...categories] : [];
+            if (!columns.includes('Outros')) columns.push('Outros');
+        }
         else if (currentView === 'platform' || currentView === 'nextByPlatform') columns = platforms;
         else if (currentView === 'health') columns = healths;
         else if (currentView === 'budget') columns = Array.from(new Set(tasks.map(t => t.budget || 'Sem Orçamento')));
@@ -1089,6 +1161,7 @@ function initializeKanban() {
                     saveCustomFields();
                 }
 
+                loadData(); // Garante que a sincronização e deduplicação ocorram logo após a importação!
                 render(); 
                 showToast("Kanban importado com sucesso!"); 
             } catch (err) { console.error(err); showToast("Erro de arquivo."); }
@@ -1349,6 +1422,17 @@ function initializeKanban() {
                     const newOpt = inputOpt.value.trim();
                     if (newOpt && !field.options.includes(newOpt)) {
                         field.options.push(newOpt);
+                        
+                        if (currentLayout === 'gerenciamento') {
+                            if (field.id === 'priority') {
+                                if (!priorities.includes(newOpt)) priorities.push(newOpt);
+                                savePriorities();
+                            } else if (field.id === 'category') {
+                                if (!categories.includes(newOpt)) categories.push(newOpt);
+                                saveCategories();
+                            }
+                        }
+
                         saveCustomFields();
                         const option = document.createElement('option');
                         option.value = newOpt;
