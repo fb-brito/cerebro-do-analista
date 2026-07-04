@@ -590,7 +590,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" id="status-container-global">
                     <div id="wrap-status">
                         <label id="lbl-item-status" for="item-status"
-                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Status</label>
+                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Coluna</label>
                         <div class="flex items-center gap-2">
                             <select id="item-status"
                                 class="flex-1 px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:border-primary text-sm">
@@ -610,29 +610,8 @@
 
                 <!-- Campos Fixos (Outros Layouts) -->
                 <div id="fixed-fields-wrapper" class="space-y-4">
-                    <!-- Prioridade -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div id="wrap-priority">
-                            <label id="lbl-item-priority" for="item-priority"
-                                class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Prioridade</label>
-                            <select id="item-priority"
-                                class="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:border-primary text-sm">
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Campos Específicos Ocultos (Plataforma, Orçamento, Saúde) -->
+                    <!-- Orçamento -->
                     <div id="dynamic-fields-row" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
-                        <div id="wrap-platform" class="hidden">
-                            <label for="item-platform"
-                                class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Plataforma</label>
-                            <div class="flex items-center gap-2">
-                                <select id="item-platform"
-                                    class="flex-1 px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:border-primary text-sm">
-                                </select>
-                                <div class="custom-color-picker-container" data-input-id="platform-color-input"></div>
-                            </div>
-                        </div>
                         <div id="wrap-budget" class="hidden">
                             <label for="item-budget"
                                 class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Orçamento</label>
@@ -640,29 +619,11 @@
                                 class="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-transparent focus:outline-none focus:border-primary text-sm"
                                 placeholder="R$ 0,00">
                         </div>
-                        <div id="wrap-health" class="hidden">
-                            <label for="item-health"
-                                class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Saúde
-                                do Projeto</label>
-                            <select id="item-health"
-                                class="w-full px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:border-primary text-sm">
-                            </select>
-                        </div>
                     </div>
 
-                    <!-- Categorias e Responsável -->
+                    <!-- Responsável -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div id="wrap-category">
-                        <label id="lbl-item-category" for="item-category"
-                            class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Categoria</label>
-                        <div class="flex items-center gap-2">
-                            <select id="item-category"
-                                class="flex-1 px-3 py-2 border border-gray-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:border-primary text-sm">
-                            </select>
-                            <div class="custom-color-picker-container" data-input-id="category-color-input"></div>
-                        </div>
-                    </div>
-                    <div id="wrap-assignee">
+                        <div id="wrap-assignee">
                         <label for="item-assignee"
                             class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Responsável</label>
                         <input type="text" id="item-assignee"

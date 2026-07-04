@@ -273,12 +273,13 @@ function initializeKanban() {
         if (storedCustomFields) customFields = JSON.parse(storedCustomFields);
         else { customFields = defs.customFields || []; saveCustomFields(); }
 
-        // --- INÍCIO: Sincronização e Deduplicação (Gerenciamento) ---
-        if (currentLayout === 'gerenciamento') {
+        // --- INÍCIO: Sincronização e Deduplicação (Global) ---
+        if (currentLayout !== 'branco') {
             let tasksChanged = false;
             let customFieldsChanged = false;
 
             const syncField = (sysId, sysName, sysGlobalArray, saveGlobalFunc) => {
+                if (!sysGlobalArray || sysGlobalArray.length === 0 && sysId !== 'priority' && sysId !== 'category') return; 
                 let sysF = customFields.find(f => f.id === sysId);
                 const manIdx = customFields.findIndex(f => f.id !== sysId && f.name && f.name.toLowerCase() === sysName.toLowerCase());
                 
@@ -298,6 +299,63 @@ function initializeKanban() {
                             }
                         });
                     } else {
+                        manF.options.forEach(opt => {
+                            if (!sysF.options.includes(opt)) {
+                                sysF.options.push(opt);
+                                customFieldsChanged = true;
+                            }
+                        });
+                        tasks.forEach(t => {
+                            if (t.customValues && t.customValues[oldId]) {
+                                if (!t.customValues[sysId]) {
+                                    t.customValues[sysId] = t.customValues[oldId];
+                                    t[sysId] = t.customValues[sysId];
+                                }
+                                delete t.customValues[oldId];
+                                tasksChanged = true;
+                            }
+                        });
+                        customFields.splice(manIdx, 1);
+                        customFieldsChanged = true;
+                    }
+                }
+                
+                if (!sysF) {
+                    if (sysGlobalArray.length > 0) {
+                        sysF = { id: sysId, name: sysName, options: [...sysGlobalArray] };
+                        customFields.push(sysF);
+                        customFieldsChanged = true;
+                    }
+                } else {
+                    sysGlobalArray.forEach(opt => {
+                        if (opt && opt !== `Sem ${sysName}` && opt !== 'Outros' && !sysF.options.includes(opt)) {
+                            sysF.options.push(opt);
+                            customFieldsChanged = true;
+                        }
+                    });
+                    sysF.options.forEach(opt => {
+                        if (opt && !sysGlobalArray.includes(opt)) {
+                            sysGlobalArray.push(opt);
+                            if (saveGlobalFunc) saveGlobalFunc();
+                        }
+                    });
+                }
+            };
+
+            if (currentLayout === 'gerenciamento') {
+                syncField('priority', 'Prioridade', priorities, savePriorities);
+                syncField('category', 'Categoria', categories, saveCategories);
+            } else if (currentLayout === 'conteudo') {
+                syncField('priority', 'Prioridade', priorities, savePriorities);
+                syncField('platform', 'Plataforma', platforms, savePlatforms);
+            } else if (currentLayout === 'fluxo') {
+                syncField('priority', 'Prioridade', priorities, savePriorities);
+                syncField('health', 'Saúde do Projeto', healths, saveHealths);
+            }
+
+            if (customFieldsChanged) saveCustomFields();
+            if (tasksChanged) saveTasks();
+        }
                         manF.options.forEach(opt => {
                             if (!sysF.options.includes(opt)) sysF.options.push(opt);
                         });
@@ -374,6 +432,7 @@ function initializeKanban() {
 
     function populateFormSelects() {
         const populateSelect = (selectElem, arr) => {
+            if (!selectElem) return;
             selectElem.innerHTML = '';
             arr.forEach(val => {
                 const o = document.createElement('option');
@@ -382,10 +441,6 @@ function initializeKanban() {
             });
         };
         populateSelect(itemStatusSelect, statuses);
-        populateSelect(itemPrioritySelect, priorities);
-        populateSelect(itemCategorySelect, categories);
-        populateSelect(itemPlatformSelect, platforms);
-        populateSelect(itemHealthSelect, healths);
     }
 
     // ===== Auxiliares Visuais =====
@@ -736,42 +791,29 @@ function initializeKanban() {
         populateFormSelects();
         itemForm.reset();
 
-        const wrapPlatform = document.getElementById('wrap-platform');
+        const wrapAssignee = document.getElementById('wrap-assignee');
         const wrapBudget = document.getElementById('wrap-budget');
-        const wrapHealth = document.getElementById('wrap-health');
-        const wrapCategory = document.getElementById('wrap-category');
         const fixedFieldsWrapper = document.getElementById('fixed-fields-wrapper');
         const dynamicCustomFieldsContainer = document.getElementById('dynamic-custom-fields-container');
         const btnAddCustomField = document.getElementById('btn-add-custom-field');
-
-        dynamicFieldsRow.classList.add('hidden');
-        wrapPlatform.classList.add('hidden');
-        wrapBudget.classList.add('hidden');
-        wrapHealth.classList.add('hidden');
-        wrapCategory.classList.add('hidden');
+        const dynamicFieldsRow = document.getElementById('dynamic-fields-row');
         
+        if (dynamicFieldsRow) dynamicFieldsRow.classList.add('hidden');
+        if (wrapBudget) wrapBudget.classList.add('hidden');
+        
+        document.getElementById('lbl-item-status').textContent = "Coluna";
         if (currentLayout === 'branco') {
-            document.getElementById('lbl-item-status').textContent = "Coluna";
-            fixedFieldsWrapper.classList.add('hidden');
-            dynamicCustomFieldsContainer.classList.remove('hidden');
-            btnAddCustomField.classList.remove('hidden');
-            renderCustomFieldsUI(taskId);
+            if(fixedFieldsWrapper) fixedFieldsWrapper.classList.add('hidden');
         } else {
-            document.getElementById('lbl-item-status').textContent = "Status";
-            fixedFieldsWrapper.classList.remove('hidden');
-            dynamicCustomFieldsContainer.classList.add('hidden');
-            btnAddCustomField.classList.add('hidden');
-            if (currentLayout === 'gerenciamento') {
-                wrapCategory.classList.remove('hidden');
-            } else if (currentLayout === 'conteudo') {
-                dynamicFieldsRow.classList.remove('hidden');
-                wrapPlatform.classList.remove('hidden');
-            } else if (currentLayout === 'fluxo') {
-                dynamicFieldsRow.classList.remove('hidden');
-                wrapBudget.classList.remove('hidden');
-                wrapHealth.classList.remove('hidden');
+            if(fixedFieldsWrapper) fixedFieldsWrapper.classList.remove('hidden');
+            if (currentLayout === 'fluxo') {
+                if (dynamicFieldsRow) dynamicFieldsRow.classList.remove('hidden');
+                if (wrapBudget) wrapBudget.classList.remove('hidden');
             }
         }
+
+        if (dynamicCustomFieldsContainer) dynamicCustomFieldsContainer.classList.remove('hidden');
+        if (btnAddCustomField) btnAddCustomField.classList.remove('hidden');
 
         if (taskId) {
             const task = tasks.find(t => t.id === taskId);
@@ -780,12 +822,8 @@ function initializeKanban() {
             modalItemId.value = task.id;
             itemTitleInput.value = task.title || '';
             itemStatusSelect.value = task.status || statuses[0] || '';
-            itemPrioritySelect.value = task.priority || priorities[3] || priorities[0] || '';
-            itemCategorySelect.value = task.category || categories[3] || categories[0] || '';
-            itemPlatformSelect.value = task.platform || platforms[0] || '';
-            itemBudgetInput.value = task.budget || '';
-            itemHealthSelect.value = task.health || healths[0] || '';
-            itemAssigneeInput.value = task.assignee || '';
+            if (itemBudgetInput) itemBudgetInput.value = task.budget || '';
+            if (itemAssigneeInput) itemAssigneeInput.value = task.assignee || '';
             itemStartDateInput.value = task.startDate || '';
             itemEndDateInput.value = task.endDate || '';
             itemNotesTextarea.value = task.notes || '';
@@ -795,39 +833,25 @@ function initializeKanban() {
             modalItemId.value = '';
             if (defaultColValue) {
                 if (currentView === 'status' || currentView === 'contentByStatus') itemStatusSelect.value = defaultColValue;
-                else if (currentView === 'priority') itemPrioritySelect.value = defaultColValue;
-                else if (currentView === 'category') itemCategorySelect.value = defaultColValue;
-                else if (currentView === 'platform' || currentView === 'nextByPlatform') itemPlatformSelect.value = defaultColValue;
-                else if (currentView === 'budget') itemBudgetInput.value = defaultColValue;
-                else if (currentView === 'health') itemHealthSelect.value = defaultColValue;
+                else if (currentView === 'budget' && itemBudgetInput) itemBudgetInput.value = defaultColValue;
             } else {
                 itemStatusSelect.value = statuses[0] || '';
-                itemPrioritySelect.value = priorities[0] || '';
-                itemCategorySelect.value = categories[0] || '';
-                itemPlatformSelect.value = platforms[0] || '';
-                itemBudgetInput.value = '';
-                itemHealthSelect.value = healths[0] || '';
+                if (itemBudgetInput) itemBudgetInput.value = '';
             }
             if (defaultDate) { itemStartDateInput.value = defaultDate; itemEndDateInput.value = defaultDate; }
             if (btnDeleteModalItem) btnDeleteModalItem.classList.add('hidden');
         }
 
         const statusColorInput = document.getElementById('status-color-input');
-        const categoryColorInput = document.getElementById('category-color-input');
-        const platformColorInput = document.getElementById('platform-color-input');
         
         if (statusColorInput) {
             statusColorInput.value = tagColors[itemStatusSelect.value] || 'default';
             if (statusColorInput.updateUI) statusColorInput.updateUI(statusColorInput.value);
         }
-        if (categoryColorInput) {
-            categoryColorInput.value = tagColors[itemCategorySelect.value] || 'default';
-            if (categoryColorInput.updateUI) categoryColorInput.updateUI(categoryColorInput.value);
-        }
-        if (platformColorInput) {
-            platformColorInput.value = tagColors[itemPlatformSelect.value] || 'default';
-            if (platformColorInput.updateUI) platformColorInput.updateUI(platformColorInput.value);
-        }
+
+        renderCustomFieldsUI(taskId, defaultColValue, currentView);
+        itemModal.classList.remove('hidden');
+    }
 
         itemModal.classList.remove('hidden');
     }
@@ -840,37 +864,37 @@ function initializeKanban() {
         const taskData = {
             title: itemTitleInput.value.trim(),
             status: itemStatusSelect.value,
-            priority: itemPrioritySelect.value,
-            category: itemCategorySelect.value,
-            platform: itemPlatformSelect.value,
-            budget: itemBudgetInput.value.trim(),
-            health: itemHealthSelect.value,
-            assignee: itemAssigneeInput.value.trim(),
+            budget: itemBudgetInput ? itemBudgetInput.value.trim() : '',
+            assignee: itemAssigneeInput ? itemAssigneeInput.value.trim() : '',
             startDate: itemStartDateInput.value,
             endDate: itemEndDateInput.value,
             notes: itemNotesTextarea.value.trim(),
             customValues: {}
         };
         
-        if (currentLayout === 'branco') {
-            customFields.forEach(field => {
-                const select = document.getElementById(`custom-field-${field.id}`);
-                if (select) {
-                    taskData.customValues[field.id] = select.value;
-                    const colorInput = document.getElementById(`custom-color-${field.id}`);
-                    if (colorInput && select.value) {
-                        tagColors[select.value] = colorInput.value;
-                    }
+        customFields.forEach(field => {
+            const select = document.getElementById(`custom-field-${field.id}`);
+            if (select) {
+                taskData.customValues[field.id] = select.value;
+                const colorInput = document.getElementById(`custom-color-${field.id}`);
+                if (colorInput && select.value) {
+                    tagColors[select.value] = colorInput.value;
                 }
-            });
+            }
+        });
+
+        if (currentLayout !== 'branco') {
+            if (taskData.customValues['priority']) taskData.priority = taskData.customValues['priority'];
+            if (taskData.customValues['category']) taskData.category = taskData.customValues['category'];
+            if (taskData.customValues['platform']) taskData.platform = taskData.customValues['platform'];
+            if (taskData.customValues['health']) taskData.health = taskData.customValues['health'];
         }
 
         if (taskId) {
             const idx = tasks.findIndex(t => t.id === taskId);
-            // preserve existing customValues if not in branco
             if (idx !== -1) {
                 if (currentLayout !== 'branco' && tasks[idx].customValues) {
-                    taskData.customValues = tasks[idx].customValues;
+                    taskData.customValues = { ...tasks[idx].customValues, ...taskData.customValues };
                 }
                 tasks[idx] = { ...tasks[idx], ...taskData };
             }
@@ -881,16 +905,6 @@ function initializeKanban() {
         const statusColorInput = document.getElementById('status-color-input');
         if (statusColorInput && itemStatusSelect.value) {
             tagColors[itemStatusSelect.value] = statusColorInput.value;
-        }
-        if (currentLayout !== 'branco') {
-            const categoryColorInput = document.getElementById('category-color-input');
-            if (categoryColorInput && itemCategorySelect.value) {
-                tagColors[itemCategorySelect.value] = categoryColorInput.value;
-            }
-            const platformColorInput = document.getElementById('platform-color-input');
-            if (platformColorInput && itemPlatformSelect.value) {
-                tagColors[itemPlatformSelect.value] = platformColorInput.value;
-            }
         }
         saveTagColors();
 
@@ -1301,7 +1315,7 @@ function initializeKanban() {
     // ===== Lógica de Campos Dinâmicos (Quadro Branco) =====
     let editingFieldId = null;
 
-    function renderCustomFieldsUI(taskId) {
+    function renderCustomFieldsUI(taskId, defaultColValue = '', activeViewId = '') {
         const container = document.getElementById('dynamic-custom-fields-container');
         container.innerHTML = '';
         const task = taskId ? tasks.find(t => t.id === taskId) : null;
@@ -1398,6 +1412,9 @@ function initializeKanban() {
                 option.value = opt;
                 option.textContent = opt;
                 if (taskValues[field.id] === opt) option.selected = true;
+                if (!taskId && defaultColValue && activeViewId === field.id && opt === defaultColValue) {
+                    option.selected = true;
+                }
                 select.appendChild(option);
             });
             rowCont.appendChild(select);
