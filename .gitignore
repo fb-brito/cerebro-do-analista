@@ -10,6 +10,8 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 estrutura_do_projeto.txt
+snapshot_completo_do_projeto.txt
+*.log
 
 # Configurações de Editor
 .vscode/
