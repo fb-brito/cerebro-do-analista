@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia do Analista: Bancada Executiva de Trabalho & Consulta</title>
+    <meta name="description" content="Cheat Sheet executivo para analistas: cálculos percentuais blindados, laboratório de rankings no Excel, Power Query e DAX, gráficos corporativos de alto padrão e automação com VBA.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body class="antialiased bg-light dark:bg-dark text-gray-800 dark:text-gray-100">
+    <div id="header-placeholder"></div>
+
+    <main class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <!-- Hero Header -->
+        <section class="text-center mb-12 pt-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs md:text-sm font-semibold mb-4 border border-primary/20">
+                <i class="fas fa-briefcase"></i> Bancada de Trabalho & Cheat Sheet Executivo
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-gradient mb-4">Guia do Analista</h1>
+            <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                O repertório prático de elite para o dia a dia corporativo: cálculos percentuais blindados, domínio de rankings (Excel, Power Query e DAX), gráficos de alto padrão visual e receitas de automação.
+            </p>
+
+            <!-- Barra de Navegação Interna / Pílulas de Acesso Rápido -->
+            <div class="flex flex-wrap justify-center gap-3 mt-8">
+                <a href="#secao-calculos" class="px-4 py-2 rounded-xl text-sm font-semibold bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary transition-all shadow-sm flex items-center gap-2">
+                    <i class="fas fa-percentage text-primary"></i> 1. Cálculos & Fórmulas %
+                </a>
+                <a href="#secao-rankings" class="px-4 py-2 rounded-xl text-sm font-semibold bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary transition-all shadow-sm flex items-center gap-2">
+                    <i class="fas fa-trophy text-yellow-500"></i> 2. Laboratório de Rankings
+                </a>
+                <a href="#secao-graficos" class="px-4 py-2 rounded-xl text-sm font-semibold bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary transition-all shadow-sm flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-indigo-500"></i> 3. Gráficos Executivos
+                </a>
+                <a href="#secao-automacao" class="px-4 py-2 rounded-xl text-sm font-semibold bg-white/80 dark:bg-slate-800/80 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary transition-all shadow-sm flex items-center gap-2">
+                    <i class="fas fa-bolt text-amber-500"></i> 4. Automação (M & VBA)
+                </a>
+            </div>
+        </section>
+
+        <!-- Container das Seções -->
+        <div class="space-y-16">
+            <!-- Módulo 1: Cálculos Matemáticos & Fórmulas Percentuais -->
+            <section id="secao-calculos" class="secao-modulo scroll-mt-24">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3.5">
+                        <span class="badge-numero-modulo badge-modulo-1">1</span>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">Operações Matemáticas & Fórmulas Percentuais</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Variação MoM/YoY blindada contra erros, participação relativa e PROCX mestre.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="container-calculos" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Coluna da Esquerda: Simulador Interativo de Variação MoM/YoY -->
+                    <div class="lg:col-span-5 glass-card rounded-2xl p-6 border border-white/20 dark:border-slate-700/60 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                                    <i class="fas fa-calculator text-primary"></i> Simulador de Variação %
+                                </h3>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-500 font-semibold border border-blue-500/20">MoM / YoY</span>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-6">
+                                Teste variações reais e confira a fórmula blindada para não exibir <code class="text-red-500 font-mono">#DIV/0!</code> ou sinais invertidos com bases negativas.
+                            </p>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="input-valor-anterior" class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                                        Valor Anterior (Base / Período Passado):
+                                    </label>
+                                    <div class="relative flex items-center">
+                                        <span class="prefixo-moeda">R$</span>
+                                        <input type="number" id="input-valor-anterior" value="1000" step="any"
+                                            class="input-moeda w-full pr-3 py-2 bg-white/70 dark:bg-slate-800/70 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="input-valor-atual" class="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">
+                                        Valor Atual (Realizado / Período Recente):
+                                    </label>
+                                    <div class="relative flex items-center">
+                                        <span class="prefixo-moeda">R$</span>
+                                        <input type="number" id="input-valor-atual" value="1250" step="any"
+                                            class="input-moeda w-full pr-3 py-2 bg-white/70 dark:bg-slate-800/70 border border-gray-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Painel de Resultado do Simulador -->
+                            <div class="mt-6 p-4 rounded-xl bg-gray-50/80 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700">
+                                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Variação Calculada:</div>
+                                <div class="flex items-baseline justify-between">
+                                    <span id="resultado-variacao-percentual" class="text-3xl font-extrabold text-green-500 flex items-center gap-1">
+                                        <i class="fas fa-arrow-up text-xl"></i> +25,00%
+                                    </span>
+                                    <span id="resultado-variacao-absoluta" class="text-sm font-semibold text-gray-600 dark:text-gray-300">
+                                        +R$ 250,00
+                                    </span>
+                                </div>
+                                <p id="resultado-diagnostico" class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                    Crescimento de R$ 250,00 sobre a base anterior.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card da Fórmula Blindada no Excel -->
+                        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-slate-700/60">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Fórmula Blindada Excel:</span>
+                                <button class="btn-copy-snippet text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 transition-all" data-target="#code-formula-variacao-pt">
+                                    <i class="far fa-copy mr-1"></i> Copiar (PT)
+                                </button>
+                            </div>
+                            <pre class="text-xs p-3 rounded-lg bg-slate-900 text-gray-100 overflow-x-auto"><code id="code-formula-variacao-pt" class="language-excel">=SE(B2=0; "-"; (C2-B2)/ABS(B2))</code></pre>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-[11px] text-gray-400">Versão EN-US:</span>
+                                <button class="btn-copy-snippet text-[11px] text-gray-400 hover:text-primary transition-colors" data-target="#code-formula-variacao-en">
+                                    <i class="far fa-copy mr-1"></i> Copiar (EN)
+                                </button>
+                            </div>
+                            <pre class="text-xs p-2 rounded-lg bg-slate-900/60 text-gray-300 overflow-x-auto mt-1"><code id="code-formula-variacao-en" class="language-excel">=IF(B2=0, "-", (C2-B2)/ABS(B2))</code></pre>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-2 leading-tight">
+                                <i class="fas fa-info-circle text-primary mr-1"></i> O uso de <code class="text-primary font-bold">ABS()</code> no denominador evita inverter o sinal matemático quando a base inicial for negativa (ex: prejuízo que reduz).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Coluna da Direita: As Fórmulas Percentuais mais Usadas no Mercado -->
+                    <div class="lg:col-span-7 space-y-4 flex flex-col justify-between">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Card 1: % do Total -->
+                            <div class="glass-card rounded-xl p-4 border border-white/20 dark:border-slate-700/60 shadow-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
+                                        <i class="fas fa-chart-pie text-blue-500"></i> % do Total (Share)
+                                    </h4>
+                                    <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code="=B2/$B$10">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Representatividade de uma linha sobre o total geral fixado.</p>
+                                <pre class="text-xs p-2.5 rounded-lg bg-slate-900 text-cyan-300 overflow-x-auto"><code>=B2 / $B$10</code></pre>
+                                <span class="text-[11px] text-gray-400 mt-1 block">Trave com <code class="text-amber-400 font-bold">$B$10</code> para arrastar a fórmula.</span>
+                            </div>
+
+                            <!-- Card 2: Margem de Contribuição / Bruta -->
+                            <div class="glass-card rounded-xl p-4 border border-white/20 dark:border-slate-700/60 shadow-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
+                                        <i class="fas fa-coins text-emerald-500"></i> Margem Bruta (%)
+                                    </h4>
+                                    <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code="=(Receita-Custo)/Receita">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">O quanto sobra de cada R$ 1 faturado após os custos diretos.</p>
+                                <pre class="text-xs p-2.5 rounded-lg bg-slate-900 text-emerald-300 overflow-x-auto"><code>=(B2 - C2) / B2</code></pre>
+                                <span class="text-[11px] text-gray-400 mt-1 block">Onde <code class="text-emerald-400">B2=Receita</code> e <code class="text-emerald-400">C2=Custo</code>.</span>
+                            </div>
+
+                            <!-- Card 3: Markup / Reajuste Direto -->
+                            <div class="glass-card rounded-xl p-4 border border-white/20 dark:border-slate-700/60 shadow-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
+                                        <i class="fas fa-tags text-purple-500"></i> Acréscimo / Desconto
+                                    </h4>
+                                    <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code="=B2*(1+C2)">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Aplica fator multiplicador direto em uma única operação.</p>
+                                <pre class="text-xs p-2.5 rounded-lg bg-slate-900 text-purple-300 overflow-x-auto"><code>=B2 * (1 + 0,15)</code></pre>
+                                <span class="text-[11px] text-gray-400 mt-1 block">+15% de reajuste sem precisar somar em 2 etapas.</span>
+                            </div>
+
+                            <!-- Card 4: Atingimento de Meta -->
+                            <div class="glass-card rounded-xl p-4 border border-white/20 dark:border-slate-700/60 shadow-sm">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 flex items-center gap-1.5">
+                                        <i class="fas fa-bullseye text-red-500"></i> Atingimento de Meta
+                                    </h4>
+                                    <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code="=Realizado/Meta">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Mede o cumprimento do orçamento/forecast (% Target).</p>
+                                <pre class="text-xs p-2.5 rounded-lg bg-slate-900 text-red-300 overflow-x-auto"><code>=Realizado / Meta</code></pre>
+                                <span class="text-[11px] text-gray-400 mt-1 block">&gt; 100% = meta superada; &lt; 100% = gap operacional.</span>
+                            </div>
+                        </div>
+
+                        <!-- Card de Agregações Condicionais SOMASES / CONT.SES com Comparadores -->
+                        <div class="glass-card rounded-xl p-4 border border-white/20 dark:border-slate-700/60 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                    <i class="fas fa-filter text-amber-500"></i> Agregações Condicionais com Comparador Dinâmico
+                                </h4>
+                                <button class="btn-copy-snippet text-xs px-2 py-1 rounded bg-slate-800 text-primary hover:bg-slate-700 border border-slate-700" data-code='=SOMASES(Custo; Prestador; "Prestador A"; Data; ">="&Data_Inicio)'>
+                                    <i class="far fa-copy mr-1"></i> Copiar
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                                O truque de ouro para filtrar por intervalos de datas e critérios dinâmicos usando o operador <code class="text-amber-400 font-bold">&amp;</code>:
+                            </p>
+                            <pre class="text-xs p-2.5 rounded-lg bg-slate-900 text-amber-300 overflow-x-auto"><code>=SOMASES(C:C; A:A; "Prosegur"; B:B; "&gt;=" &amp; F1; B:B; "&lt;=" &amp; F2)</code></pre>
+                            <span class="text-[11px] text-gray-400 mt-1 block">Onde <code class="text-amber-300">F1</code> é Data Inicial e <code class="text-amber-300">F2</code> é Data Final.</span>
+                        </div>
+                    </div>
+
+                    <!-- Linha Inferior: Laboratório PROCX (XLOOKUP) Mestre -->
+                    <div class="lg:col-span-12 glass-card rounded-2xl p-6 md:p-8 border border-white/20 dark:border-slate-700/60 shadow-lg">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-slate-700/60 gap-4">
+                            <div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase tracking-wider border border-emerald-500/20">
+                                    Evolução do PROCV
+                                </span>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-2 flex items-center gap-2">
+                                    <i class="fas fa-search text-emerald-500"></i> Laboratório PROCX (XLOOKUP) Mestre
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Esqueça as limitações do PROCV: busca para a esquerda, tratamento nativo de erro, caracteres curinga e busca de baixo para cima.
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 text-gray-200 text-xs font-mono border border-slate-700">
+                                <span class="text-emerald-400 font-bold">=PROCX</span>(pesquisa; mat_pesq; mat_retorno; <span class="text-amber-400">[se_não_encontrado]</span>; <span class="text-cyan-400">[modo_corresp]</span>; <span class="text-purple-400">[modo_pesq]</span>)
+                            </div>
+                        </div>
+
+                        <!-- 4 Casos Cirúrgicos de PROCX -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <!-- Caso 1: Curingas -->
+                            <div class="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold text-cyan-500 uppercase tracking-wide">Técnica 1</span>
+                                        <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code='=PROCX("*" & A2 & "*"; Base!A:A; Base!B:B; "Não Encontrado"; 2)'>
+                                            <i class="far fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-1">Busca com Curingas (* e ?)</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Encontra o valor mesmo digitando apenas parte do nome ou código do cliente.</p>
+                                </div>
+                                <div>
+                                    <pre class="text-[11px] p-2 rounded bg-slate-900 text-cyan-300 overflow-x-auto"><code>=PROCX("*" & A2 & "*"; A:A; B:B; "-"; 2)</code></pre>
+                                    <span class="text-[10px] text-gray-400 mt-1 block">O argumento <code class="text-cyan-400 font-bold">2</code> ativa modo curinga.</span>
+                                </div>
+                            </div>
+
+                            <!-- Caso 2: Busca Reversa -->
+                            <div class="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold text-amber-500 uppercase tracking-wide">Técnica 2</span>
+                                        <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code='=PROCX(A2; Chamados!A:A; Chamados!D:D; "-"; 0; -1)'>
+                                            <i class="far fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-1">Última Ocorrência (Reversa)</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Pega o status mais recente em tabelas ordenadas por data (de baixo para cima).</p>
+                                </div>
+                                <div>
+                                    <pre class="text-[11px] p-2 rounded bg-slate-900 text-amber-300 overflow-x-auto"><code>=PROCX(A2; A:A; D:D; "-"; 0; -1)</code></pre>
+                                    <span class="text-[10px] text-gray-400 mt-1 block">O argumento <code class="text-amber-400 font-bold">-1</code> pesquisa do fim ao início.</span>
+                                </div>
+                            </div>
+
+                            <!-- Caso 3: Busca Bidirecional -->
+                            <div class="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold text-purple-500 uppercase tracking-wide">Técnica 3</span>
+                                        <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code='=PROCX(Cidade; Tabela!A2:A10; PROCX(Serviço; Tabela!B1:Z1; Tabela!B2:Z10))'>
+                                            <i class="far fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-1">Matriz Bidirecional (2D)</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Cruza Linha x Coluna (ex: Região x Tarifa de Serviço) sem ÍNDICE/CORRESP.</p>
+                                </div>
+                                <div>
+                                    <pre class="text-[11px] p-2 rounded bg-slate-900 text-purple-300 overflow-x-auto"><code>=PROCX(Linha; A:A; PROCX(Col; 1:1; A:Z))</code></pre>
+                                    <span class="text-[10px] text-gray-400 mt-1 block">PROCX aninhado no argumento de retorno.</span>
+                                </div>
+                            </div>
+
+                            <!-- Caso 4: Multicritério Lógico -->
+                            <div class="p-4 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold text-emerald-500 uppercase tracking-wide">Técnica 4</span>
+                                        <button class="btn-copy-snippet text-xs text-primary hover:underline" data-code='=PROCX(1; (A:A = "Cliente X") * (B:B = "Status Y"); C:C; "Não Encontrado")'>
+                                            <i class="far fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <h4 class="font-bold text-sm text-gray-800 dark:text-gray-200 mb-1">Multicritério (E Lógico)</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Busca por 2 ou mais colunas simultaneamente sem precisar concatenar dados.</p>
+                                </div>
+                                <div>
+                                    <pre class="text-[11px] p-2 rounded bg-slate-900 text-emerald-300 overflow-x-auto"><code>=PROCX(1; (A:A=X)*(B:B=Y); C:C)</code></pre>
+                                    <span class="text-[10px] text-gray-400 mt-1 block">Multiplicação booleana (1*1=1).</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulo 2: O Laboratório de Rankings -->
+            <section id="secao-rankings" class="secao-modulo scroll-mt-24">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3.5">
+                        <span class="badge-numero-modulo badge-modulo-2">2</span>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">O Laboratório de Rankings</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">As 3 formas definitivas de ranquear no mercado: Tabela Dinâmica, Power Query e DAX (RANKX).</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="container-rankings" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Método 1: Tabela Dinâmica no Excel (Sem Fórmulas) -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-white/20 dark:border-slate-700/60 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 font-bold uppercase tracking-wider border border-yellow-500/20">
+                                    Método 1: Nativo Excel
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                    <i class="fas fa-magic text-yellow-500"></i> Zero Fórmulas
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-table text-yellow-500"></i> Ranking via Tabela Dinâmica
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                                O método mais rápido e elegante para criar rankings e listas Top N no Excel sem alterar uma única linha da sua base bruta.
+                            </p>
+
+                            <!-- Mini Maquete de Tabela Dinâmica com Ranking -->
+                            <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60 p-2 mb-4">
+                                <table class="w-full text-left text-xs">
+                                    <thead>
+                                        <tr class="border-b border-gray-200 dark:border-slate-700 text-gray-500 dark:text-gray-400">
+                                            <th class="py-2 px-3">Cliente / Parceiro</th>
+                                            <th class="py-2 px-3 text-right">Faturamento</th>
+                                            <th class="py-2 px-3 text-center">Classificação</th>
+                                            <th class="py-2 px-3 text-center">Posição</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100 dark:divide-slate-800 text-gray-700 dark:text-gray-200">
+                                        <tr class="hover:bg-primary/5 transition-colors">
+                                            <td class="py-2 px-3 font-semibold flex items-center gap-1.5">
+                                                <span class="w-4 h-4 rounded-full bg-yellow-400 text-slate-900 flex items-center justify-center text-[10px] font-extrabold">1</span>
+                                                Rede Varejo Alfa
+                                            </td>
+                                            <td class="py-2 px-3 text-right font-mono">R$ 185.000</td>
+                                            <td class="py-2 px-3 text-center text-gray-400">1º do Maior</td>
+                                            <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-400/20 text-yellow-600 dark:text-yellow-400">Top 1</span></td>
+                                        </tr>
+                                        <tr class="hover:bg-primary/5 transition-colors">
+                                            <td class="py-2 px-3 font-semibold flex items-center gap-1.5">
+                                                <span class="w-4 h-4 rounded-full bg-slate-300 text-slate-900 flex items-center justify-center text-[10px] font-extrabold">2</span>
+                                                Banco Central Sul
+                                            </td>
+                                            <td class="py-2 px-3 text-right font-mono">R$ 142.000</td>
+                                            <td class="py-2 px-3 text-center text-gray-400">2º do Maior</td>
+                                            <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-300/20 text-slate-600 dark:text-slate-300">Top 2</span></td>
+                                        </tr>
+                                        <tr class="hover:bg-primary/5 transition-colors">
+                                            <td class="py-2 px-3 font-semibold flex items-center gap-1.5">
+                                                <span class="w-4 h-4 rounded-full bg-amber-600 text-white flex items-center justify-center text-[10px] font-extrabold">3</span>
+                                                Shopping Metrópole
+                                            </td>
+                                            <td class="py-2 px-3 text-right font-mono">R$ 98.500</td>
+                                            <td class="py-2 px-3 text-center text-gray-400">3º do Maior</td>
+                                            <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-600/20 text-amber-700 dark:text-amber-400">Top 3</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Passo a Passo de Configuração -->
+                            <div class="space-y-2">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">Roteiro de Configuração (4 Cliques):</h4>
+                                <ol class="text-xs space-y-1.5 text-gray-600 dark:text-gray-300 list-decimal list-inside">
+                                    <li>Arraste o campo numérico (ex: <code class="text-primary font-bold">Faturamento</code>) para a área de <strong>Valores duas vezes</strong>.</li>
+                                    <li>Na segunda coluna criada, clique com o botão direito sobre qualquer número ➔ <strong>Mostrar Valores Como</strong>.</li>
+                                    <li>Escolha a opção: <strong class="text-yellow-500">"Classificação do Maior para o Menor..."</strong> e selecione o campo de Linha (ex: <code>Cliente</code>).</li>
+                                    <li><strong>Para limitar no Top 10:</strong> Clique no filtro de cabeçalho de Linha ➔ <strong>Filtros de Valores</strong> ➔ <strong>Os 10 Primeiros...</strong></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-[11px] text-yellow-700 dark:text-yellow-300">
+                            <i class="fas fa-lightbulb mr-1"></i> <strong>Vantagem Executiva:</strong> Ao atualizar a base de dados (<kbd class="px-1.5 py-0.5 bg-white dark:bg-slate-800 rounded border">Alt + F5</kbd>), o ranking e a ordem do Top N são recalculados automaticamente sem risco de fórmulas quebradas!
+                        </div>
+                    </div>
+
+                    <!-- Método 2: Ranking Estruturado no Power Query (Linguagem M) -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-white/20 dark:border-slate-700/60 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase tracking-wider border border-emerald-500/20">
+                                    Método 2: ETL no Power Query
+                                </span>
+                                <button class="btn-copy-snippet text-xs px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all" data-target="#code-power-query-ranking">
+                                    <i class="far fa-copy mr-1"></i> Copiar Código M
+                                </button>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-code-branch text-emerald-500"></i> Ranking Persistido no ETL
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                                Quando você precisa que o ranking já venha gravado como coluna física na tabela antes de gerar gráficos ou relatórios.
+                            </p>
+
+                            <!-- Snippet de Código M -->
+                            <pre class="text-xs p-3 rounded-xl bg-slate-900 text-gray-100 overflow-x-auto mb-4 border border-slate-700"><code id="code-power-query-ranking" class="language-powerquery">// Passo 1: Ordenar pela métrica em ordem decrescente
+#"Linhas Ordenadas" = Table.Sort(#"Tipo Alterado", {{"Faturamento", Order.Descending}}),
+
+// Passo 2: Adicionar coluna de índice começando do 1
+#"Ranking Adicionado" = Table.AddIndexColumn(#"Linhas Ordenadas", "Ranking_Geral", 1, 1, Int64.Type)</code></pre>
+
+                            <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300">
+                                <h4 class="font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200">Como Fazer pelos Menus:</h4>
+                                <ol class="space-y-1.5 list-decimal list-inside">
+                                    <li>Clique na seta da coluna numérica e selecione <strong>Classificar em Ordem Decrescente</strong>.</li>
+                                    <li>Vá na guia <strong>Adicionar Coluna</strong> ➔ clique em <strong>Coluna de Índice</strong> ➔ selecione <strong>De 1</strong>.</li>
+                                    <li>Dê um duplo clique no cabeçalho da nova coluna e renomeie para <code class="text-emerald-400">Ranking</code>.</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-slate-800 text-[11px] text-gray-300 border border-slate-700">
+                            <i class="fas fa-layer-group text-primary mr-1"></i> <strong>Ranking por Categoria (Ex: por Filial ou Região):</strong> Use a ferramenta <code class="text-primary font-bold">Agrupar Por</code> com a operação "Todas as Linhas", adicione o índice na subtabela via <code class="text-cyan-400">Table.AddIndexColumn</code> e expanda.
+                        </div>
+                    </div>
+
+                    <!-- Método 3: A Medida Canônica de Ranking no Power BI (DAX RANKX) -->
+                    <div class="lg:col-span-12 glass-card rounded-2xl p-6 md:p-8 border border-white/20 dark:border-slate-700/60 shadow-lg">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-slate-700/60 gap-4">
+                            <div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 font-bold uppercase tracking-wider border border-amber-500/20">
+                                    Método 3: Power BI (DAX Avançado)
+                                </span>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-2 flex items-center gap-2">
+                                    <i class="fas fa-chart-line text-amber-500"></i> A Medida Canônica de Ranking: RANKX Profissional
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    A estrutura blindada que evita os dois erros clássicos: rankear o "Total Geral" e pular posições em empates.
+                                </p>
+                            </div>
+                            <button class="btn-copy-snippet px-4 py-2 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 border border-amber-500/20 font-semibold text-sm transition-all self-start md:self-auto" data-target="#code-dax-rankx">
+                                <i class="far fa-copy mr-1"></i> Copiar Medida DAX
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                            <!-- Bloco de Código DAX -->
+                            <div class="lg:col-span-7">
+                                <pre class="text-xs md:text-sm p-4 rounded-xl bg-slate-900 text-gray-100 overflow-x-auto border border-slate-700 font-mono leading-relaxed"><code id="code-dax-rankx" class="language-dax">Rank_Cliente = 
+IF(
+    // 1. Só calcula se estiver no nível de linha (remove ranking do Total)
+    ISINSCOPE(dCliente[Nome_Cliente]),
+    
+    // 2. Calcula o ranking dinâmico respeitando filtros do dashboard
+    RANKX(
+        ALLSELECTED(dCliente[Nome_Cliente]),
+        [Total_Faturamento],
+        ,
+        DESC,
+        Dense // 3. Não pula posições em caso de empate (1, 2, 2, 3...)
+    )
+)</code></pre>
+                            </div>
+
+                            <!-- Anatomia dos Parâmetros DAX -->
+                            <div class="lg:col-span-5 space-y-3">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Anatomia do DAX Profissional:</h4>
+                                
+                                <div class="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 text-xs">
+                                    <span class="font-bold text-primary font-mono block">1. ISINSCOPE(Coluna)</span>
+                                    <p class="text-gray-500 dark:text-gray-400 mt-1">Garante que a medida só retorne número nas linhas dos clientes. Na linha de Total Geral, retorna em branco em vez do constrangedor "1º Lugar".</p>
+                                </div>
+
+                                <div class="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 text-xs">
+                                    <span class="font-bold text-amber-500 font-mono block">2. ALLSELECTED(Coluna)</span>
+                                    <p class="text-gray-500 dark:text-gray-400 mt-1">Faz o ranking recalcular respeitando os filtros de período e região da tela, mantendo a escala de 1 a N no segmento selecionado.</p>
+                                </div>
+
+                                <div class="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 text-xs">
+                                    <span class="font-bold text-emerald-500 font-mono block">3. Parâmetro "Dense"</span>
+                                    <p class="text-gray-500 dark:text-gray-400 mt-1">Se houver dois clientes empatados em 2º lugar, o próximo será o 3º (e não o 4º como no modo padrão *Skip*).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- O Quarteto Fantástico do DAX -->
+                        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-slate-700/60">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-crown text-yellow-500"></i> O Quarteto Fantástico do Analista em DAX (Cheat Sheet)
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700">
+                                    <code class="text-cyan-400 font-bold font-mono">CALCULATE(Medida; Filtro)</code>
+                                    <p class="text-gray-400 mt-1.5">O motor do DAX. Altera o contexto de avaliação aplicando novos filtros ou modificando existentes.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700">
+                                    <code class="text-yellow-400 font-bold font-mono">ALL(Tabela ou Coluna)</code>
+                                    <p class="text-gray-400 mt-1.5">Remove todos os filtros da tabela ou coluna. Essencial para calcular percentuais sobre o total geral.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700">
+                                    <code class="text-emerald-400 font-bold font-mono">DIVIDE(Num; Denom; [Alt])</code>
+                                    <p class="text-gray-400 mt-1.5">Divisão segura com tratamento de divisão por zero nativo. Retorna nulo ou valor alternativo.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-700">
+                                    <code class="text-purple-400 font-bold font-mono">USERELATIONSHIP(Fk; Pk)</code>
+                                    <p class="text-gray-400 mt-1.5">Ativa relacionamentos secundários inativos (ex: cruzar com calendário por Data de Fechamento).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulo 3: Estúdio de Gráficos Executivos -->
+            <section id="secao-graficos" class="secao-modulo scroll-mt-24">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3.5">
+                        <span class="badge-numero-modulo badge-modulo-3">3</span>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">Estúdio de Gráficos Executivos</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">O padrão visual de diretoria: Linha de meta tracejada, linhas limpas e Pareto 80/20 com tutorial Excel.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="container-graficos" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Gráfico 1: Barras com Linha de Meta Tracejada (Target vs Actual) -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-white/20 dark:border-slate-700/60 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-500 font-bold uppercase tracking-wider border border-indigo-500/20">
+                                    Padrão Diretoria 1
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Excel: Gráfico de Combinação</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-chart-column text-indigo-500"></i> Barras com Linha de Meta Tracejada
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                                Mostra o realizado por cliente/filial com uma linha de meta limpa, sem poluição de eixos secundários desalinhados.
+                            </p>
+
+                            <!-- Maquete Vetorial SVG: Barras com Meta Tracejada -->
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 mb-4">
+                                <div class="flex items-center justify-between text-[11px] text-gray-400 mb-2">
+                                    <span>Realizado vs. Meta (k R$)</span>
+                                    <span class="flex items-center gap-2">
+                                        <span class="inline-block w-3 h-3 bg-sky-500 rounded-sm"></span> Realizado
+                                        <span class="inline-block w-4 h-0.5 border-t-2 border-dashed border-rose-400"></span> Meta (100k)
+                                    </span>
+                                </div>
+                                <svg viewBox="0 0 400 180" class="w-full h-44 overflow-visible">
+                                    <!-- Linha de Fundo / Grade Suave -->
+                                    <line x1="40" y1="30" x2="380" y2="30" stroke="#334155" stroke-dasharray="2 2" stroke-width="0.5"/>
+                                    <line x1="40" y1="80" x2="380" y2="80" stroke="#334155" stroke-dasharray="2 2" stroke-width="0.5"/>
+                                    <line x1="40" y1="130" x2="380" y2="130" stroke="#334155" stroke-dasharray="2 2" stroke-width="0.5"/>
+                                    
+                                    <!-- Eixo X Base -->
+                                    <line x1="40" y1="150" x2="380" y2="150" stroke="#475569" stroke-width="1"/>
+
+                                    <!-- Linha de Meta Tracejada (Meta = 100k, y = 70) -->
+                                    <line x1="40" y1="70" x2="380" y2="70" stroke="#fb7185" stroke-dasharray="4 4" stroke-width="2"/>
+                                    <text x="382" y="74" fill="#fb7185" font-size="9" font-weight="bold" font-family="sans-serif">100k</text>
+
+                                    <!-- Barra 1: Região Norte (85k - Abaixo da meta) -->
+                                    <rect x="65" y="85" width="40" height="65" rx="3" fill="#38bdf8" opacity="0.85"/>
+                                    <text x="85" y="80" fill="#cbd5e1" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">85k</text>
+                                    <text x="85" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Norte</text>
+
+                                    <!-- Barra 2: Região Sul (120k - Superou a meta) -->
+                                    <rect x="145" y="50" width="40" height="100" rx="3" fill="#0ea5e9"/>
+                                    <text x="165" y="44" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">120k</text>
+                                    <text x="165" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Sul</text>
+
+                                    <!-- Barra 3: Região Leste (105k - Bateu a meta) -->
+                                    <rect x="225" y="65" width="40" height="85" rx="3" fill="#0ea5e9"/>
+                                    <text x="245" y="59" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">105k</text>
+                                    <text x="245" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Leste</text>
+
+                                    <!-- Barra 4: Região Oeste (92k - Abaixo) -->
+                                    <rect x="305" y="78" width="40" height="72" rx="3" fill="#38bdf8" opacity="0.85"/>
+                                    <text x="325" y="73" fill="#cbd5e1" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">92k</text>
+                                    <text x="325" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Oeste</text>
+                                </svg>
+                            </div>
+
+                            <!-- Passo a Passo de Configuração no Excel -->
+                            <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300">
+                                <h4 class="font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200">Como Parametrizar no Excel:</h4>
+                                <ol class="space-y-1.5 list-decimal list-inside">
+                                    <li>Tabela base: coluna A (Filial/Cliente), coluna B (Realizado), coluna C (Meta repetida para todas as linhas).</li>
+                                    <li>Selecione as 3 colunas ➔ Menu <strong>Inserir</strong> ➔ Gráficos ➔ <strong>Gráfico de Combinação</strong> (Coluna Agrupada e Linha).</li>
+                                    <li><strong class="text-rose-500 font-bold">O Pulo do Gato:</strong> Desmarque a caixa <em>"Eixo Secundário"</em> na série de Meta para que barras e linha usem a mesmíssima escala vertical.</li>
+                                    <li>Clique na linha de meta ➔ <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-slate-800 rounded border">Ctrl + 1</kbd> ➔ Em <strong>Linha</strong>, marque <em>Linha Sólida</em>, escolha cor contrastante e em <strong>Tipo de Traço</strong> selecione <em>Tracejado</em>.</li>
+                                    <li>Em <strong>Marcador</strong>, deixe selecionado <em>Nenhum</em>.</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-[11px] text-indigo-700 dark:text-indigo-300">
+                            <i class="fas fa-check-circle mr-1"></i> <strong>Resultado:</strong> A linha tracejada estabelece a fronteira visual instantânea. Quem cruza a linha bateu a meta; quem fica abaixo fica imediatamente evidente sem exigir esforço cognitivo da audiência.
+                        </div>
+                    </div>
+
+                    <!-- Gráfico 2: Linhas Executivo com Marcadores Destacados nos Picos -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-white/20 dark:border-slate-700/60 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase tracking-wider border border-emerald-500/20">
+                                    Padrão Diretoria 2
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Tendência Temporal Limpa</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-chart-line text-emerald-500"></i> Linha Suave com Marcadores Extremos
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                                Elimina as bolinhas poluídas em todos os meses, destacando apenas o pico máximo, o ponto mínimo e o fechamento atual.
+                            </p>
+
+                            <!-- Maquete Vetorial SVG: Linhas Executivas -->
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 mb-4">
+                                <div class="flex items-center justify-between text-[11px] text-gray-400 mb-2">
+                                    <span>Evolução de Chamados / Atendimentos (Jan-Jun)</span>
+                                    <span class="text-emerald-400 font-bold text-xs"><i class="fas fa-arrow-trend-up"></i> Pico em Mai (450)</span>
+                                </div>
+                                <svg viewBox="0 0 400 180" class="w-full h-44 overflow-visible">
+                                    <!-- Grade Mínima -->
+                                    <line x1="40" y1="40" x2="380" y2="40" stroke="#334155" stroke-dasharray="2 2" stroke-width="0.5"/>
+                                    <line x1="40" y1="90" x2="380" y2="90" stroke="#334155" stroke-dasharray="2 2" stroke-width="0.5"/>
+                                    <line x1="40" y1="140" x2="380" y2="140" stroke="#334155" stroke-dasharray="2 2" stroke-width="0.5"/>
+
+                                    <!-- Linha de Tendência Suave Principal -->
+                                    <path d="M 60,120 Q 110,135 160,95 T 260,85 T 310,40 T 360,65" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+
+                                    <!-- Marcador Mínimo em Fev (y=130) -->
+                                    <circle cx="110" cy="130" r="5" fill="#f43f5e" stroke="#0f172a" stroke-width="2"/>
+                                    <text x="110" y="150" fill="#f43f5e" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Mín: 180</text>
+
+                                    <!-- Marcador Pico Máximo em Mai (y=40) -->
+                                    <circle cx="310" cy="40" r="6" fill="#10b981" stroke="#0f172a" stroke-width="2"/>
+                                    <text x="310" y="28" fill="#10b981" font-size="11" font-weight="extrabold" text-anchor="middle" font-family="sans-serif">Máx: 450</text>
+
+                                    <!-- Marcador Fechamento em Jun (y=65) -->
+                                    <circle cx="360" cy="65" r="5" fill="#38bdf8" stroke="#0f172a" stroke-width="2"/>
+                                    <text x="360" y="55" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">410</text>
+
+                                    <!-- Labels Meses -->
+                                    <text x="60" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Jan</text>
+                                    <text x="110" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Fev</text>
+                                    <text x="160" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Mar</text>
+                                    <text x="210" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Abr</text>
+                                    <text x="310" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Mai</text>
+                                    <text x="360" y="165" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="sans-serif">Jun</text>
+                                </svg>
+                            </div>
+
+                            <!-- O Segredo das Colunas Auxiliares com NÃO.DISP() -->
+                            <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300">
+                                <h4 class="font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200">O Truque Matemático no Excel:</h4>
+                                <p>Crie duas colunas auxiliares na tabela com a função <code class="text-emerald-400 font-bold">NÃO.DISP()</code>:</p>
+                                <pre class="text-[11px] p-2 rounded bg-slate-900 text-emerald-300 overflow-x-auto border border-slate-700"><code>Pico: =SE(B2=MÁXIMO($B$2:$B$13); B2; NÃO.DISP())
+Mín:  =SE(B2=MÍNIMO($B$2:$B$13); B2; NÃO.DISP())</code></pre>
+                                <p class="text-[11px] text-gray-400">
+                                    O Excel não plota células com o erro <code class="text-rose-400 font-mono">#N/D</code>. Assim, as séries de pico e mínimo só geram marcadores onde forem os valores recordistas!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-700 dark:text-emerald-300">
+                            <i class="fas fa-wand-magic-sparkles mr-1"></i> <strong>Visual Limpo:</strong> O gráfico de linha suavizada conduz o olhar sem ruído, e os dois pontos estratégicos atraem a atenção imediata na apresentação.
+                        </div>
+                    </div>
+
+                    <!-- Gráfico 3: Gráfico de Pareto Executivo (80/20) -->
+                    <div class="lg:col-span-12 glass-card rounded-2xl p-6 md:p-8 border border-white/20 dark:border-slate-700/60 shadow-lg">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-slate-700/60 gap-4">
+                            <div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-500 font-bold uppercase tracking-wider border border-purple-500/20">
+                                    Padrão Diretoria 3
+                                </span>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-2 flex items-center gap-2">
+                                    <i class="fas fa-chart-area text-purple-500"></i> Gráfico de Pareto Executivo (Princípio 80/20)
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Identifique com clareza matemática os 20% das causas que respondem por 80% dos custos, glosas ou chamados.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-gray-200 border border-slate-700 font-mono">
+                                    Barras Descendentes + Linha Acumulada
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                            <!-- Maquete SVG Pareto -->
+                            <div class="lg:col-span-7 p-4 rounded-xl bg-slate-900 border border-slate-700">
+                                <div class="flex items-center justify-between text-[11px] text-gray-400 mb-2">
+                                    <span>Análise de Ocorrências / Custos Operacionais</span>
+                                    <span class="text-purple-400 font-semibold"><span class="inline-block w-4 h-0.5 bg-amber-400 mr-1"></span> % Acumulado (80%)</span>
+                                </div>
+                                <svg viewBox="0 0 500 200" class="w-full h-52 overflow-visible">
+                                    <!-- Linha de Referência 80% (y = 65) -->
+                                    <line x1="40" y1="65" x2="460" y2="65" stroke="#f59e0b" stroke-dasharray="4 4" stroke-width="1.5"/>
+                                    <text x="465" y="69" fill="#f59e0b" font-size="10" font-weight="bold" font-family="sans-serif">80%</text>
+
+                                    <!-- Linha Base X -->
+                                    <line x1="40" y1="165" x2="460" y2="165" stroke="#475569" stroke-width="1"/>
+
+                                    <!-- Barra 1: Alarme Falso / Disparo (45%) -->
+                                    <rect x="55" y="80" width="55" height="85" rx="3" fill="#8b5cf6"/>
+                                    <text x="82" y="74" fill="#c4b5fd" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">45%</text>
+                                    <text x="82" y="180" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="sans-serif">Alarme Falso</text>
+
+                                    <!-- Barra 2: Falha Sensor (25%) -->
+                                    <rect x="135" y="115" width="55" height="50" rx="3" fill="#8b5cf6" opacity="0.9"/>
+                                    <text x="162" y="110" fill="#c4b5fd" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">25%</text>
+                                    <text x="162" y="180" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="sans-serif">Falha Sensor</text>
+
+                                    <!-- Barra 3: Queda Energia (15%) -->
+                                    <rect x="215" y="135" width="55" height="30" rx="3" fill="#8b5cf6" opacity="0.75"/>
+                                    <text x="242" y="130" fill="#c4b5fd" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">15%</text>
+                                    <text x="242" y="180" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="sans-serif">Queda Luz</text>
+
+                                    <!-- Barra 4: Atraso Ronda (10%) -->
+                                    <rect x="295" y="145" width="55" height="20" rx="3" fill="#8b5cf6" opacity="0.6"/>
+                                    <text x="322" y="140" fill="#c4b5fd" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">10%</text>
+                                    <text x="322" y="180" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="sans-serif">Atraso Ronda</text>
+
+                                    <!-- Barra 5: Outros (5%) -->
+                                    <rect x="375" y="155" width="55" height="10" rx="3" fill="#8b5cf6" opacity="0.4"/>
+                                    <text x="402" y="150" fill="#c4b5fd" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">5%</text>
+                                    <text x="402" y="180" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="sans-serif">Outros</text>
+
+                                    <!-- Curva de Percentual Acumulado (45% -> 70% -> 85% -> 95% -> 100%) -->
+                                    <polyline points="82,125 162,85 242,55 322,35 402,25" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+                                    <circle cx="82" cy="125" r="3.5" fill="#f59e0b"/>
+                                    <circle cx="162" cy="85" r="3.5" fill="#f59e0b"/>
+                                    <circle cx="242" cy="55" r="3.5" fill="#f59e0b"/>
+                                    <circle cx="322" cy="35" r="3.5" fill="#f59e0b"/>
+                                    <circle cx="402" cy="25" r="3.5" fill="#f59e0b"/>
+                                </svg>
+                            </div>
+
+                            <!-- Explicação & Roteiro Excel -->
+                            <div class="lg:col-span-5 space-y-3 text-xs text-gray-600 dark:text-gray-300">
+                                <h4 class="font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200">Construção Nativa no Excel:</h4>
+                                <ol class="space-y-2 list-decimal list-inside">
+                                    <li>Ordene os motivos/custos em ordem estritamente <strong>decrescente</strong>.</li>
+                                    <li>Crie a coluna de <strong>% Acumulado</strong> somando as participações anteriores: <code class="text-amber-400 font-mono">=SOMA($B$2:B2)/$B$7</code>.</li>
+                                    <li>No Excel moderno (2016+): Selecione os dados ➔ Guia <strong>Inserir</strong> ➔ Gráficos ➔ <strong>Gráfico de Estatística</strong> ➔ clique direto no ícone <strong>Pareto</strong>!</li>
+                                    <li>O Excel criará as colunas já ordenadas e a linha acumulada no eixo secundário automaticamente.</li>
+                                </ol>
+
+                                <div class="mt-4 p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[11px] text-purple-700 dark:text-purple-300">
+                                    <i class="fas fa-bullseye mr-1"></i> <strong>Conclusão Executiva:</strong> Resolvendo apenas os dois primeiros itens ("Alarme Falso" e "Falha de Sensor"), <strong>70% dos problemas operacionais são eliminados</strong>!
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Checklist de Decluttering (Storytelling com Dados) -->
+                        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-slate-700/60">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-broom text-primary"></i> Checklist de "Decluttering": O que Deletar Antes de Apresentar
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                                <div class="p-3 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700">
+                                    <span class="font-bold text-rose-500 block mb-1">❌ 1. Linhas de Grade Pesadas</span>
+                                    <p class="text-gray-500 dark:text-gray-400">Clique nas linhas horizontais do fundo e aperte <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-slate-700 rounded text-[10px]">Delete</kbd>. Rótulos já informam o valor.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700">
+                                    <span class="font-bold text-rose-500 block mb-1">❌ 2. Borda e Fundo do Gráfico</span>
+                                    <p class="text-gray-500 dark:text-gray-400">Coloque "Sem Linha" e "Sem Preenchimento" na área do gráfico para ele flutuar perfeitamente na lâmina.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700">
+                                    <span class="font-bold text-rose-500 block mb-1">❌ 3. Legendas Desnecessárias</span>
+                                    <p class="text-gray-500 dark:text-gray-400">Se o gráfico só tem uma série de barras, delete a legenda "Faturamento". O título já explica o dado.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700">
+                                    <span class="font-bold text-emerald-500 block mb-1">✅ 4. Título com Insight</span>
+                                    <p class="text-gray-500 dark:text-gray-400">Em vez de "Gráfico de Vendas", use: "Sul e Leste superaram a meta de 100k impulsionados pelo Varejo".</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulo 4: Automação Rápida (Power Query & VBA) -->
+            <section id="secao-automacao" class="secao-modulo scroll-mt-24">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3.5">
+                        <span class="badge-numero-modulo badge-modulo-4">4</span>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">Automação Rápida de Rotinas</h2>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Receitas de 1 clique para consolidar pastas e desdinamizar no Power Query, mais macros essenciais de VBA.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="container-automacao" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Receita 1: Consolidar Pastas no Power Query -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-white/20 dark:border-slate-700/60 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 font-bold uppercase tracking-wider border border-amber-500/20">
+                                    ETL de Pasta (M)
+                                </span>
+                                <button class="btn-copy-snippet text-xs px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20 transition-all" data-target="#code-powerquery-folder">
+                                    <i class="far fa-copy mr-1"></i> Copiar Código M
+                                </button>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-folder-open text-amber-500"></i> Empilhar Múltiplos Arquivos de uma Pasta
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                                Pare de copiar e colar 20 arquivos mensais de prestadores. Configure a importação da pasta e junte tudo em segundos.
+                            </p>
+
+                            <!-- Snippet de Código M -->
+                            <pre class="text-xs p-3 rounded-xl bg-slate-900 text-gray-100 overflow-x-auto mb-4 border border-slate-700 font-mono"><code id="code-powerquery-folder" class="language-powerquery">// 1. Conectar na pasta local ou de rede
+Fonte = Folder.Files("C:\Operacoes\Medicoes\"),
+
+// 2. Filtrar apenas planilhas Excel e ignorar arquivos temporários do Windows
+#"Arquivos Filtrados" = Table.SelectRows(Fonte, each 
+    [Extension] = ".xlsx" and not Text.StartsWith([Name], "~$")
+),
+
+// 3. Extrair e combinar as tabelas internas
+#"Tabelas Combinadas" = Table.TransformColumns(#"Arquivos Filtrados", 
+    {"Content", each Excel.Workbook(_){[Item="Planilha1",Kind="Sheet"]}[Data]}
+)</code></pre>
+
+                            <!-- Roteiro de Configuração nos Menus -->
+                            <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300">
+                                <h4 class="font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200">Como Fazer pelos Menus:</h4>
+                                <ol class="space-y-1.5 list-decimal list-inside">
+                                    <li>Guia <strong>Dados</strong> ➔ <strong>Obter Dados</strong> ➔ <strong>Do Arquivo</strong> ➔ <strong>Da Pasta</strong>.</li>
+                                    <li>Selecione a pasta onde caem os relatórios mensais e clique em <strong>Transformar Dados</strong>.</li>
+                                    <li><strong class="text-amber-500 font-bold">Filtro de Segurança:</strong> Na coluna <code>Name</code>, filtre para excluir nomes que começam com <code class="text-rose-400 font-mono">~$</code> (evita erro de arquivo aberto no Excel).</li>
+                                    <li>Clique no botão com duas setinhas para baixo no cabeçalho da coluna <strong>Content</strong> (Combinar Arquivos).</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-700 dark:text-amber-300">
+                            <i class="fas fa-magic mr-1"></i> No mês seguinte, basta jogar o novo arquivo na pasta e apertar <kbd class="px-1.5 py-0.5 bg-white dark:bg-slate-800 rounded border">Alt + F5</kbd> para a base consolidar sozinha!
+                        </div>
+                    </div>
+
+                    <!-- Receita 2: Desdinamizar Colunas (Unpivot) -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border border-white/20 dark:border-slate-700/60 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-500 font-bold uppercase tracking-wider border border-cyan-500/20">
+                                    Tidy Data (M)
+                                </span>
+                                <button class="btn-copy-snippet text-xs px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-500 hover:bg-cyan-500/20 border border-cyan-500/20 transition-all" data-target="#code-powerquery-unpivot">
+                                    <i class="far fa-copy mr-1"></i> Copiar Código M
+                                </button>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2">
+                                <i class="fas fa-arrows-rotate text-cyan-500"></i> Desdinamizar Colunas (Unpivot)
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                                Transforme relatórios matriciais (meses na horizontal) em tabelas verticais para alimentar gráficos e tabelas dinâmicas.
+                            </p>
+
+                            <!-- Snippet de Código M -->
+                            <pre class="text-xs p-3 rounded-xl bg-slate-900 text-gray-100 overflow-x-auto mb-4 border border-slate-700 font-mono"><code id="code-powerquery-unpivot" class="language-powerquery">// Selecionar as colunas fixas e desdinamizar todo o restante
+#"Colunas Desdinamizadas" = Table.UnpivotOtherColumns(
+    Fonte, 
+    {"ID_Cliente", "Nome_Cliente", "Regiao"}, 
+    "Mes_Referencia", 
+    "Valor_Faturado"
+)</code></pre>
+
+                            <!-- Comparativo Visual Antes e Depois -->
+                            <div class="space-y-2 text-xs text-gray-600 dark:text-gray-300">
+                                <h4 class="font-bold uppercase tracking-wider text-gray-700 dark:text-gray-200">A Transformação Mágica:</h4>
+                                <div class="grid grid-cols-2 gap-2 text-[11px] p-2 rounded-xl bg-slate-900/60 border border-slate-700">
+                                    <div class="p-2 rounded bg-rose-500/10 border border-rose-500/20 text-rose-300">
+                                        <span class="font-bold block text-rose-400">❌ Antes (Matriz Horizontal):</span>
+                                        Cliente | Jan | Fev | Mar<br>
+                                        Alfa &nbsp;&nbsp;| 10k | 12k | 15k
+                                    </div>
+                                    <div class="p-2 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
+                                        <span class="font-bold block text-emerald-400">✅ Depois (Vertical / Tidy):</span>
+                                        Alfa | Jan | 10k<br>
+                                        Alfa | Fev | 12k<br>
+                                        Alfa | Mar | 15k
+                                    </div>
+                                </div>
+                                <p class="text-gray-500 dark:text-gray-400 text-[11px] mt-2">
+                                    <strong>Como fazer:</strong> Segure <kbd class="px-1 py-0.5 bg-gray-100 dark:bg-slate-800 rounded border">Ctrl</kbd>, clique nas colunas de texto que devem ficar paradas ➔ Botão direito ➔ <strong>Desdinamizar Outras Colunas</strong>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-[11px] text-cyan-700 dark:text-cyan-300">
+                            <i class="fas fa-database mr-1"></i> A base verticalizada permite filtrar por mês como segmentação de dados e calcular métricas DAX sem dor de cabeça.
+                        </div>
+                    </div>
+
+                    <!-- Macro VBA Express: Higienização de Relatórios de ERP -->
+                    <div class="lg:col-span-12 glass-card rounded-2xl p-6 md:p-8 border border-white/20 dark:border-slate-700/60 shadow-lg">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-slate-700/60 gap-4">
+                            <div>
+                                <span class="text-xs px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-500 font-bold uppercase tracking-wider border border-purple-500/20">
+                                    VBA Express
+                                </span>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mt-2 flex items-center gap-2">
+                                    <i class="fas fa-terminal text-purple-500"></i> Macro de Limpeza & Formatação Executiva em 1 Clique
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Transforme relatórios brutos e feios exportados de sistemas legados em tabelas executivas formatadas e limpas instantaneamente.
+                                </p>
+                            </div>
+                            <button class="btn-copy-snippet px-4 py-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 border border-purple-500/20 font-semibold text-sm transition-all self-start md:self-auto" data-target="#code-vba-cleanup">
+                                <i class="far fa-copy mr-1"></i> Copiar Código VBA
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                            <!-- Código VBA Completo e Comentado -->
+                            <div class="lg:col-span-8">
+                                <pre class="text-xs md:text-sm p-4 rounded-xl bg-slate-900 text-gray-100 overflow-x-auto border border-slate-700 font-mono leading-relaxed"><code id="code-vba-cleanup" class="language-vba">Sub FormatarRelatorioExecutivo()
+    Dim ws As Worksheet
+    Dim ultimaLinha As Long
+    Dim ultimaColuna As Long
+    
+    ' 1. Otimização de Performance: Desativa tela para rodar instantaneamente
+    Application.ScreenUpdating = False
+    Application.DisplayAlerts = False
+    
+    Set ws = ActiveSheet
+    
+    ' 2. Descobre a última linha e coluna preenchidas
+    ultimaLinha = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    ultimaColuna = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+    
+    If ultimaLinha &lt; 2 Then Exit Sub
+    
+    With ws
+        ' 3. Formata o Cabeçalho (Azul Marinho Corporativo + Texto Branco em Negrito)
+        With .Range(.Cells(1, 1), .Cells(1, ultimaColuna))
+            .Interior.Color = RGB(15, 23, 42) ' Slate-900 elegante
+            .Font.Color = RGB(255, 255, 255)
+            .Font.Bold = True
+            .Font.Name = "Segoe UI"
+            .Font.Size = 10
+            .HorizontalAlignment = xlCenter
+        End With
+        
+        ' 4. Formata o Corpo de Dados (Fonte Limpa + Bordas Leves)
+        With .Range(.Cells(2, 1), .Cells(ultimaLinha, ultimaColuna))
+            .Font.Name = "Segoe UI"
+            .Font.Size = 9
+            .Borders.LineStyle = xlContinuous
+            .Borders.Color = RGB(226, 232, 240)
+            .Borders.Weight = xlHairline
+        End With
+        
+        ' 5. Autoajuste de Largura de Colunas
+        .Columns.AutoFit
+    End With
+    
+    ' 6. Restaura configurações do Excel
+    Application.ScreenUpdating = True
+    Application.DisplayAlerts = True
+    
+    MsgBox "Relatório formatado com sucesso!", vbInformation, "Cérebro do Analista"
+End Sub</code></pre>
+                            </div>
+
+                            <!-- Atalhos de Teclado de Elite -->
+                            <div class="lg:col-span-4 space-y-4">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                                    <i class="fas fa-keyboard text-primary"></i> Atalhos de Elite do Analista
+                                </h4>
+                                <div class="space-y-2 text-xs">
+                                    <div class="p-2.5 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 flex items-center justify-between">
+                                        <span class="text-gray-600 dark:text-gray-300">Formatar Moeda (R$)</span>
+                                        <kbd class="px-2 py-0.5 bg-slate-900 text-cyan-300 font-mono rounded text-[11px] border border-slate-700">Ctrl + Shift + $</kbd>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 flex items-center justify-between">
+                                        <span class="text-gray-600 dark:text-gray-300">Formatar Porcentagem</span>
+                                        <kbd class="px-2 py-0.5 bg-slate-900 text-yellow-300 font-mono rounded text-[11px] border border-slate-700">Ctrl + Shift + %</kbd>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 flex items-center justify-between">
+                                        <span class="text-gray-600 dark:text-gray-300">Colar Somente Valores</span>
+                                        <kbd class="px-2 py-0.5 bg-slate-900 text-emerald-300 font-mono rounded text-[11px] border border-slate-700">Alt + C + V + V</kbd>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 flex items-center justify-between">
+                                        <span class="text-gray-600 dark:text-gray-300">Atualizar Tabelas / Dados</span>
+                                        <kbd class="px-2 py-0.5 bg-slate-900 text-purple-300 font-mono rounded text-[11px] border border-slate-700">Alt + F5</kbd>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 flex items-center justify-between">
+                                        <span class="text-gray-600 dark:text-gray-300">Ligar/Desligar Filtros</span>
+                                        <kbd class="px-2 py-0.5 bg-slate-900 text-rose-300 font-mono rounded text-[11px] border border-slate-700">Ctrl + Shift + L</kbd>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 flex items-center justify-between">
+                                        <span class="text-gray-600 dark:text-gray-300">Travar Célula ($A$1)</span>
+                                        <kbd class="px-2 py-0.5 bg-slate-900 text-amber-300 font-mono rounded text-[11px] border border-slate-700">F4</kbd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts do Ecossistema -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script type="module" src="/js/main.js"></script>
+    <script src="/js/components.js"></script>
+    <script src="/js/guia-do-analista.js"></script>
+</body>
+</html>

@@ -11,6 +11,7 @@ export function initializeNavigation() {
             text: 'Caixa de Ferramentas',
             isDropdown: true,
             sublinks: [
+                { href: './guia-do-analista.html', text: 'Guia do Analista' },
                 { href: './guia-python.html', text: 'Guia Python' },
                 { href: './guia-git.html', text: 'Guia Git' },
                 { href: './guia-sql.html', text: 'Guia SQL' },
