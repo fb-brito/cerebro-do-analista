@@ -16,3 +16,6 @@ snapshot_completo_do_projeto.txt
 # Configurações de Editor
 .vscode/
 .idea/
+
+# Especificações e Andaimes Internos de Engenharia (SDD)
+.specify/
